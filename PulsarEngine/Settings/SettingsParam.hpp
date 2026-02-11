@@ -36,7 +36,8 @@ enum Type {
 
 //If you want to add settings to your packs, they go in this enum, and GetUserSettingValue should be used to obtain the value of a given setting
 enum UserType {
-    SETTINGSTYPE_GAME
+    SETTINGSTYPE_GAME,
+    SETTINGSTYPE_TC
 };
 
 }//namespace Settings
@@ -94,6 +95,12 @@ enum GAMESettings {
     SETTINGGAME_SCROLL_ROULETTE = 0 + 6,
     SETTINGGAME_SCROLL_SPEEDMOD = 1 + 6,
     SETTINGGAME_SCROLL_LAPCOUNT = 2 + 6
+};
+
+enum TCSettings {
+    SETTINGTC_TC_EFFECT = 0,
+    SETTINGTC_TC_TYPE = 1 + 6,
+    SETTINGTC_TC_EXTRATYPE = 0 + 6
 };
 
 //MENU SETTINGS
@@ -312,6 +319,25 @@ enum GAMELapCount {
     GAMESETTING_LAPS_9,
     GAMESETTING_LAPS_1,
     GAMESETTING_LAPS_2
+};
+
+//TCSettings
+enum TCSettingTCEFFECT {
+    TCSETTING_TCEFFECT_SINGLE,
+    TCSETTING_TCEFFECT_DOUBLE
+};
+enum TCSettingTCTYPE {
+    TCSETTING_TC_DEFAULT,
+    TCSETTING_TC_MEGA,
+    TCSETTING_TC_STAR,
+    TCSETTING_TC_BLOOPER
+};
+
+enum SettingTCEXTRATYPE {
+    TCSETTING_EXTRATC_DEFAULT,
+    TCSETTING_EXTRATC_MEGA,
+    TCSETTING_EXTRATC_STAR,
+    TCSETTING_EXTRATC_BLOOPER
 };
 //USER-GAMEPLAYSETTINGS
 

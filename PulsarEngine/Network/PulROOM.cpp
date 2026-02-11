@@ -60,7 +60,12 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),1) << LOLPACK_TTITEMCOUNT_BIN1
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),2) << LOLPACK_TTITEMCOUNT_BIN2
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),3) << LOLPACK_TTITEMCOUNT_BIN4
-            | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4) << LOLPACK_TTITEMCOUNT_BIN8;
+            | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4) << LOLPACK_TTITEMCOUNT_BIN8
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE),1) << WDD_TC_BIN1
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE),2) << WDD_TC_BIN2
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE),1) << WDD_EXTRATC_BIN1
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE),2) << WDD_EXTRATC_BIN2
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EFFECT),1) << WDD_TC_EFFECT;
 
         u8 raceCount;
         if (koSetting == KOSETTING_ENABLED) raceCount = 0xFE;
