@@ -11,7 +11,7 @@ namespace Settings {
 class Params {
 public:
     static const int pulsarPageCount = 5;
-    static const int userPageCount = 1;
+    static const int userPageCount = 2;
     static const int pageCount = pulsarPageCount + userPageCount;
 
     static const int maxRadioCount = 6; //per page, due to space
