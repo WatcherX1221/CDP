@@ -64,6 +64,7 @@ enum Context {
     LOLPACK_TTITEMCOUNT_BIN8,
     LOLPACK_HAWTYPE
     
+    // Split into multiple contexts
 };
 
 
@@ -125,7 +126,11 @@ private:
     char modFolderName[IOS::ipcMaxFileName + 1]; //0xC
     u8 padding[2];
     Info info; //0x1c
-    u64 context;
+    u32 context;
+    u32 contextWDD;
+    u32 contextLOL;
+
+    //Add extra contexts here
 
 public:
     //Network variables only set when reading a ROOM packet that starts the GP; they are only ever used in UpdateState; no need to clear them as ROOM will reupdat ethem

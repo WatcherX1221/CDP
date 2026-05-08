@@ -167,7 +167,10 @@ void System::UpdateContext() {
 
     bool isLolBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
 
-    u64 newContext = 0;
+    u32 newContextPul = 0;
+    u32 newContextLOL = 0;
+    u32 newContextWDD = 0;
+
     if(sceneId != SCENE_ID_GLOBE && controller->connectionState != RKNet::CONNECTIONSTATE_SHUTDOWN) {
         switch(controller->roomType) {
             case(RKNet::ROOMTYPE_VS_REGIONAL): // Reset gameplay altering settings to default to keep regionals healthy!
@@ -210,40 +213,40 @@ void System::UpdateContext() {
             case(RKNet::ROOMTYPE_FROOM_NONHOST):
                 isCT = mode != MODE_BATTLE && mode != MODE_PUBLIC_BATTLE && mode != MODE_PRIVATE_BATTLE;
                 newContext = netMgr.hostContext;
-                isHAW = newContext & (1 << PULSAR_HAW);
-                isKO = newContext & (1 << PULSAR_MODE_KO);
-                isOTT = newContext & (1 << PULSAR_MODE_OTT);
-                isMiiHeads = newContext & (1 << PULSAR_MIIHEADS);
-                isUMTs = newContext & (1 << PULSAR_UMTS); // Usually defined alongside feathers for ott, but we don't want that
+                isHAW = newContextPul & (1 << PULSAR_HAW);
+                isKO = newContextPul & (1 << PULSAR_MODE_KO);
+                isOTT = newContextPul & (1 << PULSAR_MODE_OTT);
+                isMiiHeads = newContextPul & (1 << PULSAR_MIIHEADS);
+                isUMTs = newContextPul & (1 << PULSAR_UMTS); // Usually defined alongside feathers for ott, but we don't want that
                 //lol settings
-                isLolBrake = newContext & (1 << LOLPACK_BRAKE); // Is Brake Drift Allowed? take host settings
-                lolLapType1 = newContext & (1 << LOLPACK_LAPS_BIN1);
-                lolLapType2 = newContext & (1 << LOLPACK_LAPS_BIN2);
-                lolLaps1 = newContext & (1 << LOLPACK_LAPCOUNT_BIN1);
-                lolLaps2 = newContext & (1 << LOLPACK_LAPCOUNT_BIN2);
-                lolLaps4 = newContext & (1 << LOLPACK_LAPCOUNT_BIN4);
-                lolLaps8 = newContext & (1 << LOLPACK_LAPCOUNT_BIN8);
-                lolSpeeds1 = newContext & (1 << LOLPACK_SPEEDMOD_BIN1);
-                lolSpeeds2 = newContext & (1 << LOLPACK_SPEEDMOD_BIN2);
-                lolSpeeds4 = newContext & (1 << LOLPACK_SPEEDMOD_BIN4);
-                lolSpeeds8 = newContext & (1 << LOLPACK_SPEEDMOD_BIN8);
-                lolRoulette1 = newContext & (1 << LOLPACK_ROULETTE_BIN1);
-                lolRoulette2 = newContext & (1 << LOLPACK_ROULETTE_BIN2);
-                lolRoulette4 = newContext & (1 << LOLPACK_ROULETTE_BIN4);
-                lolTTitem1 = newContext & (1 << LOLPACK_TTITEM_BIN1);
-                lolTTitem2 = newContext & (1 << LOLPACK_TTITEM_BIN2);
-                lolTTitem4 = newContext & (1 << LOLPACK_TTITEM_BIN4);
-                lolTTitemcount1 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN1);
-                lolTTitemcount2 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN2);
-                lolTTitemcount4 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN4);
-                lolTTitemcount8 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN8);
+                isLolBrake = newContextLOL & (1 << LOLPACK_BRAKE); // Is Brake Drift Allowed? take host settings
+                lolLapType1 = newContextLOL & (1 << LOLPACK_LAPS_BIN1);
+                lolLapType2 = newContextLOL & (1 << LOLPACK_LAPS_BIN2);
+                lolLaps1 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN1);
+                lolLaps2 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN2);
+                lolLaps4 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN4);
+                lolLaps8 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN8);
+                lolSpeeds1 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN1);
+                lolSpeeds2 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN2);
+                lolSpeeds4 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN4);
+                lolSpeeds8 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN8);
+                lolRoulette1 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN1);
+                lolRoulette2 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN2);
+                lolRoulette4 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN4);
+                lolTTitem1 = newContextLOL & (1 << LOLPACK_TTITEM_BIN1);
+                lolTTitem2 = newContextLOL & (1 << LOLPACK_TTITEM_BIN2);
+                lolTTitem4 = newContextLOL & (1 << LOLPACK_TTITEM_BIN4);
+                lolTTitemcount1 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN1);
+                lolTTitemcount2 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN2);
+                lolTTitemcount4 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN4);
+                lolTTitemcount8 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN8);
                 //end of lol settings
                 //wdd tc settings
-                wddtceffect = newContext & (1 << WDD_TC_EFFECT);
-                wddtc1 = newContext & (1 << WDD_TC_BIN1);
-                wddtc2 = newContext & (1 << WDD_TC_BIN2);
-                wddextratc1 = newContext & (1 << WDD_EXTRATC_BIN1);
-                wddextratc2 = newContext & (1 << WDD_EXTRATC_BIN2);
+                wddtceffect = newContextWDD & (1 << WDD_TC_EFFECT);
+                wddtc1 = newContextWDD & (1 << WDD_TC_BIN1);
+                wddtc2 = newContextWDD & (1 << WDD_TC_BIN2);
+                wddextratc1 = newContextWDD & (1 << WDD_EXTRATC_BIN1);
+                wddextratc2 = newContextWDD & (1 << WDD_EXTRATC_BIN2);
                 //end of tc
                 break;
             default:
