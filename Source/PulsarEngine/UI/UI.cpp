@@ -1,4 +1,4 @@
-#include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
+     #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
 #include <UI/UI.hpp>
 #include <PulsarSystem.hpp>
 
@@ -36,9 +36,8 @@ kmWrite32(0x80635058, 0x60000000);
 void ExpSection::CreatePages(ExpSection& self, SectionId id) {
     const System* system = System::sInstance;
     //can't think of a better way to do this awkward thing, where the usual pages are NOT built
-    self.hasHostVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && (system->IsContext(PULSAR_HAW) == 1); //changed from auto to host
-    self.hasKnownVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && (system->IsContext(PULSAR_HAW) == 2); //added for ordered track selection
-    if(!(self.hasHostVote||self.hasKnownVote)) self.CreateSectionPages(id);
+    self.hasAutoVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && system->IsContext(PULSAR_HAW); //can't think of a better way to do this awkward thing, where the usual pages are NOT built
+    if(!self.hasAutoVote) self.CreateSectionPages(id);
     memset(&self.pulPages, 0, sizeof(Page*) * PULPAGE_MAX);
     self.CreatePulPages();
 }
@@ -128,12 +127,10 @@ void ExpSection::CreatePulPages() {
         case SECTION_OPTIONS:                    //0x8c
             this->CreateAndInitPage(*this, SettingsPanel::id);
     }
-    if(this->hasHostVote) {
+    if(this->hasAutoVote) {
         this->CreateAndInitPage(*this, PAGE_AUTO_ENDING2);
         this->CreateAndInitPage(*this, PAGE_MESSAGEBOX);
         this->CreateAndInitPage(*this, PAGE_SELECT_STAGE_MGR);
-    } else if(this->hasKnownVote) {
-        
     }
     if(this->Get<ExpFroom>() != nullptr) this->CreateAndInitPage(*this, PULPAGE_TEAMSELECT); //can also put it as part of the case froom of createandinitpage
 }
@@ -188,7 +185,7 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
             page = new ExpMultiKartSelect;
             break;
         case PAGE_SELECT_STAGE_MGR:
-            if(self.hasHostVote) page = new AutoVote;
+            if(self.hasAutoVote) page = new AutoVote;
             else page = new Pages::SELECTStageMgr;
             break;
 
@@ -214,7 +211,7 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
             page = self.CreatePageById(initId);
 
 
-    }
+        }
     if(id < PULPAGE_INITIAL) self.Set(page, initId);
     else self.SetPulPage(page, static_cast<PulPageId>(id));
     page->Init(initId);

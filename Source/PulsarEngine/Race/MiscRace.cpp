@@ -241,7 +241,21 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
         else if (itemCount >= 3) paneName = "feather_3"; // Has a strange side effect of displaying triple feathers during roulette
         else paneName = "feather";
     }
-    else if (id == THUNDER_CLOUD && megaTC) paneName = "megaTC";
+    else if (id == THUNDER_CLOUD && megaTC) {
+        switch (System::sInstance->IsContext(WDD_TC_BIN1)+System::sInstance->IsContext(WDD_TC_BIN2)*2) {
+            case(0x1): //Mega
+                paneName = "megaTC";
+                break;
+            case(0x2): //Star
+                paneName = "starTC";
+                break;
+            case(0x3): //Blooper
+                paneName = "blooperTC";
+                break;
+            default: //Shock
+                paneName = GetItemIconPaneName(id, itemCount);
+        }
+    }
     else paneName = GetItemIconPaneName(id, itemCount);
     return paneName;
 }

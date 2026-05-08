@@ -147,6 +147,12 @@ void System::UpdateContext() {
     bool lolTTitemcount2 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),2);
     bool lolTTitemcount4 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),3);
     bool lolTTitemcount8 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4);
+    //wdd
+    bool wddtceffect = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EFFECT)),1);
+    bool wddtc1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE)),1);
+    bool wddtc2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE)),2);
+    bool wddextratc1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE)),1);
+    bool wddextratc2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE)),2);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -161,7 +167,7 @@ void System::UpdateContext() {
 
     bool isLolBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
 
-    u32 newContext = 0;
+    u64 newContext = 0;
     if(sceneId != SCENE_ID_GLOBE && controller->connectionState != RKNet::CONNECTIONSTATE_SHUTDOWN) {
         switch(controller->roomType) {
             case(RKNet::ROOMTYPE_VS_REGIONAL): // Reset gameplay altering settings to default to keep regionals healthy!
@@ -232,6 +238,13 @@ void System::UpdateContext() {
                 lolTTitemcount4 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN4);
                 lolTTitemcount8 = newContext & (1 << LOLPACK_TTITEMCOUNT_BIN8);
                 //end of lol settings
+                //wdd tc settings
+                wddtceffect = newContext & (1 << WDD_TC_EFFECT);
+                wddtc1 = newContext & (1 << WDD_TC_BIN1);
+                wddtc2 = newContext & (1 << WDD_TC_BIN2);
+                wddextratc1 = newContext & (1 << WDD_EXTRATC_BIN1);
+                wddextratc2 = newContext & (1 << WDD_EXTRATC_BIN2);
+                //end of tc
                 break;
             default:
                 isCT = false;
@@ -284,7 +297,7 @@ void System::UpdateContext() {
 
 
 
-    u32 context = (isCT << PULSAR_CT)
+    u64 context = (isCT << PULSAR_CT)
                 | (isHAW << PULSAR_HAW)
                 | (lolHAW << LOLPACK_HAWTYPE)
                 | (isMiiHeads << PULSAR_MIIHEADS)
@@ -306,7 +319,12 @@ void System::UpdateContext() {
                 | (lolTTitemcount1 << LOLPACK_TTITEMCOUNT_BIN1)
                 | (lolTTitemcount2 << LOLPACK_TTITEMCOUNT_BIN2)
                 | (lolTTitemcount4 << LOLPACK_TTITEMCOUNT_BIN4)
-                | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8);
+                | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8)
+                | (wddtc1 << WDD_TC_BIN1)
+                | (wddtc2 << WDD_TC_BIN2)
+                | (wddextratc1 << WDD_EXTRATC_BIN1)
+                | (wddextratc2 << WDD_EXTRATC_BIN2)
+                | (wddtceffect << WDD_TC_EFFECT);
     }
     if(isLOL) { //contexts that should only ever not exist for RTWWs
         context |=(isFeather << PULSAR_FEATHER)

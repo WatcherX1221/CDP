@@ -35,8 +35,8 @@ private:
 
     TrackTrophy* FindTrackTrophy(u32 crc32, TTMode mode) const;
     void AdjustSections();
-    void SetSettingValue(Type type, u32 setting, u8 value);
-    void SetUserSettingValue(UserType type, u32 setting, u8 value);
+    void SetSettingValue(Type type, u64 setting, u8 value);
+    void SetUserSettingValue(UserType type, u64 setting, u8 value);
     void AdjustSectionsSizes();
     Binary* CreateFromOld(const Binary* old);
     void Update() {
@@ -73,8 +73,8 @@ public:
         return gpStatus & 0b11;
     }
     static void SaveGPResult(RKSYSRequester* requester, u32 r4, u32 r5, u32 r6, u32 r7, u32 r8, u32 r9, bool isNew);
-    u8 GetSettingValue(Type type, u32 setting) const;
-    u8 GetUserSettingValue(UserType type, u32 setting) const;
+    u8 GetSettingValue(Type type, u64 setting) const;
+    u8 GetUserSettingValue(UserType type, u64 setting) const;
     static void Create();
 
 

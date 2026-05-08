@@ -34,6 +34,12 @@ enum Context {
     PULSAR_MODE_OTT,
     PULSAR_MODE_KO,
     //PULSAR_CONTEXT_COUNT, //I don't think this ever gets used
+    //WDD Contexts
+    WDD_TC_EFFECT,
+    WDD_TC_BIN1,
+    WDD_TC_BIN2,
+    WDD_EXTRATC_BIN1,
+    WDD_EXTRATC_BIN2,
     LOLPACK_VALID_TTS,
     LOLPACK_BRAKE,
     LOLPACK_LAPS_BIN1,
@@ -57,6 +63,7 @@ enum Context {
     LOLPACK_TTITEMCOUNT_BIN4,
     LOLPACK_TTITEMCOUNT_BIN8,
     LOLPACK_HAWTYPE
+    
 };
 
 
@@ -118,7 +125,7 @@ private:
     char modFolderName[IOS::ipcMaxFileName + 1]; //0xC
     u8 padding[2];
     Info info; //0x1c
-    u32 context;
+    u64 context;
 
 public:
     //Network variables only set when reading a ROOM packet that starts the GP; they are only ever used in UpdateState; no need to clear them as ROOM will reupdat ethem

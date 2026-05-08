@@ -118,7 +118,7 @@ struct ConfigFile {
     template <class T>
     static inline void CheckSection(const T& t) { if(t.header.magic != T::magic || t.header.version != T::curVersion) Debug::FatalError(error); }
 
-    static const u32 magic = 'PULS';
+    static const u64 magic = 'PULS';
     BinaryHeader header;
     //InfoHolder infoHolder;
     //CupsHolder cupsHolder;

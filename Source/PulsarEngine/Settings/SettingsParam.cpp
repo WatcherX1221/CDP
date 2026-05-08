@@ -8,11 +8,11 @@ namespace Pulsar {
 namespace Settings {
 
 u8 Params::radioCount[Params::pageCount] ={
-    3, 5, 4, 2, 4, 2 //menu, race, host, KO, OTT, game
+    3, 5, 4, 2, 4, 2, 1 //menu, race, host, KO, OTT, game, tc
     //Add user radio count here
 
 };
-u8 Params::scrollerCount[Params::pageCount] ={ 1, 1, 1, 2, 2, 3 }; //menu, race, host, KO, OTT, game
+u8 Params::scrollerCount[Params::pageCount] ={ 1, 1, 1, 2, 2, 3, 2 }; //menu, race, host, KO, OTT, game, tc
 
 u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] = //first row is PulsarSettingsType, 2nd is rowIdx of radio
 {
@@ -21,7 +21,8 @@ u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] = //fi
     { 3, 4, 2, 2, 0, 0 }, //Host
     { 2, 2, 0, 0, 0, 0 }, //KO
     { 2, 2, 2, 2, 0, 0 }, //OTT
-    { 3, 3, 0, 0, 0, 0 }  //Game
+    { 3, 3, 0, 0, 0, 0 },  //Game
+    { 2, 0, 0, 0, 0, 0 }, //TC
 };
 
 u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount] =
@@ -31,7 +32,8 @@ u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount
     { 11, 0, 0, 0, 0}, //Host
     { 4, 4, 0, 0, 0}, //KO
     { 16, 7, 0, 0, 0}, //OTT
-    { 6, 12, 9, 0, 0}  //Game
+    { 6, 12, 9, 0, 0},  //Game
+    { 4, 4, 0, 0, 0}, //WDDTC
 };
 
 }//namespace Settings
