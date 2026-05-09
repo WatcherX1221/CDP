@@ -27,7 +27,7 @@ ExpCupSelect::ExpCupSelect() {
     this->controlsManipulatorManager.SetGlobalHandler(START_PRESS, onStartPressHandler, false, false);
 
     CupsConfig* cupsConfig = CupsConfig::sInstance;
-    cupsConfig->ToggleCTs(System::sInstance->IsContext(PULSAR_CT));
+    cupsConfig->ToggleCTs(System::sInstance->IsContextPul(PULSAR_CT));
     if (cupsConfig->GetTotalCupCount() <= 8) {
         this->arrows.leftArrow.manipulator.inaccessible = true;
         this->arrows.leftArrow.isHidden = true;

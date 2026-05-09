@@ -227,7 +227,7 @@ bool XPFMgr::CalcPredefinedCondition(u16 val) {
 
 void XPFMgr::EvaluateXPFAndCreateObjs(ObjectsMgr* mgr, bool isMii) {
     Pulsar::System* system = Pulsar::System::sInstance;
-    if(system->IsContext(Pulsar::PULSAR_CT)) {
+    if(system->IsContextPul(Pulsar::PULSAR_CT)) {
         system->lecodeMgr.xpfMgr.EvaluateConditions();
     }
     mgr->CreateAllObjects(isMii);

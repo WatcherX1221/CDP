@@ -25,7 +25,7 @@ void HAWChangeData() {
     RKNet::Controller* controller = RKNet::Controller::sInstance;
     RKNet::ControllerSub& sub = controller->subs[controller->currentSub];
     const u8 localAid = sub.localAid;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         u8 oldAidsBelonging[12];
         u8 oldPlayerIds[12][2];
         //u8 oldPlayerIds[12];

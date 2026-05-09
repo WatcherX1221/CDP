@@ -68,7 +68,7 @@ ChooseNextTrack::ChooseNextTrack() :
     PulsarId lastTrack = cupsConfig->GetWinning();
     if(!this->isBattle && cupsConfig->IsAlphabetical() && lastTrack >= PULSARID_FIRSTCT) lastTrack = static_cast<PulsarId>(cupsConfig->GetInvertedArray()[lastTrack - PULSARID_FIRSTCT] + PULSARID_FIRSTCT);
     curPageIdx = CupsConfig::ConvertCup_PulsarTrackToCup(lastTrack);
-    cupsConfig->ToggleCTs(System::sInstance->IsContext(PULSAR_CT));
+    cupsConfig->ToggleCTs(System::sInstance->IsContextPul(PULSAR_CT));
 
 }
 
@@ -287,7 +287,7 @@ PageId ChooseNextTrack::GetPageAfterWifiResults(PageId defaultId) const {
     PageId ret = defaultId;
     if(this->isHost) {
         const SectionParams* params = SectionMgr::sInstance->sectionParams;
-        if(System::sInstance->IsContext(PULSAR_MODE_KO)
+        if(System::sInstance->IsContextPul(PULSAR_MODE_KO)
             || this->isBattle && params->redWins < 2 && params->blueWins < 2
             || !this->isBattle && params->onlineParams.currentRaceNumber != System::sInstance->netMgr.racesPerGP) ret = static_cast<PageId>(ChooseNextTrack::id);
     }

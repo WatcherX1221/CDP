@@ -17,7 +17,7 @@ namespace Pulsar {
 namespace UI {
 
 PageId TTSplitsGetNextPage(const Pages::TTSplits& splits) {
-    const bool isOTT = System::sInstance->IsContext(PULSAR_MODE_OTT);
+    const bool isOTT = System::sInstance->IsContextPul(PULSAR_MODE_OTT);
 
     const SectionId sectionId = SectionMgr::sInstance->curSection->sectionId;
     if(isOTT || sectionId == SECTION_GP) return PAGE_GPVS_LEADERBOARD_UPDATE;

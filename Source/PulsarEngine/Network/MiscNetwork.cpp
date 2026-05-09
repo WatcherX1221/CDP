@@ -24,7 +24,7 @@ static void CalcSectionAfterRace(SectionMgr* sectionMgr, SectionId id) {
     const System* system = System::sInstance;
     if(choosePage != nullptr) id = choosePage->ProcessHAW(id);
     if(id != SECTION_NONE) {
-        if(system->IsContext(PULSAR_MODE_KO)) id = system->koMgr->GetSectionAfterKO(id);
+        if(system->IsContextPul(PULSAR_MODE_KO)) id = system->koMgr->GetSectionAfterKO(id);
         sectionMgr->SetNextSection(id, 0);
         register Pages::WWRaceEndWait* wait;
         asm(mr wait, r31);

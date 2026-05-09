@@ -14,7 +14,7 @@ namespace Network {
 void BeforeRH1Send(RKNet::PacketHolder<PulRH1>& packetHolder, PulRH1* packet, u32 len) {
     packetHolder.Copy(packet, len);
 
-    if(System::sInstance->IsContext(PULSAR_CT)) { //CHECK if this only exists in races
+    if(System::sInstance->IsContextPul(PULSAR_CT)) { //CHECK if this only exists in races
         packetHolder.packetSize += sizeof(Network::PulRH1) - sizeof(RKNet::RACEHEADER1Packet); //this has been changed by copy so it's safe to do this
         packetHolder.packet->pulsarTrackId = static_cast<u16>(CupsConfig::sInstance->GetWinning());
         packetHolder.packet->variantIdx = CupsConfig::sInstance->GetCurVariantIdx();

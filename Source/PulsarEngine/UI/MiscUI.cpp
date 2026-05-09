@@ -27,8 +27,8 @@ static PageId AfterWifiResults(PageId id) {
     const SectionMgr* sectionMgr = SectionMgr::sInstance;
     const System* system = System::sInstance;
 
-    if (system->IsContext(PULSAR_MODE_KO)) id = system->koMgr->KickPlayersOut(id); //return KO::RaceEndPage with the choice to spectate if the local players are out 
-    if (id != static_cast<PageId>(KO::RaceEndPage::id) && system->IsContext(PULSAR_HAW)) {
+    if (system->IsContextPul(PULSAR_MODE_KO)) id = system->koMgr->KickPlayersOut(id); //return KO::RaceEndPage with the choice to spectate if the local players are out 
+    if (id != static_cast<PageId>(KO::RaceEndPage::id) && system->IsContextPul(PULSAR_HAW)) {
         ChooseNextTrack* chooseNext = ExpSection::GetSection()->GetPulPage<ChooseNextTrack>();
         if (chooseNext != nullptr) id = chooseNext->GetPageAfterWifiResults(id);
     }
@@ -54,7 +54,7 @@ static void FixStartMessageFroom(CtrlRaceWifiStartMessage* startMsg, u32 bmgId, 
         const System* system = System::sInstance;
         const u32 raceNumber = sectionMgr->sectionParams->onlineParams.currentRaceNumber + 1;
         bmgId = BMG_GP_RACE;
-        if (system->IsContext(PULSAR_MODE_KO)) {
+        if (system->IsContextPul(PULSAR_MODE_KO)) {
             const KO::Mgr* koMgr = system->koMgr;
             const u32 playerCount = system->nonTTGhostPlayersCount;
             u32 koCount = 0;

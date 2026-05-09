@@ -92,7 +92,7 @@ void Mgr::ProcessKOs(Pages::GPVSLeaderboardUpdate::Player* playerArr, size_t nit
     qsort(playerArr, nitems, size, compar); //default
 
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         Mgr* self = system->koMgr;
 
         RacedataScenario& scenario = Racedata::sInstance->menusScenario;
@@ -170,7 +170,7 @@ kmCall(0x8085cb94, Mgr::ProcessKOs);
 
 void Mgr::Update() {
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         Mgr* self = System::sInstance->koMgr;
         self->CalcWouldBeKnockedOut();
         const RacedataScenario& scenario = Racedata::sInstance->racesScenario;
@@ -293,7 +293,7 @@ SectionId Mgr::GetSectionAfterKO(SectionId defaultId) const {
 
 void OnDisconnectKO(SectionMgr* sectionMgr, SectionId id) {
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO)) id = system->koMgr->GetSectionAfterKO(id);
+    if(system->IsContextPul(PULSAR_MODE_KO)) id = system->koMgr->GetSectionAfterKO(id);
     sectionMgr->SetNextSection(id, 0);
 }
 kmCall(0x80651814, OnDisconnectKO);

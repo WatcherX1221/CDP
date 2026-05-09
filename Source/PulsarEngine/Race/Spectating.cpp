@@ -13,7 +13,7 @@ static const u64 CreateSwitchFocusPlayerPtmfs(u32 arg) { //extremely hacky, but 
 
     SectionId id = SectionMgr::sInstance->curSection->sectionId;
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating || id >= SECTION_WATCH_GHOST_FROM_CHANNEL && id <= SECTION_WATCH_GHOST_FROM_MENU) id = SECTION_P1_WIFI_VS_LIVEVIEW;
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating || id >= SECTION_WATCH_GHOST_FROM_CHANNEL && id <= SECTION_WATCH_GHOST_FROM_MENU) id = SECTION_P1_WIFI_VS_LIVEVIEW;
     fakeSection = id;
     u64 ret = ((static_cast<u64>(arg)) << 32) | (reinterpret_cast<u32>(&fakeSection) & 0xffffffffL);
     return ret;
@@ -67,13 +67,13 @@ static void RaceinfoNoSpectating() {
     register Raceinfo* raceInfo;
     asm(mr raceInfo, r28;);
     const System* system = System::sInstance;
-    raceInfo->isSpectating = !system->IsContext(PULSAR_MODE_KO); //default instruction would store 1, here we only store 1 if it's not ko
+    raceInfo->isSpectating = !system->IsContextPul(PULSAR_MODE_KO); //default instruction would store 1, here we only store 1 if it's not ko
 }
 kmCall(0x80532cf8, RaceinfoNoSpectating);
 
 static bool SkipOpeningPanCheck(const RaceCameraMgr& cameraMgr) {
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) return true;
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) return true;
     else return cameraMgr.HasEveryOpeningPanEnded();
 }
 kmCall(0x8053342c, SkipOpeningPanCheck);

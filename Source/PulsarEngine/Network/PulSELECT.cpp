@@ -15,7 +15,7 @@ namespace Network {
 
 void BeforeSELECTSend(RKNet::PacketHolder<PulSELECT>* packetHolder, PulSELECT* src, u32 len) { //len is sizeof(RKNet::SELECTPacket) by default
     const System* system = System::sInstance;
-    if (!system->IsContext(PULSAR_CT)) {
+    if (!system->IsContextPul(PULSAR_CT)) {
         const u8 vanillaWinning = CupsConfig::ConvertTrack_PulsarIdToRealId(static_cast<PulsarId>(src->pulWinningTrack));
         src->winningCourse = vanillaWinning;
         const u8 vanillaVote = CupsConfig::ConvertTrack_PulsarIdToRealId(static_cast<PulsarId>(src->pulVote));
@@ -77,9 +77,9 @@ void ExpSELECTHandler::DecideTrack(ExpSELECTHandler& self) {
     const u8 hostAid = controller->subs[controller->currentSub].hostAid;
     const RKNet::OnlineMode mode = self.mode;
 
-    if (mode == RKNet::ONLINEMODE_PRIVATE_VS && system->IsContext(PULSAR_MODE_KO)) system->koMgr->PatchAids(sub);
+    if (mode == RKNet::ONLINEMODE_PRIVATE_VS && system->IsContextPul(PULSAR_MODE_KO)) system->koMgr->PatchAids(sub);
 
-    if (mode == RKNet::ONLINEMODE_PRIVATE_VS && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) && !system->IsContext(PULSAR_MODE_KO)) {
+    if (mode == RKNet::ONLINEMODE_PRIVATE_VS && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) && !system->IsContextPul(PULSAR_MODE_KO)) {
 
         self.toSendPacket.winningVoterAid = hostAid;
         u16 hostVote = self.toSendPacket.pulVote;
@@ -88,7 +88,7 @@ void ExpSELECTHandler::DecideTrack(ExpSELECTHandler& self) {
         self.toSendPacket.variantIdx = cupsConfig->RandomizeVariant(static_cast<PulsarId>(hostVote));
     }
     else {
-        const bool isCT = system->IsContext(PULSAR_CT);
+        const bool isCT = system->IsContextPul(PULSAR_CT);
         const u32 availableAids = sub.availableAids; //has been modified to remove KO'd player if KO is on
         u8 aids[12];
         u8 newVotesAids[12]; //only used for track blocking
@@ -152,7 +152,7 @@ CourseId SetCorrectSlot(ExpSELECTHandler* select) {
     CourseId id = reinterpret_cast<RKNet::SELECTHandler*>(select)->GetWinningCourse();
     if (select->toSendPacket.engineClass != 0) id = CupsConfig::sInstance->GetCorrectTrackSlot();
     const System* system = System::sInstance;
-    if (system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) Racedata::sInstance->menusScenario.settings.gametype = GAMETYPE_ONLINE_SPECTATOR;
+    if (system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) Racedata::sInstance->menusScenario.settings.gametype = GAMETYPE_ONLINE_SPECTATOR;
     return id;
 }
 kmCall(0x80650ea8, SetCorrectSlot);
@@ -178,7 +178,7 @@ kmCall(0x80644414, SetCorrectTrack);
 //Overwrites CC rules -> 10% 100, 65% 150, 25% mirror and/or in frooms, overwritten by host setting
 static void DecideCC(ExpSELECTHandler& handler) {
     System* system = System::sInstance;
-    if (!system->IsContext(PULSAR_CT)) reinterpret_cast<RKNet::SELECTHandler&>(handler).DecideEngineClass();
+    if (!system->IsContextPul(PULSAR_CT)) reinterpret_cast<RKNet::SELECTHandler&>(handler).DecideEngineClass();
     else {
         const u8 ccSetting = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_CC);
         RKNet::Controller* controller = RKNet::Controller::sInstance;

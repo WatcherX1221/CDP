@@ -212,7 +212,9 @@ void System::UpdateContext() {
                 break;
             case(RKNet::ROOMTYPE_FROOM_NONHOST):
                 isCT = mode != MODE_BATTLE && mode != MODE_PUBLIC_BATTLE && mode != MODE_PRIVATE_BATTLE;
-                newContext = netMgr.hostContext;
+                newContextPul = netMgr.hostContextPul;
+                newContextLOL = netMgr.hostContextLOL;
+                newContextWDD = netMgr.hostContextWDD;
                 isHAW = newContextPul & (1 << PULSAR_HAW);
                 isKO = newContextPul & (1 << PULSAR_MODE_KO);
                 isOTT = newContextPul & (1 << PULSAR_MODE_OTT);
@@ -264,7 +266,9 @@ void System::UpdateContext() {
 //            isUMTs &= ~settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS);
 //        }
     }
-    this->netMgr.hostContext = newContext;
+    this->netMgr.hostContextPul = newContextPul;
+    this->netMgr.hostContextLOL = newContextLOL;
+    this->netMgr.hostContextWDD = newContextWDD;
 
     // Brake Drift needs to be calculated after room settings since it differs based on several settings
     isLolBrake &= (BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_BRAKE),2)| // If setting = 1X, always enable
@@ -313,11 +317,10 @@ void System::UpdateContext() {
         contextPul |=(isFeather << PULSAR_FEATHER)
                 | (isUMTs << PULSAR_UMTS)
                 | (isMegaTC << PULSAR_MEGATC)
-                | (isKO << PULSAR_MODE_KO)
+                | (isKO << PULSAR_MODE_KO);
     }
     // LOl Contexts
-    u32 contextLOL = 
-                | (isValidTT << LOLPACK_VALID_TTS);
+    u32 contextLOL = (isValidTT << LOLPACK_VALID_TTS);
     if(isCT) { //contexts that should only exist when CTs are on
         contextLOL |=(lolLapType1 << LOLPACK_LAPS_BIN1)
                 | (lolLapType2 << LOLPACK_LAPS_BIN2)
@@ -331,7 +334,7 @@ void System::UpdateContext() {
                 | (lolTTitemcount1 << LOLPACK_TTITEMCOUNT_BIN1)
                 | (lolTTitemcount2 << LOLPACK_TTITEMCOUNT_BIN2)
                 | (lolTTitemcount4 << LOLPACK_TTITEMCOUNT_BIN4)
-                | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8)
+                | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8);
     }
     if(isLOL) { //contexts that should only ever not exist for RTWWs
         contextLOL |=(isLolBrake << LOLPACK_BRAKE)
@@ -345,18 +348,20 @@ void System::UpdateContext() {
     }
 
     // WDD Contexts
-    u32 contextWDD =
+    u32 contextWDD = 0;
     if(isCT) { //contexts that should only exist when CTs are on
-                | (wddtc1 << WDD_TC_BIN1)
+                contextWDD = 0;
+    }
+    if(isLOL) { //contexts that should only ever not exist for RTWWs
+        contextWDD = (wddtc1 << WDD_TC_BIN1)
                 | (wddtc2 << WDD_TC_BIN2)
                 | (wddextratc1 << WDD_EXTRATC_BIN1)
                 | (wddextratc2 << WDD_EXTRATC_BIN2)
                 | (wddtceffect << WDD_TC_EFFECT);
     }
-    if(isLOL) { //contexts that should only ever not exist for RTWWs
-        contextWDD |=
-    }
-    this->context = context;
+    this->contextPul = contextPul;
+    this->contextLOL = contextLOL;
+    this->contextWDD = contextWDD;
 
     //Create temp instances if needed:
     /*
@@ -381,8 +386,8 @@ void System::UpdateContext() {
 s32 System::OnSceneEnter(Random& random) {
     System* self = System::sInstance;
     self->UpdateContext();
-    if(self->IsContext(PULSAR_MODE_OTT)) OTT::AddGhostToVS();
-    if(self->IsContext(PULSAR_HAW) && self->IsContext(PULSAR_MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
+    if(self->IsContextPul(PULSAR_MODE_OTT)) OTT::AddGhostToVS();
+    if(self->IsContextPul(PULSAR_HAW) && self->IsContextPul(PULSAR_MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
         KO::HAWChangeData();
     }
     return random.NextLimited(8);

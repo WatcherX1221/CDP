@@ -12,7 +12,7 @@ namespace OTT {
 
 
 bool IsVSGhost(u32 playerId) {
-    if(System::sInstance->IsContext(PULSAR_MODE_OTT)) {
+    if(System::sInstance->IsContextPul(PULSAR_MODE_OTT)) {
         const Racedata* racedata = Racedata::sInstance;
         if(racedata->racesScenario.players[playerId].playerType == PLAYER_GHOST) return true;
     }
@@ -27,7 +27,7 @@ inline s32 GetVSGhostId() {
 void AddGhostToVS() {
     const System* system = System::sInstance;
     Racedata* racedata = Racedata::sInstance;
-    if(GameScene::GetCurrent()->id == SCENE_ID_RACE && system->IsContext(PULSAR_MODE_OTT) && racedata->menusScenario.settings.gametype != GAMETYPE_ONLINE_SPECTATOR) {
+    if(GameScene::GetCurrent()->id == SCENE_ID_RACE && system->IsContextPul(PULSAR_MODE_OTT) && racedata->menusScenario.settings.gametype != GAMETYPE_ONLINE_SPECTATOR) {
         u8 playerCount;
         u8 screenCount;
         u8 localCount;
@@ -48,7 +48,7 @@ void AddGhostToVS() {
         cupsConfig->GetTrackGhostFolder(folderPath, id);
 
         alignas(0x20) Ghosts::Leaderboard leaderboard(folderPath, id, false);
-        const TTMode ttMode = static_cast<TTMode>(racedata->menusScenario.settings.engineClass % 2 + 2 * system->IsContext(PULSAR_FEATHER)); //CC_150 (2) becomes 0 (TT_MODE_150), CC_100 (1) becomes 1 (TT_MODE_100)
+        const TTMode ttMode = static_cast<TTMode>(racedata->menusScenario.settings.engineClass % 2 + 2 * system->IsContextPul(PULSAR_FEATHER)); //CC_150 (2) becomes 0 (TT_MODE_150), CC_100 (1) becomes 1 (TT_MODE_100)
         const char* favGhost = leaderboard.GetFavGhost(ttMode);
         char initial = favGhost[0];
 
@@ -74,7 +74,7 @@ void AddGhostToVS() {
             io->Close();
         }
         if(rkg->CheckValidity()) {
-            if(rkg->header.kartId > HONEYCOUPE || rkg->header.driftType == 1 || system->IsContext(PULSAR_UMTS)) {
+            if(rkg->header.kartId > HONEYCOUPE || rkg->header.driftType == 1 || system->IsContextPul(PULSAR_UMTS)) {
                 RKG* dest = &racedata->ghosts[0];
                 racedata->menusScenario.rkg = dest;
                 if(rkg->header.compressed) {

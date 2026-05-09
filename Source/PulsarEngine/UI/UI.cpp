@@ -36,7 +36,7 @@ kmWrite32(0x80635058, 0x60000000);
 void ExpSection::CreatePages(ExpSection& self, SectionId id) {
     const System* system = System::sInstance;
     //can't think of a better way to do this awkward thing, where the usual pages are NOT built
-    self.hasAutoVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && system->IsContext(PULSAR_HAW); //can't think of a better way to do this awkward thing, where the usual pages are NOT built
+    self.hasAutoVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && system->IsContextPul(PULSAR_HAW); //can't think of a better way to do this awkward thing, where the usual pages are NOT built
     if(!self.hasAutoVote) self.CreateSectionPages(id);
     memset(&self.pulPages, 0, sizeof(Page*) * PULPAGE_MAX);
     self.CreatePulPages();
@@ -59,7 +59,7 @@ void ExpSection::CreatePulPages() {
         case SECTION_P2TEAM_VS:                   //0x25
         case SECTION_P3TEAM_VS:                   //0x26
         case SECTION_P4TEAM_VS:                   //0x27
-            if(system->IsContext(PULSAR_MODE_OTT)) {
+            if(system->IsContextPul(PULSAR_MODE_OTT)) {
                 this->CreateAndInitPage(*this, PAGE_TT_SPLITS);
                 Pages::RaceHUD::sInstance->nextPageId = PAGE_TT_SPLITS;
             }
@@ -79,16 +79,16 @@ void ExpSection::CreatePulPages() {
         case SECTION_P1_WIFI_FRIEND_TEAMVS:   //0x71
         case SECTION_P2_WIFI_FRIEND_VS:       //0x74
         case SECTION_P2_WIFI_FRIEND_TEAMVS:   //0x75
-            if(system->IsContext(PULSAR_MODE_OTT)) {
+            if(system->IsContextPul(PULSAR_MODE_OTT)) {
                 this->CreateAndInitPage(*this, PAGE_TT_SPLITS);
                 Pages::RaceHUD::sInstance->nextPageId = PAGE_TT_SPLITS;
             }
-            if(system->IsContext(PULSAR_MODE_KO)) {
+            if(system->IsContextPul(PULSAR_MODE_KO)) {
                 this->CreateAndInitPage(*this, KO::RaceEndPage::id);
                 this->CreateAndInitPage(*this, KO::WinnerPage::id);
             }
-            if(system->IsContext(PULSAR_HAW)) {
-                if(system->IsContext(LOLPACK_HAWTYPE) == 0) {
+            if(system->IsContextPul(PULSAR_HAW)) {
+                if(system->IsContextLOL(LOLPACK_HAWTYPE) == 0) {
                     if(SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber != System::sInstance->netMgr.racesPerGP) this->CreateAndInitPage(*this, ChooseNextTrack::id);
                 }
                 else { // Track select In Order online (probably an awful place to put this code, but where else? We need to optionally circumvent a menu altogether)
@@ -106,7 +106,7 @@ void ExpSection::CreatePulPages() {
         case SECTION_P2_WIFI_FRIEND_BALLOON:  //0x76
         case SECTION_P2_WIFI_FRIEND_COIN:     //0x77
 
-            if(system->IsContext(PULSAR_HAW)) {
+            if(system->IsContextPul(PULSAR_HAW)) {
                 const SectionParams* sectionParams = SectionMgr::sInstance->sectionParams;
                 if(sectionParams->redWins < 2 && sectionParams->blueWins < 2) this->CreateAndInitPage(*this, ChooseNextTrack::id);
             }

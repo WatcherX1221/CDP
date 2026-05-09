@@ -9,16 +9,16 @@
 
 namespace Pulsar {
 namespace Race {
-//Mostly a port of MrBean's version with better hooks and arguments documentation
 RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
+//Mostly a port of MrBean's version with better hooks and arguments documentation
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
 
     //Blockface3 Lap Mod
 
-    int lapSetting = System::sInstance->IsContext(LOLPACK_LAPCOUNT_BIN8)*8
-                   + System::sInstance->IsContext(LOLPACK_LAPCOUNT_BIN4)*4
-                   + System::sInstance->IsContext(LOLPACK_LAPCOUNT_BIN2)*2
-                   + System::sInstance->IsContext(LOLPACK_LAPCOUNT_BIN1)+3;
+    int lapSetting = System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN8)*8
+                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN4)*4
+                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN2)*2
+                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN1)+3;
     if (lapSetting > 9) {
         lapSetting -= 9;
     };
@@ -26,7 +26,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     if ((lapSetting == 9) || (lapCount == 9)) {
         lapMax9 = 1;
     };
-    switch (System::sInstance->IsContext(LOLPACK_LAPS_BIN1)+System::sInstance->IsContext(LOLPACK_LAPS_BIN2)*2) {
+    switch (System::sInstance->IsContextLOL(LOLPACK_LAPS_BIN1)+System::sInstance->IsContextLOL(LOLPACK_LAPS_BIN2)*2) {
     case(0x1): // Exclusive
         if (lapCount == 3) {
             lapCount = lapSetting;
@@ -77,10 +77,10 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
 
     //Blockface3 Speed Mod
 
-    switch ( System::sInstance->IsContext(LOLPACK_SPEEDMOD_BIN8)*8
-           + System::sInstance->IsContext(LOLPACK_SPEEDMOD_BIN4)*4
-           + System::sInstance->IsContext(LOLPACK_SPEEDMOD_BIN2)*2
-           + System::sInstance->IsContext(LOLPACK_SPEEDMOD_BIN1)) {
+    switch ( System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN8)*8
+           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN4)*4
+           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN2)*2
+           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN1)) {
     case(0x1):
         factor = 1.1f;
         break;

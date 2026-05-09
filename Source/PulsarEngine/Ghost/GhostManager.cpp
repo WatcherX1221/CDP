@@ -219,7 +219,7 @@ bool Mgr::SaveGhost(const RKSYS::LicenseLdbEntry& entry, u32 ldbPosition, bool i
     // Heavily define valid tts to prevent crashing and to ensure ghost saves are in correct folder
     const System* system = System::sInstance;
     const TTMode mode = system->ttMode;
-    const bool validTTs = (mode != TTMODE_UNRESTRICTED) && System::sInstance->IsContext(LOLPACK_VALID_TTS);
+    const bool validTTs = (mode != TTMODE_UNRESTRICTED) && System::sInstance->IsContextLOL(LOLPACK_VALID_TTS);
     if(isFlap && validTTs) this->leaderboard.Update(ENTRY_FLAP, this->entry, -1);
     GhostData data;
     data.Fill(0);
@@ -347,7 +347,7 @@ kmWrite32(0x80531f44, 0x4800001c); //make it so the game will only use the first
 static bool RacedataCheckCorrectRKG() {
     u8 offset = 0;
     u32 index;
-    if(System::sInstance->IsContext(PULSAR_MODE_OTT)) index = 0;
+    if(System::sInstance->IsContextPul(PULSAR_MODE_OTT)) index = 0;
     else {
         register u32 id;
         asm(mr id, r27;);
@@ -364,7 +364,7 @@ static void GhostHeaderGetCorrectRKG(GhostData& header) { //id = index of the cu
     Racedata* racedata = Racedata::sInstance;
     RacedataScenario& scenario = racedata->menusScenario;
     u32 index;
-    if(System::sInstance->IsContext(PULSAR_MODE_OTT)) index = 0;
+    if(System::sInstance->IsContextPul(PULSAR_MODE_OTT)) index = 0;
     else {
         register u32 id;
         asm(mr id, r27;);

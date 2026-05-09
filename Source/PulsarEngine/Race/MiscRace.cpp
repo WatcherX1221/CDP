@@ -27,17 +27,17 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     if (Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_CPU) return;
     const System* system = System::sInstance;
     const bool isTT = DriverMgr::isTT;
-    if (isTT || system->IsContext(PULSAR_MODE_OTT)) {
+    if (isTT || system->IsContextPul(PULSAR_MODE_OTT)) {
     bool isFeather;
     if (isTT) { //Should probably remove this but right now I don't care much
         const TTMode mode = system->ttMode;
         isFeather = (mode == TTMODE_150_FEATHER || mode == TTMODE_200_FEATHER);
     }
-    else isFeather = system->IsContext(PULSAR_FEATHER);
+    else isFeather = system->IsContextPul(PULSAR_FEATHER);
     // Switch for item
-    switch(system->IsContext(LOLPACK_TTITEM_BIN1)
-          +system->IsContext(LOLPACK_TTITEM_BIN2)*2
-          +system->IsContext(LOLPACK_TTITEM_BIN4)*4
+    switch(system->IsContextLOL(LOLPACK_TTITEM_BIN1)
+          +system->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
+          +system->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
           ){
     case(0x1):
         id = BLOOPER;
@@ -62,10 +62,10 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     }
     inventory.SetItem(id, isItemForcedDueToCapacity);
     // Switch for item count
-    switch(system->IsContext(LOLPACK_TTITEMCOUNT_BIN1)
-          +system->IsContext(LOLPACK_TTITEMCOUNT_BIN2)*2
-          +system->IsContext(LOLPACK_TTITEMCOUNT_BIN4)*4
-          +system->IsContext(LOLPACK_TTITEMCOUNT_BIN8)*8
+    switch(system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN1)
+          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN2)*2
+          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN4)*4
+          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN8)*8
           ){
     case(0x1):
         inventory.currentItemCount = 1;
@@ -111,16 +111,16 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
         break;
     case(0xF):
         inventory.currentItemCount = ((
-                                     (system->IsContext(LOLPACK_LAPCOUNT_BIN1)
-                                     +system->IsContext(LOLPACK_LAPCOUNT_BIN2)*2
-                                     +system->IsContext(LOLPACK_LAPCOUNT_BIN4)*4
-                                     +system->IsContext(LOLPACK_LAPCOUNT_BIN8)*8
+                                     (system->IsContextLOL(LOLPACK_LAPCOUNT_BIN1)
+                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN2)*2
+                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN4)*4
+                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN8)*8
                                      )+2)%9)+1;
         break;
     default:
-        switch(system->IsContext(LOLPACK_TTITEM_BIN1)
-              +system->IsContext(LOLPACK_TTITEM_BIN2)*2
-              +system->IsContext(LOLPACK_TTITEM_BIN4)*4
+        switch(system->IsContextLOL(LOLPACK_TTITEM_BIN1)
+              +system->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
+              +system->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
               ){
         case(0x1):
             inventory.currentItemCount = 3;
@@ -151,7 +151,7 @@ kmCall(0x80799808, SetStartingItem);
 //From JoshuaMK, ported to C++ by Brawlbox and adapted as a setting
 static int MiiHeads(Racedata* racedata, u32 unused, u32 unused2, u8 id) {
     CharacterId charId = racedata->racesScenario.players[id].characterId;
-    if (System::sInstance->IsContext(PULSAR_MIIHEADS)) {
+    if (System::sInstance->IsContextPul(PULSAR_MIIHEADS)) {
         if (charId < MII_M) {
             if (id == 0) charId = MII_M;
             else if (RKNet::Controller::sInstance->connectionState != 0) charId = MII_M;
@@ -169,7 +169,7 @@ static void BattleGlitchEnable() {
     float maxDistance = 7500.0f;
     if (val == RACESETTING_BATTLE_GLITCH_ENABLED) maxDistance = 75000.0f;
     System* system = System::sInstance;
-    if (system->IsContext(PULSAR_MODE_OTT)) {
+    if (system->IsContextPul(PULSAR_MODE_OTT)) {
         const Input::RealControllerHolder* controllerHolder = SectionMgr::sInstance->pad.padInfos[0].controllerHolder;
         const ControllerType controllerType = controllerHolder->curController->GetType();
         const u16 inputs = controllerHolder->inputStates[0].buttonRaw;
@@ -233,8 +233,8 @@ kmWrite16(0x80569F68, 0x4800);
 kmWrite24(0x808A9C16, 'PUL'); //item_window_new -> item_window_PUL
 
 const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
-    const bool feather = System::sInstance->IsContext(PULSAR_FEATHER);
-    const bool megaTC = System::sInstance->IsContext(PULSAR_MEGATC);
+    const bool feather = System::sInstance->IsContextPul(PULSAR_FEATHER);
+    const bool megaTC = System::sInstance->IsContextPul(PULSAR_MEGATC);
     const char* paneName;
     if (id == BLOOPER && feather) {
         if (itemCount == 2) paneName = "feather_2";
@@ -242,7 +242,7 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
         else paneName = "feather";
     }
     else if (id == THUNDER_CLOUD && megaTC) {
-        switch (System::sInstance->IsContext(WDD_TC_BIN1)+System::sInstance->IsContext(WDD_TC_BIN2)*2) {
+        switch (System::sInstance->IsContextWDD(WDD_TC_BIN1)+System::sInstance->IsContextWDD(WDD_TC_BIN2)*2) {
             case(0x1): //Mega
                 paneName = "megaTC";
                 break;

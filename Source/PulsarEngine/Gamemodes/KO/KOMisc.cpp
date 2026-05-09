@@ -23,7 +23,7 @@ namespace KO {
 static void EditLdb(CtrlRaceResult* result, u8 playerId) {
     const System* system = System::sInstance;
 
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         const char* pane= "player_name";
         const Status koStatus = system->koMgr->GetPlayerStatus(playerId);
         if(koStatus != NORMAL) {
@@ -58,7 +58,7 @@ static u8 EditPosTracker(CtrlRaceRankNum& posTracker) {
     const u32 playerId = posTracker.GetPlayerId();
     const System* system = System::sInstance;
     Mgr* mgr = system->koMgr;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         u8 idx = posTracker.hudSlotId;
         lyt::Picture* posPane = static_cast<nw4r::lyt::Picture*>(posTracker.layout.GetPaneByName("position"));
         ut::Color color = 0xffffffff;
@@ -89,7 +89,7 @@ kmCall(0x807f4b64, EditPosTracker);
 //Fixes for when spectating
 static u8 ReturnCorrectId(u8 localId) {
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
         const RaceCameraMgr* cameraMgr = RaceCameraMgr::sInstance;
         if(cameraMgr == nullptr) return 0; //this is needed because this function is called by the ctor of racecameramgr
         return cameraMgr->focusedPlayerIdx;
@@ -101,7 +101,7 @@ kmBranch(0x80531f7c, ReturnCorrectId);
 static GameType SyncCountdown(const Racedata& raceData) {
     GameType type = raceData.racesScenario.settings.gametype;
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO) && type == GAMETYPE_ONLINE_SPECTATOR) type = GAMETYPE_DEFAULT;
+    if(system->IsContextPul(PULSAR_MODE_KO) && type == GAMETYPE_ONLINE_SPECTATOR) type = GAMETYPE_DEFAULT;
     return type;
 }
 kmCall(0x806537d8, SyncCountdown);
@@ -117,7 +117,7 @@ static void VoteCounterPatch(LayoutUIControl& voteCounter, u32 bmgId, Text::Info
     asm(mr vote, r25;);
     const System* system = System::sInstance;
 
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         int stillIn = 0;
         for(int playerId = 0; playerId < mgr->playerCount; ++playerId) {
             if(!system->koMgr->IsKOdPlayerId(playerId)) ++stillIn;
@@ -139,7 +139,7 @@ static void SkipVoteControlFill(VoteControl& voteControl, bool isCourseIdInvalid
     vote->order[playerId] = vote->lastHandledVote;
     const System* system = System::sInstance;
 
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         if(system->koMgr->IsKOdPlayerId(playerId)) {
             return;
         }
@@ -153,7 +153,7 @@ static void SkipVoteControlFill(VoteControl& voteControl, bool isCourseIdInvalid
 
 static void SkipVRControlFill(Pages::VR& vr, u32 index, u32 playerId, u32 team, u8 type, bool isLocalPlayer) { //1 -> 2, index = 1
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         const RKNet::Controller* controller = RKNet::Controller::sInstance;
         const Mgr* mgr = system->koMgr;
         u8 aid = controller->aidsBelongingToPlayerIds[playerId];
@@ -173,7 +173,7 @@ static void SkipVRControlFill(Pages::VR& vr, u32 index, u32 playerId, u32 team, 
 static void PatchAidsBeforeSELECTStageMgrSetup(Pages::SELECTStageMgr& stageMgr) {
     const System* system = System::sInstance;
 
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         Mgr* mgr = system->koMgr;
         RKNet::Controller* controller = RKNet::Controller::sInstance;
         RKNet::ControllerSub& sub = controller->subs[controller->currentSub];
@@ -206,7 +206,7 @@ static u8 SwapUISelectInfo() { //this can only be called if localPlayerCount > 0
 
     asm(stb r16, 0x1f5 (r22);); //default
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO)) {
+    if(system->IsContextPul(PULSAR_MODE_KO)) {
         if(localPlayerCount == 1) {
             Mgr* mgr = system->koMgr;
             curHudSlotId = mgr->IsKOdAid(aid, 0); //if only one localPlayer but slot 0 is KOd, that guarantees it was initially 2 players and the main is out
@@ -231,7 +231,7 @@ static u8 SwapRaceMiis() { //this can only be called if localPlayerCount > 0, ie
     asm(mr playerId, r17;);
     const System* system = System::sInstance;
 
-    bool isKO = system->IsContext(PULSAR_MODE_KO);
+    bool isKO = system->IsContextPul(PULSAR_MODE_KO);
     if(isKO) {
         if(aid < 12) curHudSlotId = system->koMgr->IsKOdAid(aid, 0); //if only one localPlayer but slot 0 is KOd, that guarantees it was initially 2 players and the main is out
         if(curHudSlotId == 1) {
@@ -260,7 +260,7 @@ static bool CtrlRaceItemWindowIsInactive(const CtrlRaceItemWindow& itemWindow) {
     const Item::Player& itemPlayer = Item::Manager::sInstance->players[playerId];
     const Kart::Status* status = itemPlayer.pointers->kartStatus;
     if(status->bitfield0 & 0x10) return true;
-    if(Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_REAL_ONLINE && System::sInstance->IsContext(PULSAR_MODE_KO)) {
+    if(Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_REAL_ONLINE && System::sInstance->IsContextPul(PULSAR_MODE_KO)) {
         return RKNet::ITEMHandler::sInstance->GetStoredItem(playerId) != ITEM_NONE;
     }
     else { //default behaviour
@@ -274,7 +274,7 @@ static bool CtrlRaceItemWindowIsInactive(const CtrlRaceItemWindow& itemWindow) {
 
 void StoreItemsForSpectating(RKNet::ITEMHandler& itemHandler) {
     itemHandler.ImportNewPackets();
-    if(System::sInstance->IsContext(PULSAR_MODE_KO)) { //guaranteed to be spectating already via a check in the func
+    if(System::sInstance->IsContextPul(PULSAR_MODE_KO)) { //guaranteed to be spectating already via a check in the func
         const RacedataScenario& scenario = Racedata::sInstance->racesScenario;
         for(int playerId = 0; playerId < System::sInstance->nonTTGhostPlayersCount; ++playerId) {
             if(scenario.players[playerId].playerType != PLAYER_REAL_ONLINE) continue;

@@ -12,9 +12,9 @@ void UpdatePoints(RacedataScenario& scenario) {
     const System* system = System::sInstance;
     Racedata* racedata = Racedata::sInstance;
 
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) scenario.settings.gametype = GAMETYPE_DEFAULT;
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) scenario.settings.gametype = GAMETYPE_DEFAULT;
     bool hasVSGhost = false;
-    if(system->IsContext(PULSAR_MODE_OTT)) {
+    if(system->IsContextPul(PULSAR_MODE_OTT)) {
         if(racedata->racesScenario.players[racedata->racesScenario.playerCount - 1].playerType == PLAYER_GHOST) {
             hasVSGhost = true;
             scenario.players[racedata->racesScenario.playerCount - 1].finishPos = racedata->racesScenario.playerCount;

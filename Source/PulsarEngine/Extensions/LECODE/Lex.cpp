@@ -23,7 +23,7 @@ const KMPHeader* LexMgr::LoadLEXAndKMP(u32, const char* kmpString) {
     Pulsar::System* system = Pulsar::System::sInstance;
     LexMgr& self = system->lecodeMgr.lexMgr;
     self.Reset();
-    if(system->IsContext(Pulsar::PULSAR_CT)) {
+    if(system->IsContextPul(Pulsar::PULSAR_CT)) {
         LEXHeader* header = static_cast<LEXHeader*>(ArchiveMgr::sInstance->GetFile(ARCHIVE_HOLDER_COURSE, "course.lex"));
         if(header != nullptr) {
             if(header->magic == LEXHeader::goodMagic && header->majorVersion == 1) {

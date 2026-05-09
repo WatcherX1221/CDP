@@ -98,6 +98,7 @@ public:
     bool IsContextPul(ContextPul context) const { return (this->contextPul & (1 << context)) != 0; }
     bool IsContextLOL(ContextLOL context) const { return (this->contextLOL & (1 << context)) != 0; }
     bool IsContextWDD(ContextWDD context) const { return (this->contextWDD & (1 << context)) != 0; }
+    //bool IsWatcherInsane = yes;
     static s32 OnSceneEnter(Random& random);
 
     const char* GetModFolder() const { return modFolderName; }

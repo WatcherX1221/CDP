@@ -223,7 +223,7 @@ void BeforeEntranceAnimations(Pages::TTSplits* page) {
     }
 
     //No saving and no new record in OTT for now
-    if (System::sInstance->IsContext(PULSAR_MODE_OTT)) return;
+    if (System::sInstance->IsContextPul(PULSAR_MODE_OTT)) return;
 
     //enhanced replay
     if (sectionMgr->curSection->sectionId >= SECTION_WATCH_GHOST_FROM_CHANNEL
@@ -260,14 +260,14 @@ void BeforeEntranceAnimations(Pages::TTSplits* page) {
             }
             page->ctrlRaceTimeArray[0]->EnableFlashingAnimation();
             page->PlaySound(SOUND_ID_NEW_RECORD, -1);
-            if(System::sInstance->IsContext(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_SAVED_GHOST);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
+            if(System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_SAVED_GHOST);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
 
         }
         else if (position < 0) page->ctrlRaceCount.isHidden = true;
         if (hasFlap || position >= 0) {
             bool gotTrophy = manager->SaveGhost(entry, position, hasFlap);
             if (gotTrophy) {
-                if(System::sInstance->IsContext(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_EARNED);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
+                if(System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_EARNED);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
             }
         }
     }

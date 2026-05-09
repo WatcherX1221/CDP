@@ -17,7 +17,9 @@ namespace Network {
 
 static void ConvertROOMPacketToData(const PulROOM& packet) {
     System* system = System::sInstance;
-    system->netMgr.hostContext = packet.hostSystemContext;
+    system->netMgr.hostContextPul = packet.hostSystemContextPul;
+    system->netMgr.hostContextLOL = packet.hostSystemContextLOL;
+    system->netMgr.hostContextWDD = packet.hostSystemContextWDD;
     system->netMgr.racesPerGP = packet.raceCount;
 }
 
@@ -34,14 +36,14 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
 
         const u8 koSetting = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_ENABLED) && destPacket->message == 0; //KO only enabled for normal GPs
         //invert mii setting as the first button is enabled, not disabled, so a value of 1 indicates disabled
-        destPacket->hostSystemContext = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_VERSUS) << PULSAR_MODE_OTT //ott
+        destPacket->hostSystemContextPul = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_VERSUS) << PULSAR_MODE_OTT //ott
             | settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS) << PULSAR_UMTS //ott umts
             | koSetting << PULSAR_MODE_KO
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_ALLOW_MIIHEADS) ^ true) << PULSAR_MIIHEADS
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_ALLOW_LOLPACK_BRAKE) ^ true) << LOLPACK_BRAKE
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0) << PULSAR_HAW
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_LAYOUT) > 0) << PULSAR_LAYOUT // Used to speed up "In Order" rooms where transitions are otherwise unnecessary
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_LAPSTYPE),1) << LOLPACK_LAPS_BIN1
+            | (settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_LAYOUT) > 0) << PULSAR_LAYOUT; // Used to speed up "In Order" rooms where transitions are otherwise unnecessary
+        destPacket->hostSystemContextLOL = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_LAPSTYPE),1) << LOLPACK_LAPS_BIN1
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_LAPSTYPE),2) << LOLPACK_LAPS_BIN2
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),1) << LOLPACK_LAPCOUNT_BIN1
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),2) << LOLPACK_LAPCOUNT_BIN2
@@ -60,8 +62,8 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),1) << LOLPACK_TTITEMCOUNT_BIN1
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),2) << LOLPACK_TTITEMCOUNT_BIN2
             | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),3) << LOLPACK_TTITEMCOUNT_BIN4
-            | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4) << LOLPACK_TTITEMCOUNT_BIN8
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE),1) << WDD_TC_BIN1
+            | BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4) << LOLPACK_TTITEMCOUNT_BIN8;
+        destPacket->hostSystemContextWDD = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE),1) << WDD_TC_BIN1
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE),2) << WDD_TC_BIN2
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE),1) << WDD_EXTRATC_BIN1
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE),2) << WDD_EXTRATC_BIN2

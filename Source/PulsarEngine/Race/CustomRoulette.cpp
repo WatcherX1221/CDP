@@ -19,9 +19,9 @@ namespace Race{
 
 // Custom Roulette odds loading
 static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
-    switch( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-          + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-          + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) {
+    switch( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+          + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+          + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) {
     case(0x1): // Standard
         name = "ItemSlot.bin";
         break;
@@ -45,9 +45,9 @@ static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const ch
 
 // Accurate roulettes for supported modes
 static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxType, u8 position, ItemId prevRandomItem, bool r7){
-    if (    ( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-            + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-            + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)
+    if (    ( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+            + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+            + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)
             ) > 0 ) {
         const u8 playerId = Raceinfo::sInstance->playerIdInEachPosition[position-1];
         const GameMode gameMode = Racedata::sInstance->racesScenario.settings.gamemode;
@@ -62,9 +62,9 @@ static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxTyp
 }
 
 static int PatchMushroomBug() { // Needs testing
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return 0x0;
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return 0x0;
     return -1;
 }
 
@@ -76,45 +76,45 @@ static int UseItem(Kart::Collision *kartCollision, ItemId id){
     return -1;
 }
 static int GroundCollisionShock(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, LIGHTNING);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, LIGHTNING);
     return -1;
 }
 static int GroundCollisionMega(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, MEGA_MUSHROOM);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, MEGA_MUSHROOM);
     return -1;
 }
 static int GroundCollisionFeather(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, BLOOPER);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, BLOOPER);
     return -1;
 }
 static int GroundCollisionPOW(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, POW_BLOCK);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, POW_BLOCK);
     return -1;
 }
 static int GroundCollisionGolden(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, MUSHROOM);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, MUSHROOM);
     return -1;
 }
 static int GroundCollisionBullet(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, BULLET_BILL);
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return UseItem(kartCollision, BULLET_BILL);
     return -1;
 }
 static int ItemLanding() {
-    if (( System::sInstance->IsContext(LOLPACK_ROULETTE_BIN4)*4
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN2)*2
-        + System::sInstance->IsContext(LOLPACK_ROULETTE_BIN1)) > 0 ) return 0x39800001;
+    if (( System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN4)*4
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN2)*2
+        + System::sInstance->IsContextLOL(LOLPACK_ROULETTE_BIN1)) > 0 ) return 0x39800001;
     return 0x89840058;
 }
 

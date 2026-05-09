@@ -26,7 +26,7 @@ void ExpVR::OnInit() {
 
     const System* system = System::sInstance;
     bool isKOd = false;
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) isKOd = true;
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) isKOd = true;
 
     this->AddControl(0xF, this->randomComboButton, 0);
     this->randomComboButton.isHidden = isKOd;
@@ -313,7 +313,7 @@ void AddCharSelectLayer(Pages::SELECTStageMgr& page, PageId id, u32 animDirectio
 
     const System* system = System::sInstance;
     const ExpVR* votingPage = SectionMgr::sInstance->curSection->Get<ExpVR>(); //always present when 0x90 is present
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
         id = PAGE_VOTE;
         page.status = Pages::SELECTStageMgr::STATUS_VOTES_PAGE;
     }

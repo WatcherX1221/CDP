@@ -133,7 +133,7 @@ void WinnerPage::HandleClick(u32 hudSlotId) {
 
 static PageId LoadCorrectPageAfterOnlineLdb(PageId ret) {
     const System* system = System::sInstance;
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->winnerPlayerId != 0xFF) ret = static_cast<PageId>(WinnerPage::id);
+    if(system->IsContextPul(PULSAR_MODE_KO) && system->koMgr->winnerPlayerId != 0xFF) ret = static_cast<PageId>(WinnerPage::id);
     return ret;
 }
 kmBranch(0x8085cc70, LoadCorrectPageAfterOnlineLdb);

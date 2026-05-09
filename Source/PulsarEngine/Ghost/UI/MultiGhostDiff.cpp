@@ -11,7 +11,7 @@ namespace UI {
 kmWrite24(0x808a9af9, 'PUL');
 
 u32 MultiGhostDiff::Count() {
-    return System::sInstance->IsContext(PULSAR_MODE_OTT);
+    return System::sInstance->IsContextPul(PULSAR_MODE_OTT);
 }
 void MultiGhostDiff::Create(Page& page, u32 idx, u32 unused) {
     MultiGhostDiff* ghostDiff = new(MultiGhostDiff);
@@ -26,7 +26,7 @@ static CustomCtrlBuilder GhostDiff(MultiGhostDiff::Count, MultiGhostDiff::Create
 
 MultiGhostDiff::MultiGhostDiff() {
     u32 count = 0;
-    if(System::sInstance->IsContext(PULSAR_MODE_OTT)) count = 2;
+    if(System::sInstance->IsContextPul(PULSAR_MODE_OTT)) count = 2;
     else {
         RacedataScenario* scenario = &Racedata::sInstance->menusScenario;
         if(scenario->players[0].playerType == PLAYER_GHOST) this->isGhostReplay = true;
@@ -37,7 +37,7 @@ MultiGhostDiff::MultiGhostDiff() {
 
 void MultiGhostDiff::Load() {
     if(this->diffTimeCount > 0) {
-        if(System::sInstance->IsContext(PULSAR_MODE_OTT)) this->diffTimes = new OTTGhostDiff[this->diffTimeCount];
+        if(System::sInstance->IsContextPul(PULSAR_MODE_OTT)) this->diffTimes = new OTTGhostDiff[this->diffTimeCount];
         else this->diffTimes = new CtrlRaceGhostDiffTime[this->diffTimeCount];
 
         this->InitControlGroup(this->diffTimeCount);
@@ -46,7 +46,7 @@ void MultiGhostDiff::Load() {
             this->AddControl(i, &this->diffTimes[i]);
             snprintf(variantName, 0x80, "TimeDiffGhost_%d", i);
             this->diffTimes[i].Load(variantName);
-            if(!System::sInstance->IsContext(PULSAR_MODE_OTT)) this->diffTimes[i].ghostData.Init(Racedata::sInstance->ghosts[i + this->isGhostReplay]);
+            if(!System::sInstance->IsContextPul(PULSAR_MODE_OTT)) this->diffTimes[i].ghostData.Init(Racedata::sInstance->ghosts[i + this->isGhostReplay]);
             else reinterpret_cast<OTTGhostDiff&>(this->diffTimes[i]).SetIdx(i);
         }
     }
