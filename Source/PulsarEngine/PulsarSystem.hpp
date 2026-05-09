@@ -22,7 +22,7 @@ class Mgr;
 class ConfigFile;
 
 
-enum Context {
+enum ContextPul {
     PULSAR_CT = 0,
     //PULSAR_200, //Useless now since it's done via speedmod
     PULSAR_FEATHER,
@@ -34,12 +34,9 @@ enum Context {
     PULSAR_MODE_OTT,
     PULSAR_MODE_KO,
     //PULSAR_CONTEXT_COUNT, //I don't think this ever gets used
-    //WDD Contexts
-    WDD_TC_EFFECT,
-    WDD_TC_BIN1,
-    WDD_TC_BIN2,
-    WDD_EXTRATC_BIN1,
-    WDD_EXTRATC_BIN2,
+};
+
+enum ContextLOL {
     LOLPACK_VALID_TTS,
     LOLPACK_BRAKE,
     LOLPACK_LAPS_BIN1,
@@ -63,10 +60,15 @@ enum Context {
     LOLPACK_TTITEMCOUNT_BIN4,
     LOLPACK_TTITEMCOUNT_BIN8,
     LOLPACK_HAWTYPE
-    
-    // Split into multiple contexts
 };
 
+enum ContextWDD {
+    WDD_TC_EFFECT,
+    WDD_TC_BIN1,
+    WDD_TC_BIN2,
+    WDD_EXTRATC_BIN1,
+    WDD_EXTRATC_BIN2,    
+};
 
 
 class System {
@@ -93,7 +95,9 @@ public:
     //virtual void ParsePackROOMMsg(u8 msg) {}  //Only called for non-hosts
     const Info& GetInfo() const { return this->info; }
 
-    bool IsContext(Context context) const { return (this->context & (1 << context)) != 0; }
+    bool IsContextPul(ContextPul context) const { return (this->contextPul & (1 << context)) != 0; }
+    bool IsContextLOL(ContextLOL context) const { return (this->contextLOL & (1 << context)) != 0; }
+    bool IsContextWDD(ContextWDD context) const { return (this->contextWDD & (1 << context)) != 0; }
     static s32 OnSceneEnter(Random& random);
 
     const char* GetModFolder() const { return modFolderName; }
@@ -126,7 +130,7 @@ private:
     char modFolderName[IOS::ipcMaxFileName + 1]; //0xC
     u8 padding[2];
     Info info; //0x1c
-    u32 context;
+    u32 contextPul;
     u32 contextWDD;
     u32 contextLOL;
 

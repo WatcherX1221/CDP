@@ -300,17 +300,26 @@ void System::UpdateContext() {
 
 
 
-    u64 context = (isCT << PULSAR_CT)
+    u32 contextPul = (isCT << PULSAR_CT)
                 | (isHAW << PULSAR_HAW)
                 | (lolHAW << LOLPACK_HAWTYPE)
                 | (isMiiHeads << PULSAR_MIIHEADS)
                 //lolpack divider
                 | (isValidTT << LOLPACK_VALID_TTS);
     if(isCT) { //contexts that should only exist when CTs are on
-        context |=(isOTT << PULSAR_MODE_OTT)
-                //|(is200 << PULSAR_200) // Unused
-                //lolpack divider
-                | (lolLapType1 << LOLPACK_LAPS_BIN1)
+        contextPul |=(isOTT << PULSAR_MODE_OTT);
+    }
+    if(isLOL) { //contexts that should only ever not exist for RTWWs
+        contextPul |=(isFeather << PULSAR_FEATHER)
+                | (isUMTs << PULSAR_UMTS)
+                | (isMegaTC << PULSAR_MEGATC)
+                | (isKO << PULSAR_MODE_KO)
+    }
+    // LOl Contexts
+    u32 contextLOL = 
+                | (isValidTT << LOLPACK_VALID_TTS);
+    if(isCT) { //contexts that should only exist when CTs are on
+        contextLOL |=(lolLapType1 << LOLPACK_LAPS_BIN1)
                 | (lolLapType2 << LOLPACK_LAPS_BIN2)
                 | (lolLaps1 << LOLPACK_LAPCOUNT_BIN1)
                 | (lolLaps2 << LOLPACK_LAPCOUNT_BIN2)
@@ -323,19 +332,9 @@ void System::UpdateContext() {
                 | (lolTTitemcount2 << LOLPACK_TTITEMCOUNT_BIN2)
                 | (lolTTitemcount4 << LOLPACK_TTITEMCOUNT_BIN4)
                 | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8)
-                | (wddtc1 << WDD_TC_BIN1)
-                | (wddtc2 << WDD_TC_BIN2)
-                | (wddextratc1 << WDD_EXTRATC_BIN1)
-                | (wddextratc2 << WDD_EXTRATC_BIN2)
-                | (wddtceffect << WDD_TC_EFFECT);
     }
     if(isLOL) { //contexts that should only ever not exist for RTWWs
-        context |=(isFeather << PULSAR_FEATHER)
-                | (isUMTs << PULSAR_UMTS)
-                | (isMegaTC << PULSAR_MEGATC)
-                | (isKO << PULSAR_MODE_KO)
-                //lolpack divider
-                | (isLolBrake << LOLPACK_BRAKE)
+        contextLOL |=(isLolBrake << LOLPACK_BRAKE)
                 | (lolSpeeds1 << LOLPACK_SPEEDMOD_BIN1)
                 | (lolSpeeds2 << LOLPACK_SPEEDMOD_BIN2)
                 | (lolSpeeds4 << LOLPACK_SPEEDMOD_BIN4)
@@ -343,6 +342,19 @@ void System::UpdateContext() {
                 | (lolRoulette1 << LOLPACK_ROULETTE_BIN1)
                 | (lolRoulette2 << LOLPACK_ROULETTE_BIN2)
                 | (lolRoulette4 << LOLPACK_ROULETTE_BIN4);
+    }
+
+    // WDD Contexts
+    u32 contextWDD =
+    if(isCT) { //contexts that should only exist when CTs are on
+                | (wddtc1 << WDD_TC_BIN1)
+                | (wddtc2 << WDD_TC_BIN2)
+                | (wddextratc1 << WDD_EXTRATC_BIN1)
+                | (wddextratc2 << WDD_EXTRATC_BIN2)
+                | (wddtceffect << WDD_TC_EFFECT);
+    }
+    if(isLOL) { //contexts that should only ever not exist for RTWWs
+        contextWDD |=
     }
     this->context = context;
 
