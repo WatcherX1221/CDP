@@ -1867,5 +1867,9 @@ IsBattle__Fv = 0x80860a8c
 GetItemIconPaneName__F6ItemIdUi = 0x80860af0
 TimerToTextInfo__FRC5TimerRQ24Text4Info = 0x808608e4
 
+#NewCDPMisc
+Calc__Q25Audio7RaceMgrFv = 0x80710ca0
+GetPhysics__Q24Kart4LinkFv = 0x805903cc
+Update__Q24Kart7PhysicsFbff = 0x805b5170
 
 
