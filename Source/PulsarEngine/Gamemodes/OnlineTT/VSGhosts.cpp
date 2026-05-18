@@ -74,7 +74,7 @@ void AddGhostToVS() {
             io->Close();
         }
         if(rkg->CheckValidity()) {
-            if(rkg->header.kartId > HONEYCOUPE || rkg->header.driftType == 1 || system->IsContextPul(PULSAR_UMTS)) {
+            if(rkg->header.kartId > HONEYCOUPE || rkg->header.driftType == 1 || system->IsContextPul(PHYS_TURBO_1)) {
                 RKG* dest = &racedata->ghosts[0];
                 racedata->menusScenario.rkg = dest;
                 if(rkg->header.compressed) {
