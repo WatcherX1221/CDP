@@ -119,40 +119,55 @@ void System::UpdateContext() {
     const RacedataSettings& racedataSettings = Racedata::sInstance->menusScenario.settings;
     this->ottVoteState = OTT::COMBO_NONE;
     const Settings::Mgr& settings = Settings::Mgr::Get();
+
+    // try not to exceed 24 context bits because we think it causes problems
+    // pulsar divider -- 11 context bits
+
     bool isCT = true;
     bool isLOL = true;
     bool isHAW = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0;
     bool lolHAW = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 1;
     bool isKO = false;
-    bool isOTT = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_VERSUS);
+    bool isOTT = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGOTT_VERSUS);
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
-    //lolpack divider
-    bool lolLapType1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_LAPSTYPE),1);
-    bool lolLapType2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_LAPSTYPE),2);
-    bool lolLaps1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),1);
-    bool lolLaps2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),2);
-    bool lolLaps4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),3);
-    bool lolLaps8 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_LAPCOUNT),4);
-    bool lolSpeeds1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_SPEEDMOD),1);
-    bool lolSpeeds2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_SPEEDMOD),2);
-    bool lolSpeeds4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_SPEEDMOD),3);
-    bool lolSpeeds8 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_SPEEDMOD),4);
-    bool lolRoulette1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_ROULETTE)+1)%6,1); // 6 settings
-    bool lolRoulette2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_ROULETTE)+1)%6,2); // important to define last setting as 0
-    bool lolRoulette4 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_SCROLL_ROULETTE)+1)%6,3); // so add one and mod by highest setting value
-    bool lolTTitem1 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEM),1);
-    bool lolTTitem2 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEM),2);
-    bool lolTTitem4 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEM),3);
-    bool lolTTitemcount1 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),1);
-    bool lolTTitemcount2 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),2);
-    bool lolTTitemcount4 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),3);
-    bool lolTTitemcount8 = BlFa3::getbin(settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_TTITEMCOUNT),4);
-    //wdd
-    bool wddtceffect = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EFFECT)),1);
-    bool wddtc1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE)),1);
-    bool wddtc2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_TYPE)),2);
-    bool wddextratc1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE)),1);
-    bool wddextratc2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_TC, SETTINGTC_TC_EXTRATYPE)),2);
+    bool cdpDisregard = false;
+    bool isUMTs1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO),1);
+    bool isUMTs2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO),2);
+
+    // lolpack divider -- 23+1 context bits (TTVALID)
+
+    bool lolLapType1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),1);
+    bool lolLapType2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),2);
+    bool lolLaps1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),1);
+    bool lolLaps2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),2);
+    bool lolLaps3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),3);
+    bool lolLaps4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),4);
+    bool lolSpeeds1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),1);
+    bool lolSpeeds2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),2);
+    bool lolSpeeds3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),3);
+    bool lolSpeeds4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),4);
+    bool cdpGravity1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),1);
+    bool cdpGravity2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),2);
+    bool cdpGravity3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),3);
+    bool cdpGravity4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),4);
+    // It's important to define the last setting of lolRoulette as 0, so add one and mod by highest setting value.
+    bool lolRoulette1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,1);
+    bool lolRoulette2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,2);
+    bool lolRoulette3 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,3);
+    bool lolTTitem1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),1);
+    bool lolTTitem2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),2);
+    bool lolTTitem3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),3);
+    bool lolTTitem4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),4);
+    bool lolTTitem5 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),5);
+    bool lolTTitembool = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED);
+
+    // wdd & cdp divider -- 4 context bits
+
+    bool wddtceffect1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),1);
+    bool wddtceffect2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),2);
+    bool wddtceffect3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),3);
+    bool wddtceffect4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),4);
+    //bool cdpVehicleStats = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS); // Needs actual settings - hurry up and work on those vehicle stat edits!
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -162,8 +177,7 @@ void System::UpdateContext() {
     //bool is200 = racedataSettings.engineClass == CC_100 && this->info.Has200cc(); //unused
     bool isFeather = this->info.HasFeather();
     //bool isUMTs = this->info.HasUMTs(); // The normal definition for umts is undesirable now that we have trophy validation
-    bool isUMTs = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS); // Instead take setting directly from tt settings to suit user preference
-    bool isMegaTC = this->info.HasMegaTC();
+    //bool isMegaTC = this->info.HasMegaTC(); // Unused because of settings
 
     bool isLolBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
 
@@ -181,29 +195,38 @@ void System::UpdateContext() {
                 // 3 Laps
                 lolLaps1 = 0;
                 lolLaps2 = 0;
+                lolLaps3 = 0;
                 lolLaps4 = 0;
-                lolLaps8 = 0;
                 // 1.0x Speed
                 lolSpeeds1 = 0;
                 lolSpeeds2 = 0;
+                lolSpeeds3 = 0;
                 lolSpeeds4 = 0;
-                lolSpeeds8 = 0;
+                // 1.0x Gravity
+                cdpGravity1 = 0;
+                cdpGravity2 = 0;
+                cdpGravity3 = 0;
+                cdpGravity4 = 0;
                 // Standard Roulette
                 lolRoulette1 = 1;
                 lolRoulette2 = 0;
-                lolRoulette4 = 0;
-                // For ott regionals
-                // Mushroom
+                lolRoulette3 = 0;
+                // Thundercloud // Take MegaTC from pack creator settings
+                wddtceffect1 = this->info.HasMegaTC();
+                wddtceffect2 = 0;
+                wddtceffect3 = 0;
+                wddtceffect4 = 0;
+                // Starting Items
+                lolTTitembool = 0;
+                // Starting item // Unconditionally used in OTT regionals, so it's important to set this!
                 lolTTitem1 = 0;
                 lolTTitem2 = 0;
+                lolTTitem3 = 0;
                 lolTTitem4 = 0;
-                // Default Count
-                lolTTitemcount1 = 0;
-                lolTTitemcount2 = 0;
-                lolTTitemcount4 = 0;
-                lolTTitemcount8 = 0;
-                // Take UMTs from pack creator settings
-                isUMTs = this->info.HasUMTs();
+                lolTTitem5 = 0;
+                // Turbo Style // Take UMTs from pack creator settings
+                isUMTs1 = this->info.HasUMTs();
+                isUMTs2 = 0;
                 break;
             case(RKNet::ROOMTYPE_JOINING_REGIONAL):
                 isOTT = netMgr.ownStatusData == true;
@@ -215,41 +238,44 @@ void System::UpdateContext() {
                 newContextPul = netMgr.hostContextPul;
                 newContextLOL = netMgr.hostContextLOL;
                 newContextWDD = netMgr.hostContextWDD;
-                isHAW = newContextPul & (1 << PULSAR_HAW);
+                // Define disregard early so it does what it's meant to
+		cdpDisregard = newContextPul & ( 1 << CDP_DISREGARD );
+                isHAW = newContextPul & (1 << PULSAR_HAW_1);
                 isKO = newContextPul & (1 << PULSAR_MODE_KO);
-                isOTT = newContextPul & (1 << PULSAR_MODE_OTT);
                 isMiiHeads = newContextPul & (1 << PULSAR_MIIHEADS);
-                isUMTs = newContextPul & (1 << PULSAR_UMTS); // Usually defined alongside feathers for ott, but we don't want that
-                //lol settings
-                isLolBrake = newContextLOL & (1 << LOLPACK_BRAKE); // Is Brake Drift Allowed? take host settings
-                lolLapType1 = newContextLOL & (1 << LOLPACK_LAPS_BIN1);
-                lolLapType2 = newContextLOL & (1 << LOLPACK_LAPS_BIN2);
-                lolLaps1 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN1);
-                lolLaps2 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN2);
-                lolLaps4 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN4);
-                lolLaps8 = newContextLOL & (1 << LOLPACK_LAPCOUNT_BIN8);
-                lolSpeeds1 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN1);
-                lolSpeeds2 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN2);
-                lolSpeeds4 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN4);
-                lolSpeeds8 = newContextLOL & (1 << LOLPACK_SPEEDMOD_BIN8);
-                lolRoulette1 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN1);
-                lolRoulette2 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN2);
-                lolRoulette4 = newContextLOL & (1 << LOLPACK_ROULETTE_BIN4);
-                lolTTitem1 = newContextLOL & (1 << LOLPACK_TTITEM_BIN1);
-                lolTTitem2 = newContextLOL & (1 << LOLPACK_TTITEM_BIN2);
-                lolTTitem4 = newContextLOL & (1 << LOLPACK_TTITEM_BIN4);
-                lolTTitemcount1 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN1);
-                lolTTitemcount2 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN2);
-                lolTTitemcount4 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN4);
-                lolTTitemcount8 = newContextLOL & (1 << LOLPACK_TTITEMCOUNT_BIN8);
-                //end of lol settings
-                //wdd tc settings
-                wddtceffect = newContextWDD & (1 << WDD_TC_EFFECT);
-                wddtc1 = newContextWDD & (1 << WDD_TC_BIN1);
-                wddtc2 = newContextWDD & (1 << WDD_TC_BIN2);
-                wddextratc1 = newContextWDD & (1 << WDD_EXTRATC_BIN1);
-                wddextratc2 = newContextWDD & (1 << WDD_EXTRATC_BIN2);
-                //end of tc
+                if (!cdpDisregard) { // Settings that don't always NEED to be synced:
+                    isOTT = newContextPul & (1 << PULSAR_MODE_OTT);
+                    isUMTs1 = newContextPul & (1 << PHYS_TURBO_1); // Usually defined alongside feathers for ott, but we don't want that
+                    isUMTs2 = newContextPul & (1 << PHYS_TURBO_2);
+                    isLolBrake = newContextLOL & (1 << LOLPACK_BRAKE); // Is Brake Drift Allowed? take host settings
+                    //lol settings
+                    lolLapType1 = newContextLOL & (1 << LAP_MATHS_1);
+                    lolLapType2 = newContextLOL & (1 << LAP_MATHS_2);
+                    lolLaps1 = newContextLOL & (1 << LAP_COUNT_1);
+                    lolLaps2 = newContextLOL & (1 << LAP_COUNT_2);
+                    lolLaps3 = newContextLOL & (1 << LAP_COUNT_4);
+                    lolLaps4 = newContextLOL & (1 << LAP_COUNT_8);
+                    lolSpeeds1 = newContextLOL & (1 << PHYS_SPEED_1);
+                    lolSpeeds2 = newContextLOL & (1 << PHYS_SPEED_2);
+                    lolSpeeds3 = newContextLOL & (1 << PHYS_SPEED_4);
+                    lolSpeeds4 = newContextLOL & (1 << PHYS_SPEED_8);
+                    lolRoulette1 = newContextLOL & (1 << ITEM_ROULETTE_1);
+                    lolRoulette2 = newContextLOL & (1 << ITEM_ROULETTE_2);
+                    lolRoulette3 = newContextLOL & (1 << ITEM_ROULETTE_4);
+                    lolTTitembool = newContextLOL & (1 << ITEM_START_ENABLED);
+                    lolTTitem1 = newContextLOL & (1 << ITEM_START_1);
+                    lolTTitem2 = newContextLOL & (1 << ITEM_START_2);
+                    lolTTitem3 = newContextLOL & (1 << ITEM_START_4);
+                    lolTTitem4 = newContextLOL & (1 << ITEM_START_8);
+                    lolTTitem5 = newContextLOL & (1 << ITEM_START_16);
+                    //end of lol settings
+                    //wdd tc settings
+                    //wddtcbehave = newContextWDD & (1 << ITEM_CLOUD_BEHAVE);
+                    wddtceffect1 = newContextWDD & (1 << ITEM_CLOUD_1);
+                    wddtceffect2 = newContextWDD & (1 << ITEM_CLOUD_2);
+                    wddtceffect3 = newContextWDD & (1 << ITEM_CLOUD_4);
+                    wddtceffect4 = newContextWDD & (1 << ITEM_CLOUD_8);
+                    }//end of tc
                 break;
             default:
                 isCT = false;
@@ -271,93 +297,94 @@ void System::UpdateContext() {
     this->netMgr.hostContextWDD = newContextWDD;
 
     // Brake Drift needs to be calculated after room settings since it differs based on several settings
-    isLolBrake &= (BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_BRAKE),2)| // If setting = 1X, always enable
-                  (!BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_GAME, SETTINGGAME_RADIO_BRAKE),1) // If setting = 01, disable. Else, check speedmod.
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds4*4+lolSpeeds8*8 > 1) // Lower bound 2 = 1.25x speed
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds4*4+lolSpeeds8*8 < 9) // Upper bound 8 = 100x speed
+    isLolBrake &= (BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),2)| // If setting = 1X, always enable
+                  (!BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),1) // If setting = 01, disable. Else, check speedmod.
+                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > 1) // Lower bound 2 = 1.25x speed
+                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < 9) // Upper bound 8 = 100x speed
                   )); // AND assignment since we need to know if brakedrifting is allowed
 
     // Validate Time Trials
     bool isValidTT = ! // NOT gate result
                      //Valid lapcount would be 0000, = 3. (It'd be better to check directly with kmp, but not possible for most menus.)
-                     (lolLaps1 |lolLaps2 |lolLaps4 |lolLaps8
+                     (lolLaps1 |lolLaps2 |lolLaps3 |lolLaps4
+                     // Valid gravity is 0000
+                     |cdpGravity1 |cdpGravity2 |cdpGravity3 |cdpGravity4
                      //Calculated and Exclusive laps are always correct for 3 laps, but Forced laps cause issues, so restrict it.
                      |lolLapType2
                      //if speed is high, ignore as this is enabled anyway.
                      |(isLolBrake
-                         ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds4*4+lolSpeeds8*8 > 1) // Lower bound 2 = 1.25x speed
-                         & (lolSpeeds1+lolSpeeds2*2+lolSpeeds4*4+lolSpeeds8*8 < 9) // Upper bound 8 = 100x speed
+                         ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > 1) // Lower bound 2 = 1.25x speed
+                         & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < 9) // Upper bound 8 = 100x speed
                      ))
                      // Verify UMT setting matches pack setting
-                     |(this->info.HasUMTs() != isUMTs)
+                     |(this->info.HasUMTs() != isUMTs1)
+                     |isUMTs2 // high setting check
                      // We run into a slight problem here - TT items depend on the mode, selected via menu buttons
                      // Eventual solution - Condense all buttons into settings
                      // Temporary solution - Make all buttons do the same thing lmao
-                     //Valid item counts are weird, though as long as only mushrooms and feathers are normal categories we can be lenient (set to only default for now tho)
-                     |lolTTitemcount1 |lolTTitemcount2 |lolTTitemcount4 |lolTTitemcount8
                      );
 
 // Extra validity notes:
 // - All speedmods are valid now since they're split up into categories, so we don't need to check for that
 // - All items are also valid for the same reason
-// - Blooper TTs are incorrectly read as valid Feather TTs. No fix?
 
 
 
     u32 contextPul = (isCT << PULSAR_CT)
-                | (isHAW << PULSAR_HAW)
-                | (lolHAW << LOLPACK_HAWTYPE)
-                | (isMiiHeads << PULSAR_MIIHEADS)
-                //lolpack divider
-                | (isValidTT << LOLPACK_VALID_TTS);
-    if(isCT) { //contexts that should only exist when CTs are on
-        contextPul |=(isOTT << PULSAR_MODE_OTT);
+                | (isMiiHeads << PULSAR_MIIHEADS);
+    if(isCT) { contextPul //contexts that should only exist when CTs are on
+                |=(isOTT << PULSAR_MODE_OTT);
     }
-    if(isLOL) { //contexts that should only ever not exist for RTWWs
-        contextPul |=(isFeather << PULSAR_FEATHER)
-                | (isUMTs << PULSAR_UMTS)
-                | (isMegaTC << PULSAR_MEGATC)
-                | (isKO << PULSAR_MODE_KO);
+    if(isLOL) { contextPul //contexts that should only ever not exist for RTWWs
+                |=(isLolBrake << LOLPACK_BRAKE)
+                | (isHAW << PULSAR_HAW_1)
+                | (isHAW << PULSAR_HAW_2)
+                | (isFeather << PULSAR_FEATHER)
+                | (isKO << PULSAR_MODE_KO)
+                | (isUMTs1 << PHYS_TURBO_1)
+                | (isUMTs2 << PHYS_TURBO_2)
+                | (cdpDisregard << CDP_DISREGARD);
     }
-    // LOl Contexts
-    u32 contextLOL = (isValidTT << LOLPACK_VALID_TTS);
-    if(isCT) { //contexts that should only exist when CTs are on
-        contextLOL |=(lolLapType1 << LOLPACK_LAPS_BIN1)
-                | (lolLapType2 << LOLPACK_LAPS_BIN2)
-                | (lolLaps1 << LOLPACK_LAPCOUNT_BIN1)
-                | (lolLaps2 << LOLPACK_LAPCOUNT_BIN2)
-                | (lolLaps4 << LOLPACK_LAPCOUNT_BIN4)
-                | (lolLaps8 << LOLPACK_LAPCOUNT_BIN8)
-                | (lolTTitem1 << LOLPACK_TTITEM_BIN1)
-                | (lolTTitem2 << LOLPACK_TTITEM_BIN2)
-                | (lolTTitem4 << LOLPACK_TTITEM_BIN4)
-                | (lolTTitemcount1 << LOLPACK_TTITEMCOUNT_BIN1)
-                | (lolTTitemcount2 << LOLPACK_TTITEMCOUNT_BIN2)
-                | (lolTTitemcount4 << LOLPACK_TTITEMCOUNT_BIN4)
-                | (lolTTitemcount8 << LOLPACK_TTITEMCOUNT_BIN8);
+    // LOL Contexts
+    u32 contextLOL = (isValidTT << TTS_VALID);
+    if(isCT) { contextLOL //contexts that should only exist when CTs are on
+                |=(lolLapType1 << LAP_MATHS_1)
+                | (lolLapType2 << LAP_MATHS_2)
+                | (lolLaps1 << LAP_COUNT_1)
+                | (lolLaps2 << LAP_COUNT_2)
+                | (lolLaps3 << LAP_COUNT_4)
+                | (lolLaps4 << LAP_COUNT_8);
     }
-    if(isLOL) { //contexts that should only ever not exist for RTWWs
-        contextLOL |=(isLolBrake << LOLPACK_BRAKE)
-                | (lolSpeeds1 << LOLPACK_SPEEDMOD_BIN1)
-                | (lolSpeeds2 << LOLPACK_SPEEDMOD_BIN2)
-                | (lolSpeeds4 << LOLPACK_SPEEDMOD_BIN4)
-                | (lolSpeeds8 << LOLPACK_SPEEDMOD_BIN8)
-                | (lolRoulette1 << LOLPACK_ROULETTE_BIN1)
-                | (lolRoulette2 << LOLPACK_ROULETTE_BIN2)
-                | (lolRoulette4 << LOLPACK_ROULETTE_BIN4);
+    if(isLOL) { contextLOL //contexts that should only ever not exist for RTWWs
+                |=(lolSpeeds1 << PHYS_SPEED_1)
+                | (lolSpeeds2 << PHYS_SPEED_2)
+                | (lolSpeeds3 << PHYS_SPEED_4)
+                | (lolSpeeds4 << PHYS_SPEED_8)
+                | (cdpGravity1 << PHYS_GRAVITY_1)
+                | (cdpGravity2 << PHYS_GRAVITY_2)
+                | (cdpGravity3 << PHYS_GRAVITY_4)
+                | (cdpGravity4 << PHYS_GRAVITY_8)
+                | (lolRoulette1 << ITEM_ROULETTE_1)
+                | (lolRoulette2 << ITEM_ROULETTE_2)
+                | (lolRoulette3 << ITEM_ROULETTE_4)
+                | (lolTTitembool << ITEM_START_ENABLED)
+                | (lolTTitem1 << ITEM_START_1)
+                | (lolTTitem2 << ITEM_START_2)
+                | (lolTTitem3 << ITEM_START_4)
+                | (lolTTitem4 << ITEM_START_8)
+                | (lolTTitem5 << ITEM_START_16);
     }
 
     // WDD Contexts
     u32 contextWDD = 0;
     if(isCT) { //contexts that should only exist when CTs are on
-                contextWDD = 0;
+        contextWDD = 0;
     }
-    if(isLOL) { //contexts that should only ever not exist for RTWWs
-        contextWDD = (wddtc1 << WDD_TC_BIN1)
-                | (wddtc2 << WDD_TC_BIN2)
-                | (wddextratc1 << WDD_EXTRATC_BIN1)
-                | (wddextratc2 << WDD_EXTRATC_BIN2)
-                | (wddtceffect << WDD_TC_EFFECT);
+    if(isLOL) { contextWDD //contexts that should only ever not exist for RTWWs
+                |=(wddtceffect1 << ITEM_CLOUD_1)
+                | (wddtceffect2 << ITEM_CLOUD_2)
+                | (wddtceffect3 << ITEM_CLOUD_4)
+                | (wddtceffect4 << ITEM_CLOUD_8);
     }
     this->contextPul = contextPul;
     this->contextLOL = contextLOL;
@@ -387,7 +414,7 @@ s32 System::OnSceneEnter(Random& random) {
     System* self = System::sInstance;
     self->UpdateContext();
     if(self->IsContextPul(PULSAR_MODE_OTT)) OTT::AddGhostToVS();
-    if(self->IsContextPul(PULSAR_HAW) && self->IsContextPul(PULSAR_MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
+    if(self->IsContextPul(PULSAR_HAW_1) && self->IsContextPul(PULSAR_MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
         KO::HAWChangeData();
     }
     return random.NextLimited(8);
