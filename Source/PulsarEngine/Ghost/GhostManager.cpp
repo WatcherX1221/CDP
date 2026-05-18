@@ -219,7 +219,7 @@ bool Mgr::SaveGhost(const RKSYS::LicenseLdbEntry& entry, u32 ldbPosition, bool i
     // Heavily define valid tts to prevent crashing and to ensure ghost saves are in correct folder
     const System* system = System::sInstance;
     const TTMode mode = system->ttMode;
-    const bool validTTs = (mode != TTMODE_UNRESTRICTED) && System::sInstance->IsContextLOL(LOLPACK_VALID_TTS);
+    const bool validTTs = (mode != TTMODE_UNRESTRICTED) && System::sInstance->IsContextLOL(TTS_VALID);
     if(isFlap && validTTs) this->leaderboard.Update(ENTRY_FLAP, this->entry, -1);
     GhostData data;
     data.Fill(0);
