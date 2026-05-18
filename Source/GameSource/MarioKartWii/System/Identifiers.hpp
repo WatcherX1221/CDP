@@ -109,7 +109,9 @@ enum ItemObjId {
     OBJ_POW_BLOCK = 0xB,
     OBJ_THUNDER_CLOUD = 0xE,
     OBJ_BULLET_BILL = 0xD,
-    OBJ_NONE = 0x10
+    OBJ_NONE = 0x10,
+    // CUSTOM
+    OBJ_FEATHER = 0x11
 };
 
 enum ItemId {
@@ -133,7 +135,11 @@ enum ItemId {
     TRIPLE_RED_SHELL = 0x11,
     TRIPLE_BANANA = 0x12,
     UNKNOWN_0x13 = 0x13,
-    ITEM_NONE = 0x14
+    ITEM_NONE = 0x14,
+    // CUSTOM
+    FEATHER = 0x15,
+    TRIPLE_FEATHER = 0x16,
+    TRIPLE_FAKE_ITEM_BOX = 0x17
 };
 
 
