@@ -4,9 +4,13 @@
 #include <Settings/UI/ExpFroomPage.hpp>
 #include <Settings/UI/ExpWFCMainPage.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
+#include <Settings/SettingsParam.hpp>
 
 namespace Pulsar {
 namespace UI {
+
+// Reminder to go through this at some point to change the scroller offset value from 0x700 to 0x1000
+// in order to avoid running out of bmg space from overlapping radios and scrollers
 
 //SETTINGS PANEL
 SettingsPanel::SettingsPanel()
@@ -182,14 +186,14 @@ void SettingsPanel::OnActivate() {
             const u8 setting = this->radioSettings[this->sheetIdx][radio.id];
             radio.chosenButtonId = setting;
             radio.selectedButtonId = setting;
-            u32 bmgCategory = this->bmgOffset + BMG_RADIO_SETTINGS + (this->catIdx << 12);
+            u32 bmgCategory = this->bmgOffset + BMG_RADIO_SETTINGS + (this->catIdx << (8+Settings::Params::maxSettingBitCount));
             radio.SetMessage(radio.id + bmgCategory);
 
             for(int j = 0; j < 4; ++j) {
                 bool isHidden = false;
                 if(j >= Settings::Params::buttonsPerPagePerRow[this->sheetIdx][radio.id]) isHidden = true;
                 radio.optionButtonsArray[j].isHidden = isHidden;
-                if(!isHidden) radio.optionButtonsArray[j].SetMessage((radio.id + 1 << 4) + j + bmgCategory);
+                if(!isHidden) radio.optionButtonsArray[j].SetMessage((radio.id + 1 << Settings::Params::maxSettingBitCount) + j + bmgCategory);
             }
         }
     }
@@ -204,9 +208,9 @@ void SettingsPanel::OnActivate() {
         valueControl.isHidden = isDisabled;
         if(!isDisabled) {
             scroller.curSelectedOption = this->scrollerSettings[this->sheetIdx][i];
-            u32 bmgCategory = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << 12);
+            u32 bmgCategory = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << (8+Settings::Params::maxSettingBitCount));
             scroller.SetMessage(scroller.id + bmgCategory);
-            valueControl.activeTextValueControl->SetMessage((scroller.id + 1 << 4) + bmgCategory);
+            valueControl.activeTextValueControl->SetMessage((scroller.id + 1 << Settings::Params::maxSettingBitCount) + bmgCategory);
         }
 
 
@@ -327,7 +331,7 @@ void SettingsPanel::OnRadioButtonClick(RadioButtonControl& radioButtonControl, u
 }
 
 void SettingsPanel::OnRadioButtonChange(RadioButtonControl& radioButtonControl, u32 hudSlotId, u32 optionId) {
-    this->bottomText->SetMessage(this->bmgOffset + BMG_RADIO_SETTINGS + (this->catIdx << 12) + (radioButtonControl.id + 1 << 8) + optionId);
+    this->bottomText->SetMessage(this->bmgOffset + BMG_RADIO_SETTINGS + (this->catIdx << (8+Settings::Params::maxSettingBitCount)) + (radioButtonControl.id + 1 << (4+Settings::Params::maxSettingBitCount)) + optionId);
 }
 
 void SettingsPanel::OnUpDownClick(UpDownControl& upDownControl, u32 hudSlotId) {
@@ -337,18 +341,18 @@ void SettingsPanel::OnUpDownClick(UpDownControl& upDownControl, u32 hudSlotId) {
 
 void SettingsPanel::OnTextChange(TextUpDownValueControl::TextControl& text, u32 optionId) {
 
-    const u32 bmgId = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << 12) + optionId;
+    const u32 bmgId = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << (8+Settings::Params::maxSettingBitCount)) + optionId;
     u32 id = this->GetTextId(text);
     this->scrollerSettings[this->sheetIdx][id] = optionId;
 
-    text.SetMessage(bmgId + (id + 1 << 4));
+    text.SetMessage(bmgId + (id + 1 << Settings::Params::maxSettingBitCount));
     if(!this->externControls[0]->IsSelected()) {
-        this->bottomText->SetMessage(bmgId + (id + 1 << 8));
+        this->bottomText->SetMessage(bmgId + (id + 1 << (4+Settings::Params::maxSettingBitCount)));
     }
 };
 
 void SettingsPanel::OnUpDownSelect(UpDownControl& upDownControl, u32 hudSlotId) {
-    const u32 bmgId = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << 12) + (upDownControl.id + 1 << 8) + upDownControl.curSelectedOption;
+    const u32 bmgId = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << (8+Settings::Params::maxSettingBitCount)) + (upDownControl.id + 1 << (4+Settings::Params::maxSettingBitCount)) + upDownControl.curSelectedOption;
     this->bottomText->SetMessage(bmgId);
 }
 

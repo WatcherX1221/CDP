@@ -14,6 +14,9 @@
 // I HATE BUTTONS!!!!
 // I HATE BUTTONS!!!!
 // Hi Block, found your comments
+// SPINACH GAS!!!!
+// SPINACH GAS!!!!
+// SPINACH GAS!!!!
 
 
 namespace Pulsar {
@@ -123,20 +126,20 @@ void OnButtonSelect(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId
     if(id == 4) bmgId = BMG_SETTINGSBUTTON_BOTTOM;
     else if(id == 1) {
         bmgId = BMG_TT_MODE_BOTTOM_SINGLE;
-        if(!System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) bmgId+=4;
+        if(!System::sInstance->IsContextLOL(TTS_VALID)) bmgId+=4;
         else {
-            if( System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN1)
-              + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN2)*2
-              + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN4)*4
-              + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN8)*8
+            if( System::sInstance->IsContextLOL(PHYS_SPEED_1)
+              + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
+              + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
+              + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
               == 3) bmgId +=1;
-            if( System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN1)
-              + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
-              + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
+            if( System::sInstance->IsContextLOL(ITEM_START_1)
+              + System::sInstance->IsContextLOL(ITEM_START_2)*2
+              + System::sInstance->IsContextLOL(ITEM_START_4)*4
               == 1) bmgId +=2;
-            else if( System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN1)
-                   + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
-                   + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
+            else if( System::sInstance->IsContextLOL(ITEM_START_1)
+                   + System::sInstance->IsContextLOL(ITEM_START_2)*2
+                   + System::sInstance->IsContextLOL(ITEM_START_4)*4
                    != 0) bmgId = BMG_TT_MODE_BOTTOM_SINGLE + 4;
         }
         page->bottomText->SetMessage(bmgId);
@@ -187,17 +190,17 @@ void OnButtonClick(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId)
         //keep in mind that 200cc is done via speedsetting now, so 200cc tt validity is hence based on that
 
         //lolpack divider
-        const int speedContext = ( System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN1)
-                                 + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN2)*2
-                                 + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN4)*4
-                                 + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN8)*8
+        const int speedContext = ( System::sInstance->IsContextLOL(PHYS_SPEED_1)
+                                 + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
+                                 + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
+                                 + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
                                  );
-        const int itemContext = ( System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN1)
-                                + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
-                                + System::sInstance->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
+        const int itemContext = ( System::sInstance->IsContextLOL(ITEM_START_1)
+                                + System::sInstance->IsContextLOL(ITEM_START_2)*2
+                                + System::sInstance->IsContextLOL(ITEM_START_4)*4
                                 );
         TTMode mode = TTMODE_UNRESTRICTED;
-        if(System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) {
+        if(System::sInstance->IsContextLOL(TTS_VALID)) {
             if(itemContext == 0) {
                 if(speedContext==0) mode = TTMODE_150;
                 else mode = TTMODE_200;
