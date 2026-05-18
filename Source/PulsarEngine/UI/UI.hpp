@@ -196,7 +196,7 @@ enum BMG {
     BMG_SETTINGS_BOTTOM = 0x2f10,
     BMG_SETTINGS_TITLE = 0x2f20,
     BMG_RADIO_SETTINGS = 0x3000,
-    BMG_SCROLLER_SETTINGS = 0x3700,
+    BMG_SCROLLER_SETTINGS = 0x4000,
     BMG_USERSETTINGSOFFSET = 0x60000, //user settings therefore start at 0x53000 for radi osettings, 0x53700 for scrollers
 
 };
