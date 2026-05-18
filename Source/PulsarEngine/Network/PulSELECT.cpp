@@ -308,10 +308,10 @@ void InitPatch() {
     bool allowChangeCombo;
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     if (controller->roomType == RKNet::ROOMTYPE_VS_REGIONAL) allowChangeCombo = true;
-    else allowChangeCombo = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWCHANGECOMBO);
+    else allowChangeCombo = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGOTT_ALLOWCHANGECOMBO);
     select->toSendPacket.allowChangeComboStatus = allowChangeCombo;
-    select->toSendPacket.koPerRace = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_KOPERRACE) + 1;
-    select->toSendPacket.racesPerKO = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_RACESPERKO) + 1;
+    select->toSendPacket.koPerRace = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGKO_KOPERRACE) + 1;
+    select->toSendPacket.racesPerKO = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGKO_RACESPERKO) + 1;
     for (int aid = 0; aid < 12; ++aid) {
         PulSELECT& cur = select->receivedPackets[aid];
         cur.pulVote = 0x43;
