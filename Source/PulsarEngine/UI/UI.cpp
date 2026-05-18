@@ -1,4 +1,4 @@
-     #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
+#include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
 #include <UI/UI.hpp>
 #include <PulsarSystem.hpp>
 
@@ -36,7 +36,7 @@ kmWrite32(0x80635058, 0x60000000);
 void ExpSection::CreatePages(ExpSection& self, SectionId id) {
     const System* system = System::sInstance;
     //can't think of a better way to do this awkward thing, where the usual pages are NOT built
-    self.hasAutoVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && system->IsContextPul(PULSAR_HAW); //can't think of a better way to do this awkward thing, where the usual pages are NOT built
+    self.hasAutoVote = (id >= SECTION_P1_WIFI_FROOM_VS_VOTING && id <= SECTION_P2_WIFI_FROOM_COIN_VOTING) && system->IsContextPul(PULSAR_HAW_1);
     if(!self.hasAutoVote) self.CreateSectionPages(id);
     memset(&self.pulPages, 0, sizeof(Page*) * PULPAGE_MAX);
     self.CreatePulPages();
@@ -87,8 +87,8 @@ void ExpSection::CreatePulPages() {
                 this->CreateAndInitPage(*this, KO::RaceEndPage::id);
                 this->CreateAndInitPage(*this, KO::WinnerPage::id);
             }
-            if(system->IsContextPul(PULSAR_HAW)) {
-                if(system->IsContextLOL(LOLPACK_HAWTYPE) == 0) {
+            if(system->IsContextPul(PULSAR_HAW_1)) {
+                if(system->IsContextPul(PULSAR_HAW_2) == 0) {
                     if(SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber != System::sInstance->netMgr.racesPerGP) this->CreateAndInitPage(*this, ChooseNextTrack::id);
                 }
                 else { // Track select In Order online (probably an awful place to put this code, but where else? We need to optionally circumvent a menu altogether)
@@ -106,7 +106,7 @@ void ExpSection::CreatePulPages() {
         case SECTION_P2_WIFI_FRIEND_BALLOON:  //0x76
         case SECTION_P2_WIFI_FRIEND_COIN:     //0x77
 
-            if(system->IsContextPul(PULSAR_HAW)) {
+            if(system->IsContextPul(PULSAR_HAW_1)) {
                 const SectionParams* sectionParams = SectionMgr::sInstance->sectionParams;
                 if(sectionParams->redWins < 2 && sectionParams->blueWins < 2) this->CreateAndInitPage(*this, ChooseNextTrack::id);
             }
