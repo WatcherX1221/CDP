@@ -259,6 +259,10 @@ void System::UpdateContext() {
                     lolSpeeds2 = newContextLOL & (1 << PHYS_SPEED_2);
                     lolSpeeds3 = newContextLOL & (1 << PHYS_SPEED_4);
                     lolSpeeds4 = newContextLOL & (1 << PHYS_SPEED_8);
+                    cdpGravity1 = newContextLOL & (1 << PHYS_GRAVITY_1);
+                    cdpGravity2 = newContextLOL & (1 << PHYS_GRAVITY_2);
+                    cdpGravity3 = newContextLOL & (1 << PHYS_GRAVITY_4);
+                    cdpGravity4 = newContextLOL & (1 << PHYS_GRAVITY_8);
                     lolRoulette1 = newContextLOL & (1 << ITEM_ROULETTE_1);
                     lolRoulette2 = newContextLOL & (1 << ITEM_ROULETTE_2);
                     lolRoulette3 = newContextLOL & (1 << ITEM_ROULETTE_4);
