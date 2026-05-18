@@ -2,73 +2,99 @@
 #include <MarioKartWii/Item/Obj/Kumo.hpp>
 #include <MarioKartWii/Kart/KartMovement.hpp>
 #include <PulsarSystem.hpp>
+#include <Settings/SettingsParam.hpp>
 
 
 namespace Pulsar {
 namespace Race {
 //Mega TC
 void MegaTC(Kart::Movement& movement, int frames, int unk0, int unk1) {
-    switch (System::sInstance->IsContextWDD(WDD_TC_EFFECT)) {
-        case(0x1): //Double Effect
-            switch (System::sInstance->IsContextWDD(WDD_TC_BIN1)+System::sInstance->IsContextWDD(WDD_TC_BIN2)*2) {
-                case(0x1): //Mega
-                    movement.ActivateMega();
-                    break;
-                case(0x2): //Star
-                    movement.ActivateStar();
-                    break;
-                case(0x3): //Mushroom
-                    movement.ApplyInk(0);
-                    break;
-                default: //Default
-                    movement.ApplyLightningEffect(frames, unk0, unk1);
-            }
-            switch (System::sInstance->IsContextWDD(WDD_EXTRATC_BIN1)+System::sInstance->IsContextWDD(WDD_EXTRATC_BIN2)*2) {
-                case(0x1): //Mega
-                    movement.ActivateMega();
-                    break;
-                case(0x2): //Star
-                    movement.ActivateStar();
-                    break;
-                case(0x3): //Mushroom
-                    movement.ApplyInk(0);
-                    break;
-                default: //Default
-                    movement.ApplyLightningEffect(frames, unk0, unk1);
-            }
-        default: //Single Effect
-            switch (System::sInstance->IsContextWDD(WDD_TC_BIN1)+System::sInstance->IsContextWDD(WDD_TC_BIN2)*2) {
-                case(0x1): //Mega
-                    movement.ActivateMega();
-                    break;
-                case(0x2): //Star
-                    movement.ActivateStar();
-                    break;
-                case(0x3): //Mushroom
-                    movement.ApplyInk(0);
-                    break;
-                default: //Default
-                    movement.ApplyLightningEffect(frames, unk0, unk1);
-            }
+    switch ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
+           ) {
+        case ITEMSETTING_CLOUD_MEGA: // Mega
+            movement.ActivateMega();
+            break;
+        case ITEMSETTING_CLOUD_STAR: // Star
+            movement.ActivateStar();
+            break;
+        case ITEMSETTING_CLOUD_FEATHER: // Feather
+            //movement.ActivateMushroom();
+            //ActivateFeather();
+            break;
+        case ITEMSETTING_CLOUD_DEATH: // Death
+            //movement.ApplyLightningEffect(frames, unk0, unk1);
+            //movement.DoRespawn();
+            break;
+        case ITEMSETTING_CLOUD_BLOOPER: // Blooper
+            movement.ApplyInk(0);
+            break;
+        case ITEMSETTING_CLOUD_MEGASTAR: // Mega Star
+            movement.ActivateMega();
+            movement.ActivateStar();
+            break;
+        case ITEMSETTING_CLOUD_SHOCKBLOOPER: // Shock Blooper
+            movement.ApplyLightningEffect(frames, unk0, unk1);
+            movement.ApplyInk(0);
+            break;
+        case ITEMSETTING_CLOUD_SHOCKMEGA: // Dizzy
+            movement.ApplyLightningEffect(frames, unk0, unk1);
+            movement.ActivateMega();
+            break;
+        case ITEMSETTING_CLOUD_MEGASHOCK: // Cloud
+            //summon enderdragon ~~~
+            break;
+        default: // Shock
+            movement.ApplyLightningEffect(frames, unk0, unk1);
     }
 }
 kmCall(0x80580630, MegaTC);
 
 void LoadCorrectTCBRRES(Item::ObjKumo& objKumo, const char* mdlName, const char* shadowSrc, u8 whichShadowListToUse,
     Item::Obj::AnmParam* anmParam) {
-    switch (System::sInstance->IsContextWDD(WDD_TC_BIN1)+System::sInstance->IsContextWDD(WDD_TC_BIN2)*2) {
-        case(0x1): //Mega
+    switch ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
+           + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
+           ) {
+        case ITEMSETTING_CLOUD_MEGA: // Mega
             objKumo.LoadGraphics("megaTC.brres", mdlName, shadowSrc, 1, anmParam,
             static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
             break;
-        case(0x2): //Star
+        case ITEMSETTING_CLOUD_STAR: // Star
             objKumo.LoadGraphics("starTC.brres", mdlName, shadowSrc, 1, anmParam,
             static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
             break;
-        case(0x3): //Blooper
+//        case ITEMSETTING_CLOUD_FEATHER: // Feather
+//            objKumo.LoadGraphics("featherTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+//        case ITEMSETTING_CLOUD_DEATH: // Death
+//            objKumo.LoadGraphics("deathTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+        case ITEMSETTING_CLOUD_BLOOPER: // Blooper
             objKumo.LoadGraphics("blooperTC.brres", mdlName, shadowSrc, 1, anmParam,
             static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
             break;
+//        case ITEMSETTING_CLOUD_MEGASTAR: // Mega Star
+//            objKumo.LoadGraphics("megastarTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+//        case ITEMSETTING_CLOUD_SHOCKBLOOPER: // Shock Blooper
+//            objKumo.LoadGraphics("shockblooperTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+//        case ITEMSETTING_CLOUD_SHOCKMEGA: // Dizzy
+//            objKumo.LoadGraphics("dizzyTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+//        case ITEMSETTING_CLOUD_MEGASHOCK: // Cloud
+//            objKumo.LoadGraphics("cloudTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
         default: //Shock
             objKumo.LoadGraphicsImplicitBRRES(mdlName, shadowSrc, 1, anmParam, static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr);
     }

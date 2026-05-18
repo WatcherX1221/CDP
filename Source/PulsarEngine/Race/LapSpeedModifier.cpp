@@ -15,10 +15,10 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
 
     //Blockface3 Lap Mod
 
-    int lapSetting = System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN8)*8
-                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN4)*4
-                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN2)*2
-                   + System::sInstance->IsContextLOL(LOLPACK_LAPCOUNT_BIN1)+3;
+    int lapSetting = System::sInstance->IsContextLOL(LAP_COUNT_8)*8
+                   + System::sInstance->IsContextLOL(LAP_COUNT_4)*4
+                   + System::sInstance->IsContextLOL(LAP_COUNT_2)*2
+                   + System::sInstance->IsContextLOL(LAP_COUNT_1)+3;
     if (lapSetting > 9) {
         lapSetting -= 9;
     };
@@ -26,7 +26,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     if ((lapSetting == 9) || (lapCount == 9)) {
         lapMax9 = 1;
     };
-    switch (System::sInstance->IsContextLOL(LOLPACK_LAPS_BIN1)+System::sInstance->IsContextLOL(LOLPACK_LAPS_BIN2)*2) {
+    switch (System::sInstance->IsContextLOL(LAP_MATHS_1)+System::sInstance->IsContextLOL(LAP_MATHS_2)*2) {
     case(0x1): // Exclusive
         if (lapCount == 3) {
             lapCount = lapSetting;
@@ -77,10 +77,10 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
 
     //Blockface3 Speed Mod
 
-    switch ( System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN8)*8
-           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN4)*4
-           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN2)*2
-           + System::sInstance->IsContextLOL(LOLPACK_SPEEDMOD_BIN1)) {
+    switch ( System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
+           + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
+           + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
+           + System::sInstance->IsContextLOL(PHYS_SPEED_1)) {
     case(0x1):
         factor = 1.1f;
         break;

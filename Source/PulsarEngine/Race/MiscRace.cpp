@@ -27,7 +27,7 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     if (Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_CPU) return;
     const System* system = System::sInstance;
     const bool isTT = DriverMgr::isTT;
-    if (isTT || system->IsContextPul(PULSAR_MODE_OTT)) {
+    if ((isTT || system->IsContextPul(PULSAR_MODE_OTT)) || system->IsContextLOL(ITEM_START_ENABLED)) {
     bool isFeather;
     if (isTT) { //Should probably remove this but right now I don't care much
         const TTMode mode = system->ttMode;
@@ -35,115 +35,113 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     }
     else isFeather = system->IsContextPul(PULSAR_FEATHER);
     // Switch for item
-    switch(system->IsContextLOL(LOLPACK_TTITEM_BIN1)
-          +system->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
-          +system->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
+    if ( system->IsContextLOL(ITEM_START_ENABLED) ) {
+    switch(system->IsContextLOL(ITEM_START_1)
+          +system->IsContextLOL(ITEM_START_2)*2
+          +system->IsContextLOL(ITEM_START_4)*4
+          +system->IsContextLOL(ITEM_START_8)*8
+          +system->IsContextLOL(ITEM_START_16)*16
           ){
-    case(0x1):
-        id = BLOOPER;
-        break;
-    case(0x2):
-        id = STAR;
-        break;
-    case(0x3):
-        id = MEGA_MUSHROOM;
-        break;
-    case(0x4):
-        id = GOLDEN_MUSHROOM;
-        break;
-    case(0x5):
-        id = THUNDER_CLOUD;
-        break;
-    case(0x6):
-        id = BULLET_BILL;
-        break;
-    default:
-        id = TRIPLE_MUSHROOM;
-    }
-    inventory.SetItem(id, isItemForcedDueToCapacity);
-    // Switch for item count
-    switch(system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN1)
-          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN2)*2
-          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN4)*4
-          +system->IsContextLOL(LOLPACK_TTITEMCOUNT_BIN8)*8
-          ){
-    case(0x1):
+    case ITEMSETTING_START_MUSH:
+        id = MUSHROOM;
         inventory.currentItemCount = 1;
         break;
-    case(0x2):
-        inventory.currentItemCount = 2;
-        break;
-    case(0x3):
+    case ITEMSETTING_START_3MUS:
+        id = TRIPLE_MUSHROOM;
         inventory.currentItemCount = 3;
         break;
-    case(0x4):
-        inventory.currentItemCount = 4;
+    case ITEMSETTING_START_GMUS:
+        id = GOLDEN_MUSHROOM;
+        inventory.currentItemCount = 1;
         break;
-    case(0x5):
-        inventory.currentItemCount = 5;
+    case ITEMSETTING_START_FEAT:
+        id = FEATHER;
+        inventory.currentItemCount = 1;
         break;
-    case(0x6):
-        inventory.currentItemCount = 6;
+    case ITEMSETTING_START_3FEA:
+        id = TRIPLE_FEATHER;
+        inventory.currentItemCount = 3;
         break;
-    case(0x7):
-        inventory.currentItemCount = 7;
+    case ITEMSETTING_START_STAR:
+        id = STAR;
+        inventory.currentItemCount = 1;
         break;
-    case(0x8):
-        inventory.currentItemCount = 8;
+    case ITEMSETTING_START_MEGA:
+        id = MEGA_MUSHROOM;
+        inventory.currentItemCount = 1;
         break;
-    case(0x9):
-        inventory.currentItemCount = 9;
+    case ITEMSETTING_START_CLOU:
+        id = THUNDER_CLOUD;
+        inventory.currentItemCount = 1;
         break;
-    case(0xA):
-        inventory.currentItemCount = 10;
+    case ITEMSETTING_START_GREN:
+        id = GREEN_SHELL;
+        inventory.currentItemCount = 1;
         break;
-    case(0xB):
-        inventory.currentItemCount = 15;
+    case ITEMSETTING_START_3GRN:
+        id = TRIPLE_GREEN_SHELL;
+        inventory.currentItemCount = 3;
         break;
-    case(0xC):
-        inventory.currentItemCount = 25;
+    case ITEMSETTING_START_REDS:
+        id = RED_SHELL;
+        inventory.currentItemCount = 1;
         break;
-    case(0xD):
-        inventory.currentItemCount = 50;
+    case ITEMSETTING_START_3RED:
+        id = TRIPLE_RED_SHELL;
+        inventory.currentItemCount = 3;
         break;
-    case(0xE):
-        inventory.currentItemCount = 9999;
+    case ITEMSETTING_START_BLUE:
+        id = BLUE_SHELL;
+        inventory.currentItemCount = 1;
         break;
-    case(0xF):
-        inventory.currentItemCount = ((
-                                     (system->IsContextLOL(LOLPACK_LAPCOUNT_BIN1)
-                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN2)*2
-                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN4)*4
-                                     +system->IsContextLOL(LOLPACK_LAPCOUNT_BIN8)*8
-                                     )+2)%9)+1;
+    case ITEMSETTING_START_BANA:
+        id = BANANA;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_3BNA:
+        id = TRIPLE_BANANA;
+        inventory.currentItemCount = 3;
+        break;
+    case ITEMSETTING_START_FIBX:
+        id = FAKE_ITEM_BOX;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_3FIB:
+        id = TRIPLE_FAKE_ITEM_BOX;
+        inventory.currentItemCount = 3;
+        break;
+    case ITEMSETTING_START_BOMB:
+        id = BOBOMB;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_BLPR:
+        id = BLOOPER;
+        inventory.currentItemCount = 1;
+        break;
+//    case ITEMSETTING_START_GHST:
+//        id = BOO;
+//        inventory.currentItemCount = 1;
+//        break;
+    case ITEMSETTING_START_POWB:
+        id = POW_BLOCK;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_BILL:
+        id = BULLET_BILL;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_SHOK:
+        id = LIGHTNING;
+        inventory.currentItemCount = 1;
         break;
     default:
-        switch(system->IsContextLOL(LOLPACK_TTITEM_BIN1)
-              +system->IsContextLOL(LOLPACK_TTITEM_BIN2)*2
-              +system->IsContextLOL(LOLPACK_TTITEM_BIN4)*4
-              ){
-        case(0x1):
-            inventory.currentItemCount = 3;
-            break;
-        case(0x2):
-            inventory.currentItemCount = 1;
-            break;
-        case(0x3):
-            inventory.currentItemCount = 1;
-            break;
-        case(0x4):
-            inventory.currentItemCount = 1;
-            break;
-        case(0x5):
-            inventory.currentItemCount = 1;
-            break;
-        case(0x6):
-            inventory.currentItemCount = 1;
-            break;
-        default:
-            inventory.currentItemCount = 3;
+        id = ITEM_NONE;
+    }}
+    else {
+        id = TRIPLE_MUSHROOM;
+        inventory.currentItemCount = 3;
         }
-    }
+    if (id != ITEM_NONE) inventory.SetItem(id, isItemForcedDueToCapacity);
     }
 }
 kmCall(0x80799808, SetStartingItem);
@@ -219,7 +217,7 @@ kmWrite32(0x80572618, 0x38000000); //KartCollision::CheckItemCollision()
 kmWrite32(0x80573290, 0x38000000); //KartCollision::HandleFIBCollision()
 kmWrite32(0x8068e2d0, 0x38000000); //PlayerEffects ctor
 kmWrite32(0x8068e314, 0x38000000); //PlayerEffects ctor
-kmWrite32(0x807a7f6c, 0x38c00000); //FIB are always red
+//kmWrite32(0x807a7f6c, 0x38c00000); //FIB are always red //funny
 kmWrite32(0x807b0bd4, 0x38000000); //pass TC to teammate
 kmWrite32(0x807bd2bc, 0x38000000); //RaceGlobals
 kmWrite32(0x807f18c8, 0x38000000); //TC alert
@@ -236,27 +234,30 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
     const bool feather = System::sInstance->IsContextPul(PULSAR_FEATHER);
     const bool megaTC = System::sInstance->IsContextPul(PULSAR_MEGATC);
     const char* paneName;
-    if (id == BLOOPER && feather) {
-        if (itemCount == 2) paneName = "feather_2";
-        else if (itemCount >= 3) paneName = "feather_3"; // Has a strange side effect of displaying triple feathers during roulette
-        else paneName = "feather";
-    }
-    else if (id == THUNDER_CLOUD && megaTC) {
-        switch (System::sInstance->IsContextWDD(WDD_TC_BIN1)+System::sInstance->IsContextWDD(WDD_TC_BIN2)*2) {
-            case(0x1): //Mega
-                paneName = "megaTC";
-                break;
-            case(0x2): //Star
-                paneName = "starTC";
-                break;
-            case(0x3): //Blooper
-                paneName = "blooperTC";
-                break;
-            default: //Shock
-                paneName = GetItemIconPaneName(id, itemCount);
-        }
-    }
-    else paneName = GetItemIconPaneName(id, itemCount);
+    switch (id) {
+        case THUNDER_CLOUD:
+            switch
+            ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
+            + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
+            + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
+            + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
+            ) {
+            case ITEMSETTING_CLOUD_SHOCK: GetItemIconPaneName(id, itemCount); //Shock;
+            case ITEMSETTING_CLOUD_MEGA: paneName = "megaTC" ;break; // Mega
+            case ITEMSETTING_CLOUD_STAR: paneName = "starTC" ;break; // Star
+            //case ITEMSETTING_CLOUD_FEATHER: paneName = "featherTC" ;break; // Feather
+            //case ITEMSETTING_CLOUD_DEATH: paneName = "deathTC" ;break; // Death
+            case ITEMSETTING_CLOUD_BLOOPER: paneName = "blooperTC" ;break; // Blooper
+            //case ITEMSETTING_CLOUD_MEGASTAR: paneName = "megastarTC" ;break; // Mega Star
+            //case ITEMSETTING_CLOUD_SHOCKBLOOPER: paneName = "shockblooperTC" ;break; // Shock Blooper
+            //case ITEMSETTING_CLOUD_SHOCKMEGA: paneName = "dizzyTC" ;break; // Dizzy
+            //case ITEMSETTING_CLOUD_MEGASHOCK: paneName = "cloudTC" ;break; // Cloud
+            default: paneName = "wanwan" // Placeholder // Char wanted funny wanwan pane lol
+            ;}break;
+        case FEATHER: paneName = "feather" ;break;
+        case TRIPLE_FEATHER: paneName = itemCount == 1 ? "feather" : itemCount == 2 ? "feather_2" : "feather_3" ;break;
+        case TRIPLE_FAKE_ITEM_BOX: paneName = "dummybox_3" ;break;
+        default: paneName = GetItemIconPaneName(id, itemCount);}
     return paneName;
 }
 kmCall(0x807f3648, ChangeItemWindowPane);

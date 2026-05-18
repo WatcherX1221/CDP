@@ -59,7 +59,22 @@ static void ApplyAreaGravityMultiplier(Kart::Physics& physics, float dt, float m
             gravityMultiplier = *settingAsFloat;
         }
     }
-    
+
+    switch ( System::sInstance->IsContextLOL(PHYS_GRAVITY_8)*8
+           + System::sInstance->IsContextLOL(PHYS_GRAVITY_4)*4
+           + System::sInstance->IsContextLOL(PHYS_GRAVITY_2)*2
+           + System::sInstance->IsContextLOL(PHYS_GRAVITY_1)) {
+        case(0x1): gravityMultiplier *= 1.1f   ;break;
+        case(0x2): gravityMultiplier *= 1.25f  ;break;
+        case(0x3): gravityMultiplier *= 1.5f   ;break;
+        case(0x4): gravityMultiplier *= 2.0f   ;break;
+        case(0x5): gravityMultiplier *= 5.0f   ;break;
+        case(0x6): gravityMultiplier *= 0.25f  ;break;
+        case(0x7): gravityMultiplier *= 0.5f   ;break;
+        case(0x8): gravityMultiplier *= 0.75f  ;break;
+        case(0x9): gravityMultiplier *= 0.9f   ;break;
+        default: break;} // No need to multiply something by 1
+
     physics.gravity *= gravityMultiplier;
     
     physics.Update(false, dt, maxSpeed);
