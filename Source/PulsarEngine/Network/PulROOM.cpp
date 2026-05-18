@@ -46,7 +46,7 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0) << PULSAR_HAW_1
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 1) << PULSAR_HAW_2
             //| (settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_LAYOUT) > 0) << PULSAR_LAYOUT // Used to speed up "In Order" rooms where transitions are otherwise unnecessary
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0) << CDP_DISREGARD
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_DISREGARD) << CDP_DISREGARD
         ;
         destPacket->hostSystemContextLOL
             = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),1) << LAP_MATHS_1
