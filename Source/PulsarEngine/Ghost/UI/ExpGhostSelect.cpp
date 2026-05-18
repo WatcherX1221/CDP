@@ -260,14 +260,14 @@ void BeforeEntranceAnimations(Pages::TTSplits* page) {
             }
             page->ctrlRaceTimeArray[0]->EnableFlashingAnimation();
             page->PlaySound(SOUND_ID_NEW_RECORD, -1);
-            if(System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_SAVED_GHOST);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
+            if(System::sInstance->IsContextLOL(TTS_VALID)) {page->savedGhostMessage.SetMessage(UI::BMG_SAVED_GHOST);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
 
         }
         else if (position < 0) page->ctrlRaceCount.isHidden = true;
         if (hasFlap || position >= 0) {
             bool gotTrophy = manager->SaveGhost(entry, position, hasFlap);
             if (gotTrophy) {
-                if(System::sInstance->IsContextLOL(LOLPACK_VALID_TTS)) {page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_EARNED);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
+                if(System::sInstance->IsContextLOL(TTS_VALID)) {page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_EARNED);} else page->savedGhostMessage.SetMessage(UI::BMG_TROPHY_INVALID);
             }
         }
     }
