@@ -4,6 +4,7 @@
 #include <MarioKartWii/Kart/KartCollision.hpp>
 #include <PulsarSystem.hpp>
 #include <Settings/SettingsParam.hpp>
+#include <Race/Feather.hpp>
 
 
 namespace Pulsar {
@@ -23,7 +24,7 @@ void MegaTC(Kart::Movement& movement, Kart::Collision& collision, int frames, in
             break;
         case ITEMSETTING_CLOUD_FEATHER: // Feather
             //movement.ActivateMushroom();
-            //ActivateFeather();
+            //feather.ApplyFeatherRemoteEffect();
             break;
         case ITEMSETTING_CLOUD_DEATH: // Death
             collision.ActivateOob(true, 0, false, 0);
