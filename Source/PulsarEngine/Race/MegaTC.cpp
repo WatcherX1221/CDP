@@ -26,7 +26,7 @@ void MegaTC(Kart::Movement& movement, Kart::Collision& collision, int frames, in
             //ActivateFeather();
             break;
         case ITEMSETTING_CLOUD_DEATH: // Death
-            collision.ActivateOob(true, 0, true, 0);
+            collision.ActivateOob(true, 0, false, 0);
             break;
         case ITEMSETTING_CLOUD_BLOOPER: // Blooper
             movement.ApplyInk(0);
