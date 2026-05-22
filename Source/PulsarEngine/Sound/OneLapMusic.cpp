@@ -57,7 +57,8 @@ static void CheckOneLapFinalMusic(Audio::RaceMgr* raceMgr) {
     // So for a 1 lap track: 1.0 = start, 2.0 = finish
     // 2/3 completion = 1.0 + (2/3 * 1.0) = 1.6667
     const float twoThirdsCompletion = 1.0f + (2.0f / 3.0f); // ~1.6667
-    
+
+    // Todo: Add switch case for every % we want to add. 
     if (player->raceCompletion < twoThirdsCompletion) return;
     
     // Get the speedup setting
