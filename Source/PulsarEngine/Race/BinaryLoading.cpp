@@ -25,7 +25,7 @@ static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const ch
         name = "ItemSlotDebalanced.bin";
         break;
     default:   // Vanilla
-        name = "ItemSlotVanilla.bin";
+        name = "ItemSlot.bin";
     }
     return archive->GetFile(type, name, length);
 }
