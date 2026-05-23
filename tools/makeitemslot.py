@@ -49,23 +49,23 @@ for x in range(len(filedata)): # x is filedata line
         read=False
         y=0 # y is table row
     if read:
-        if int(filedata[x][0])==y:
+        if int(filedata[x][0])==y: # if in table
             if y==0: itemdata.append([])
             itemdata[len(itemdata)-1].append([])
             y+=1
             for z in range(1, int(len(filedata[x]))): # z is column | itemdata uses z-1
-                if filedata[x][z]=='.': itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(0)
-                else: itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(int(filedata[x][z]))
+                if filedata[x][z]=='.': itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(0) # set 0 cell data
+                else: itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(int(filedata[x][z])) # set non-0 cell data
 print(itemdata)
 # Converts itemslot data to bytearray.
 bytecollect=[]
-bytecollect.append(len(itemdata))
-for x in range(len(itemdata)):
-    bytecollect.append(len(itemdata[x]))
-    bytecollect.append(len(itemdata[x][0]))
-    for y in range(len(itemdata[x])):
-        for z in range(len(itemdata[x][y])):
-            bytecollect.append(itemdata[x][y][z])
+bytecollect.append(len(itemdata)) # write number of tables
+for x in range(len(itemdata)): # for every table
+    bytecollect.append(len(itemdata[x][0])) # write number of columns in table
+    bytecollect.append(len(itemdata[x])) # write number of rows in table
+    for y in range(len(itemdata[x])): # for every row?
+        for z in range(len(itemdata[x][y])): # for every column?
+            bytecollect.append(itemdata[x][y][z]) # write cell data
 print(bytecollect)
 # Writes the file
 filename=input("Enter ItemSlot.bin name: ")
