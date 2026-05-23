@@ -5,6 +5,7 @@
 #include <MarioKartWii/KMP/KMPManager.hpp>
 #include <Race/200ccParams.hpp>
 #include <PulsarSystem.hpp>
+#include <Settings/Settings.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -64,15 +65,15 @@ static void ApplyAreaGravityMultiplier(Kart::Physics& physics, float dt, float m
            + System::sInstance->IsContextLOL(PHYS_GRAVITY_4)*4
            + System::sInstance->IsContextLOL(PHYS_GRAVITY_2)*2
            + System::sInstance->IsContextLOL(PHYS_GRAVITY_1)) {
-        case(0x1): gravityMultiplier *= 1.1f   ;break;
-        case(0x2): gravityMultiplier *= 1.25f  ;break;
-        case(0x3): gravityMultiplier *= 1.5f   ;break;
-        case(0x4): gravityMultiplier *= 2.0f   ;break;
-        case(0x5): gravityMultiplier *= 5.0f   ;break;
-        case(0x6): gravityMultiplier *= 0.25f  ;break;
-        case(0x7): gravityMultiplier *= 0.5f   ;break;
-        case(0x8): gravityMultiplier *= 0.75f  ;break;
-        case(0x9): gravityMultiplier *= 0.9f   ;break;
+        case(PHYSSETTING_GRAVITY_110): gravityMultiplier *= 1.1f   ;break;
+        case(PHYSSETTING_GRAVITY_125): gravityMultiplier *= 1.25f  ;break;
+        case(PHYSSETTING_GRAVITY_150): gravityMultiplier *= 1.5f   ;break;
+        case(PHYSSETTING_GRAVITY_200): gravityMultiplier *= 2.0f   ;break;
+        case(PHYSSETTING_GRAVITY_500): gravityMultiplier *= 5.0f   ;break;
+        case(PHYSSETTING_GRAVITY_025): gravityMultiplier *= 0.25f  ;break;
+        case(PHYSSETTING_GRAVITY_050): gravityMultiplier *= 0.5f   ;break;
+        case(PHYSSETTING_GRAVITY_075): gravityMultiplier *= 0.75f  ;break;
+        case(PHYSSETTING_GRAVITY_090): gravityMultiplier *= 0.9f   ;break;
         default: break;} // No need to multiply something by 1
 
     physics.gravity *= gravityMultiplier;

@@ -9,36 +9,12 @@
 #include <MarioKartWii/Kart/KartCollision.hpp>
 #include <MarioKartWii/Item/ItemBehaviour.hpp>
 
-// Credits to Brawlbox for Variety Pack common binary loading
 // Credits to Brawlbox for Accurate Roulette
 // Credits to Vega for Remove Mushroom Bug
 // Credits to Brawlbox for All Items Can Land
 
 namespace Pulsar {
 namespace Race{
-
-// Custom Roulette odds loading
-static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
-    switch( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-          + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-          + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) {
-    case(0x1): // Standard
-        name = "ItemSlotStandard.bin";
-        break;
-    case(0x2): // Mushrooms
-        name = "ItemSlotMushroom.bin";
-        break;
-    case(0x3): // Random
-        name = "ItemSlotRandom.bin";
-        break;
-    case(0x4): // Debalanced
-        name = "ItemSlotDebalanced.bin";
-        break;
-    default:   // Vanilla
-        name = "ItemSlotVanilla.bin";
-    }
-    return archive->GetFile(type, name, length);
-}
 
 // Accurate roulettes for supported modes
 static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxType, u8 position, ItemId prevRandomItem, bool r7){
@@ -58,11 +34,11 @@ static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxTyp
     return itemSlotData->DecideRouletteItem(itemBoxType, position, prevRandomItem, r7);
 }
 
-static int PatchMushroomBug() { // Needs testing
+static int PatchMushroomBug() { // Needs testing, not sure how to disable?
     if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
         + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
         + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return 0x0;
-    return -1;
+    return -1; // Change this value probably?
 }
 
 // All Items Can Land
@@ -116,30 +92,25 @@ static int ItemLanding() {
 }
 
 // Item Slot
-kmCall(0x807bb128, GetCustomItemSlot);
-kmCall(0x807bb030, GetCustomItemSlot);
-kmCall(0x807bb200, GetCustomItemSlot);
-kmCall(0x807bb53c, GetCustomItemSlot);
-kmCall(0x807bbb58, GetCustomItemSlot);
 // Accurate Roulette
 kmCall(0x807ba1e4, AccurateItemRoulette);
 kmCall(0x807ba428, AccurateItemRoulette);
 kmCall(0x807ba598, AccurateItemRoulette);
 // Mushroom Bug
-kmWritePointer(0x807BA077, PatchMushroomBug);
+// kmWritePointer(0x807BA077, PatchMushroomBug); // Needs testing.
 // All Items Can Land
-kmWritePointer(0x808b54b8, GroundCollisionShock);
-kmWritePointer(0x808b54d0, GroundCollisionMega);
-kmWritePointer(0x808b54f4, GroundCollisionPOW);
-kmWritePointer(0x808b5500, GroundCollisionGolden);
-kmWritePointer(0x808b550c, GroundCollisionBullet);
-//kmWritePointer(0x808b54e8, GroundCollisionFeather); // Already done in Pulsar
-kmWrite32(0x807A66C4, 0x60000000);
-kmWrite32(0x80796D30, 0x38600000);
-kmWrite32(0x80790EF0, 0x89840058); // Needs fixing. Item Landing is disabled entirely until fix is devised
-kmWrite32(0x80790EF4, 0x39600001);
-kmWrite32(0x80790EF8, 0x39400001);
-kmWrite32(0x80790EFC, 0x39200001);
+// kmWritePointer(0x808b54b8, GroundCollisionShock);
+// kmWritePointer(0x808b54d0, GroundCollisionMega);
+// kmWritePointer(0x808b54f4, GroundCollisionPOW);
+// kmWritePointer(0x808b5500, GroundCollisionGolden);
+// kmWritePointer(0x808b550c, GroundCollisionBullet);
+// kmWritePointer(0x808b54e8, GroundCollisionFeather); // Already done in Pulsar
+// kmWrite32(0x807A66C4, 0x60000000);
+// kmWrite32(0x80796D30, 0x38600000);
+// kmWrite32(0x80790EF0, 0x89840058); // Needs fixing. Item Landing is disabled entirely until fix is devised
+// kmWrite32(0x80790EF4, 0x39600001);
+// kmWrite32(0x80790EF8, 0x39400001);
+// kmWrite32(0x80790EFC, 0x39200001);
 
 } // namespace Race
 } // namespace Pulsar

@@ -6,6 +6,7 @@
 #include <MarioKartWii/Item/Obj/ObjProperties.hpp>
 #include <Race/200ccParams.hpp>
 #include <PulsarSystem.hpp>
+#include <Settings/Settings.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -27,17 +28,17 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
         lapMax9 = 1;
     };
     switch (System::sInstance->IsContextLOL(LAP_MATHS_1)+System::sInstance->IsContextLOL(LAP_MATHS_2)*2) {
-    case(0x1): // Exclusive
+    case(LAPSETTING_CALC_EXCLUDE): // Exclusive
         if (lapCount == 3) {
             lapCount = lapSetting;
         };
         break;
-    case(0x2): // Forced
+    case(LAPSETTING_CALC_FORCE): // Forced
         lapCount = lapSetting;
         break;
-    case(0x3): // EXPONENT DEBUG
-        lapCount = lapSetting*lapSetting*lapSetting;
-        break;
+//    case(LAPSETTING_CALC_EXPONENT): // EXPONENT DEBUG
+//        lapCount = lapSetting*lapSetting*lapSetting;
+//        break;
     default: // Calculated
         lapCount = ((lapCount * lapSetting + 1) / 3); // added 1 for rounding
         if (lapCount < 1) lapCount = 1;
@@ -75,43 +76,42 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     if(speedModConv.speedMod == 0.0f) speedModConv.speedMod = 1.0f;
     float factor = 1.0f;
 
-    //Blockface3 Speed Mod
-
+    // Speed Setting
     switch ( System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
            + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
            + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
            + System::sInstance->IsContextLOL(PHYS_SPEED_1)) {
-    case(0x1):
+    case(PHYSSETTING_SPEED_110):
         factor = 1.1f;
         break;
-    case(0x2):
+    case(PHYSSETTING_SPEED_125):
         factor = 1.25f;
         break;
-    case(0x3):
+    case(PHYSSETTING_SPEED_150):
         factor = 1.5f;
         break;
-    case(0x4):
+    case(PHYSSETTING_SPEED_175):
         factor = 1.75f;
         break;
-    case(0x5):
+    case(PHYSSETTING_SPEED_200):
         factor = 2.0f;
         break;
-    case(0x6):
+    case(PHYSSETTING_SPEED_300):
         factor = 3.0f;
         break;
-    case(0x7):
+    case(PHYSSETTING_SPEED_500):
         factor = 5.0f;
         break;
-    case(0x8):
+    case(PHYSSETTING_SPEED_999):
         factor = 100.0f;
         break;
-    case(0x9):
+    case(PHYSSETTING_SPEED_070):
         factor = 0.7f;
         break;
-    case(0xA):
+    case(PHYSSETTING_SPEED_080):
         factor = 0.8f;
         break;
-    case(0xB):
+    case(PHYSSETTING_SPEED_090):
         factor = 0.9f;
         break;
     default:
@@ -119,7 +119,49 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     }
     factor *= speedModConv.speedMod;
 
-    //End of custom code
+    // Lap-Based Speed Setting
+    //const u8 lapCount = racedata->racesScenario.settings.lapCount; // <- This will be useful!
+    //player->raceCompletion // <- This is our race completion
+/*
+    switch ( System::sInstance->IsContextWDD(LAP_SPEED_8)*8
+           + System::sInstance->IsContextWDD(LAP_SPEED_4)*4
+           + System::sInstance->IsContextWDD(LAP_SPEED_2)*2
+           + System::sInstance->IsContextWDD(LAP_SPEED_1)) {
+    case(LAPSETTING_SPEED_101):
+        factor *= 1.01f;
+        break;
+    case(LAPSETTING_SPEED_105):
+        factor *= 1.05f;
+        break;
+    case(LAPSETTING_SPEED_110):
+        factor *= 1.1f;
+        break;
+    case(LAPSETTING_SPEED_125):
+        factor *= 1.25f;
+        break;
+    case(LAPSETTING_SPEED_150):
+        factor *= 1.5f;
+        break;
+    case(LAPSETTING_SPEED_200):
+        factor *= 2.0f;
+        break;
+    case(LAPSETTING_SPEED_050):
+        factor *= 0.5f;
+        break;
+    case(LAPSETTING_SPEED_075):
+        factor *= 0.75f;
+        break;
+    case(LAPSETTING_SPEED_090):
+        factor *= 0.9f;
+        break;
+    case(LAPSETTING_SPEED_095):
+        factor *= 0.95f;
+        break;
+    case(LAPSETTING_SPEED_099):
+        factor *= 0.99f;
+        break;
+    default: break;
+*/
 
     Item::greenShellSpeed = 105.0f * factor;
     Item::redShellInitialSpeed = 75.0f * factor;
@@ -154,5 +196,13 @@ kmWrite32(0x80723D10, 0x281D0009);
 kmWrite32(0x80723D40, 0x3BA00009);
 
 kmWrite24(0x808AAA0C, 'PUL'); //time_number -> time_numPUL
+
+
+//Max Lap Fix [Toadette Hack Fan]
+kmWrite32(0x805328C0, 0x280000FF);
+kmWrite32(0x805336c8, 0x280000FF);
+kmWrite32(0x80534bcc, 0x280000FF);
+kmWrite32(0x80534360, 0x280000FF);
+
 }//namespace Race
 }//namespace Pulsar

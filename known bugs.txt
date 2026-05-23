@@ -1,2 +1,2 @@
 Host Always Wins is probably bugged and HAW In Order is unfinished
-Triple Feather item drops 1 feather
+For some reason, seemingly only 1 feather can be in play (should be 6)
