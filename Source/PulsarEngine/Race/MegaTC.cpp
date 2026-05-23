@@ -2,10 +2,10 @@
 #include <MarioKartWii/Item/Obj/Kumo.hpp>
 #include <MarioKartWii/Kart/KartMovement.hpp>
 #include <MarioKartWii/Kart/KartCollision.hpp>
+#include <MarioKartWii/System/Identifiers.hpp>
 #include <PulsarSystem.hpp>
 #include <Settings/SettingsParam.hpp>
 #include <Race/Feather.hpp>
-
 
 namespace Pulsar {
 namespace Race {
@@ -27,7 +27,9 @@ void MegaTC(Kart::Movement& movement, Kart::Collision& collision, int frames, in
             //feather.ApplyFeatherRemoteEffect();
             break;
         case ITEMSETTING_CLOUD_DEATH: // Death
-            collision.ActivateOob(true, 0, false, 0);
+            KCLTypeHolder typeholder;
+            typeholder.bitfield = KCL_BITFIELD_SOLID_FALL;
+            collision.ActivateOob(false, &typeholder, movement.IsCPU(), 0);
             break;
         case ITEMSETTING_CLOUD_BLOOPER: // Blooper
             movement.ApplyInk(0);
@@ -92,10 +94,10 @@ void LoadCorrectTCBRRES(Item::ObjKumo& objKumo, const char* mdlName, const char*
 //            objKumo.LoadGraphics("dizzyTC.brres", mdlName, shadowSrc, 1, anmParam,
 //            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
 //            break;
-//        case ITEMSETTING_CLOUD_MEGASHOCK: // Cloud
-//            objKumo.LoadGraphics("cloudTC.brres", mdlName, shadowSrc, 1, anmParam,
-//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
-//            break;
+        case ITEMSETTING_CLOUD_MEGASHOCK: // Cloud
+            objKumo.LoadGraphics("cloudTC.brres", mdlName, shadowSrc, 1, anmParam,
+            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+            break;
         default: //Shock
             objKumo.LoadGraphicsImplicitBRRES(mdlName, shadowSrc, 1, anmParam, static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr);
     }
