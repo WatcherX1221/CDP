@@ -302,9 +302,11 @@ void System::UpdateContext() {
 
     // Brake Drift needs to be calculated after room settings since it differs based on several settings
     isLolBrake &= (BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),2)| // If setting = 1X, always enable
-                  (!BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),1) // If setting = 01, disable. Else, check speedmod.
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > 1) // Lower bound 2 = 1.25x speed
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < 9) // Upper bound 8 = 100x speed
+                  (!BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),1) // If setting = 01, disable. Else, check speedmod & gravmod
+                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 >= 2) // Lower bound 2 = 1.25x speed
+                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 <= 8) // Upper bound 8 = 100x speed
+                  )|((cdpGravity1+cdpGravity2*2+cdpGravity3*4+cdpGravity4*8 >= 6) // Lower bound 6 = 0.25x gravity
+                  & (cdpGravity1+cdpGravity2*2+cdpGravity3*4+cdpGravity4*8 <= 8) // Upper bound 8 = 0.75x gravity
                   )); // AND assignment since we need to know if brakedrifting is allowed
 
     // Validate Time Trials
