@@ -38,7 +38,7 @@ for line in enumerate(file):
     if filedata[len(filedata)-1]==[]:
         filedata.pop(len(filedata)-1)
 file.close()
-print(filedata)
+#print(filedata)
 # Converts data to represent the expected itemslot data.
 for x in range(len(filedata)): # x is filedata line
     read=False
@@ -57,16 +57,25 @@ for x in range(len(filedata)): # x is filedata line
                 if filedata[x][z]=='.': itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(0) # set 0 cell data
                 else: itemdata[len(itemdata)-1][len(itemdata[len(itemdata)-1])-1].append(int(filedata[x][z])) # set non-0 cell data
 print(itemdata)
+# Check for any significant errors in the data structure
+z=0
+for x in range(len(itemdata)): # for every table
+    for z in range(len(itemdata[x][0])): # for every column
+        sumcheck=0 # check the sum
+        if len(itemdata[x][z]) != len(itemdata[x][0]): print("Inconsistent table size?")
+        for y in range(len(itemdata[x])): # for every row
+            sumcheck+=itemdata[x][y][z] # add value of every row
+        if sumcheck != 200 and (x!=5 and y<=12) or sumcheck > 200: print("Column "+str(z+1)+" of table "+str(x+1)+" does not equal 200 ("+str(sumcheck)+")")
 # Converts itemslot data to bytearray.
 bytecollect=[]
 bytecollect.append(len(itemdata)) # write number of tables
 for x in range(len(itemdata)): # for every table
     bytecollect.append(len(itemdata[x][0])) # write number of columns in table
     bytecollect.append(len(itemdata[x])) # write number of rows in table
-    for y in range(len(itemdata[x])): # for every row?
-        for z in range(len(itemdata[x][y])): # for every column?
+    for y in range(len(itemdata[x])): # for every row
+        for z in range(len(itemdata[x][y])): # for every column
             bytecollect.append(itemdata[x][y][z]) # write cell data
-print(bytecollect)
+#print(bytecollect)
 # Writes the file
 filename=input("Enter ItemSlot.bin name: ")
 file=open(filename,"bw")
