@@ -65,7 +65,7 @@ for x in range(len(itemdata)): # for every table
         if len(itemdata[x][z]) != len(itemdata[x][0]): print("Inconsistent table size?")
         for y in range(len(itemdata[x])): # for every row
             sumcheck+=itemdata[x][y][z] # add value of every row
-        if sumcheck != 200 and (x!=5 and y<=12) or sumcheck > 200: print("Column "+str(z+1)+" of table "+str(x+1)+" does not equal 200 ("+str(sumcheck)+")")
+        if sumcheck != 200 and sumcheck != 0: print("Column "+str(z+1)+" of table "+str(x+1)+" does not equal 200 ("+str(sumcheck)+")")
 # Converts itemslot data to bytearray.
 bytecollect=[]
 bytecollect.append(len(itemdata)) # write number of tables
