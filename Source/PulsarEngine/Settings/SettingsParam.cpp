@@ -36,7 +36,7 @@ u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount
     {  0,  0,  0,  0,  0}, // Host
     {  4,  4,  0,  0,  0}, // OTTKO
     {  0,  0,  0,  0,  0}, // Audio
-    { 10,  5, 23,  0,  0}, // Item
+    { 10,  5, 25,  0,  0}, // Item
     { 10, 12,  0,  0,  0}, // Physics
     { 11,  9,  0,  0,  0}  // Lap
 };
