@@ -242,7 +242,7 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
             + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
             + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
             ) {
-            case ITEMSETTING_CLOUD_SHOCK: paneName = GetItemIconPaneName(id, itemCount) ;break; //Shock;
+            case ITEMSETTING_CLOUD_SHOCK: GetItemIconPaneName(id, itemCount); //Shock;
             case ITEMSETTING_CLOUD_MEGA: paneName = "megaTC" ;break; // Mega
             case ITEMSETTING_CLOUD_STAR: paneName = "starTC" ;break; // Star
             //case ITEMSETTING_CLOUD_FEATHER: paneName = "featherTC" ;break; // Feather
@@ -257,6 +257,8 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
         case FEATHER: paneName = "feather" ;break;
         case TRIPLE_FEATHER: paneName = itemCount == 1 ? "feather" : itemCount == 2 ? "feather_2" : "feather_3" ;break;
         case TRIPLE_FAKE_ITEM_BOX: paneName = "dummybox_3" ;break;
+        case GREEN_SHELL_MUSHROOM: paneName = "ctdn_green" ;break;
+        case BOBOMB_MUSHROOM: paneName = "ctdn_bomb" ;break;
         default: paneName = GetItemIconPaneName(id, itemCount);}
     return paneName;
 }
