@@ -1,2 +1,3 @@
 Host Always Wins is probably bugged and HAW In Order is unfinished
-For some reason, seemingly only 1 feather can be in play (should be 6)
+Triple feather only drops one feather
+Extended items don't work online
