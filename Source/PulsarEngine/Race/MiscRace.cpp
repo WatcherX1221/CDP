@@ -242,7 +242,7 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
             + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
             + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
             ) {
-            case ITEMSETTING_CLOUD_SHOCK: GetItemIconPaneName(id, itemCount); //Shock;
+            case ITEMSETTING_CLOUD_SHOCK: paneName = GetItemIconPaneName(id, itemCount) ;break; //Shock;
             case ITEMSETTING_CLOUD_MEGA: paneName = "megaTC" ;break; // Mega
             case ITEMSETTING_CLOUD_STAR: paneName = "starTC" ;break; // Star
             //case ITEMSETTING_CLOUD_FEATHER: paneName = "featherTC" ;break; // Feather
