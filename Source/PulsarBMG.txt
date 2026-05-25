@@ -336,8 +336,10 @@
  66072	= Pow Block
  66073	= Bullet Bill
  66074	= Lightning
- 66075	= None
- 66076	= Mushroom
+ 66075	= Shroom Green
+ 66076	= Shroom Bomb
+ 66077	= None
+ 66078	= Mushroom
  66200	= Thunderclouds behave normally.
  66201	= Clouds inflict a Mega Mushroom effect.
  66202	= Clouds inflict a Star Invincibility effect.
@@ -374,8 +376,10 @@
  66612	= Start with a Pow Block.
  66613	= Start with a Bullet Bill.
  66614	= Start with Lightning.
- 66615	= Do not start with any items.
- 66616	= Start with a Mushroom.
+ 66615	= Start with a Mushroom and Green Shell.
+ 66616	= Start with a Mushroom and Bob-Omb.
+ 66617	= Do not start with any items.
+ 66618	= Start with a Mushroom.
  67000	= Brake Drifting
  67001	= Turbo Style
  67020	= Standard
