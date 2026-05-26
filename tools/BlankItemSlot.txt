@@ -78,6 +78,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200
 
@@ -114,6 +116,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200
 
@@ -150,6 +154,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200
 
@@ -186,6 +192,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200
 
@@ -222,6 +230,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200
 
@@ -258,6 +268,8 @@ USE-SLT    = 0  # information only
    21    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  # Feather
    22    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  # Triple Feather
    23    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  # Triple Fake Item Box
+   24    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Green
+   25    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  # Shroom Bomb
 #-----------------------------------------------------------------------#-------------------------
 #SUM:  200 200 200 200 200 200 200 200 200 200 200 200   0   0   0   0
 
@@ -294,6 +306,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
@@ -330,6 +344,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
@@ -366,6 +382,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
@@ -402,6 +420,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
@@ -438,6 +458,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
@@ -474,6 +496,8 @@ USE-SLT    = 0  # information only
    21    .   .   .  # Feather
    22    .   .   .  # Triple Feather
    23    .   .   .  # Triple Fake Item Box
+   24    .   .   .  # Shroom Green
+   25    .   .   .  # Shroom Bomb
 #-------------------#-------------------------
 #SUM:  200 200 200
 
