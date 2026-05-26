@@ -1,16 +1,14 @@
 #include <MarioKartWii/Item/ItemManager.hpp>
 #include <MarioKartWii/Item/Obj/Kumo.hpp>
 #include <MarioKartWii/Kart/KartMovement.hpp>
-#include <MarioKartWii/Kart/KartCollision.hpp>
-#include <MarioKartWii/System/Identifiers.hpp>
 #include <PulsarSystem.hpp>
 #include <Settings/SettingsParam.hpp>
-#include <Race/Feather.hpp>
+
 
 namespace Pulsar {
 namespace Race {
 //Mega TC
-void MegaTC(Kart::Movement& movement, Kart::Collision& collision, int frames, int unk0, int unk1) {
+void MegaTC(Kart::Movement& movement, int frames, int unk0, int unk1) {
     switch ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
            + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
            + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
@@ -23,13 +21,12 @@ void MegaTC(Kart::Movement& movement, Kart::Collision& collision, int frames, in
             movement.ActivateStar();
             break;
         case ITEMSETTING_CLOUD_FEATHER: // Feather
-            //movement.ActivateMushroom();
-            //feather.ApplyFeatherRemoteEffect();
+            movement.ActivateMushroom();
+            //ActivateFeather();
             break;
         case ITEMSETTING_CLOUD_DEATH: // Death
-            KCLTypeHolder typeholder;
-            typeholder.bitfield = KCL_BITFIELD_SOLID_FALL;
-            collision.ActivateOob(false, &typeholder, movement.IsCPU(), 0);
+            //movement.ApplyLightningEffect(frames, unk0, unk1);
+            //movement.DoRespawn();
             break;
         case ITEMSETTING_CLOUD_BLOOPER: // Blooper
             movement.ApplyInk(0);
