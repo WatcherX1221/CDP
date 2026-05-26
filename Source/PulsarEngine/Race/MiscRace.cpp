@@ -135,11 +135,11 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
         inventory.currentItemCount = 1;
         break;
     case ITEMSETTING_START_SGRN:
-        id = LIGHTNING;
+        id = GREEN_SHELL_MUSHROOM;
         inventory.currentItemCount = 1;
         break;
     case ITEMSETTING_START_SBOM:
-        id = LIGHTNING;
+        id = BOBOMB_MUSHROOM;
         inventory.currentItemCount = 1;
         break;
     default:
