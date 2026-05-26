@@ -128,19 +128,34 @@ void OnButtonSelect(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId
         bmgId = BMG_TT_MODE_BOTTOM_SINGLE;
         if(!System::sInstance->IsContextLOL(TTS_VALID)) bmgId+=4;
         else {
-            if( System::sInstance->IsContextLOL(PHYS_SPEED_1)
-              + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
-              + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
-              + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
-              == 3) bmgId +=1;
-            if( System::sInstance->IsContextLOL(ITEM_START_1)
-              + System::sInstance->IsContextLOL(ITEM_START_2)*2
-              + System::sInstance->IsContextLOL(ITEM_START_4)*4
-              == 1) bmgId +=2;
-            else if( System::sInstance->IsContextLOL(ITEM_START_1)
-                   + System::sInstance->IsContextLOL(ITEM_START_2)*2
-                   + System::sInstance->IsContextLOL(ITEM_START_4)*4
-                   != 0) bmgId = BMG_TT_MODE_BOTTOM_SINGLE + 4;
+            const u8 speedContext = System::sInstance->IsContextLOL(PHYS_SPEED_1)
+                                  + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
+                                  + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
+                                  + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8;
+            const bool itemBool   = System::sInstance->IsContextLOL(ITEM_START_ENABLED);
+            const u8 itemContext  = System::sInstance->IsContextLOL(ITEM_START_1)
+                                  + System::sInstance->IsContextLOL(ITEM_START_2)*2
+                                  + System::sInstance->IsContextLOL(ITEM_START_4)*4
+                                  + System::sInstance->IsContextLOL(ITEM_START_8)*8
+                                  + System::sInstance->IsContextLOL(ITEM_START_16)*16;
+            switch (speedContext) {
+                case PHYSSETTING_SPEED_100: break;
+                case PHYSSETTING_SPEED_150: bmgId +=1; break;
+                default:
+                    bmgId = BMG_TT_MODE_BOTTOM_SINGLE + 4;
+                    page->bottomText->SetMessage(bmgId);
+                    return;
+            }
+            if (itemBool) {
+                switch (itemContext) {
+                    case ITEMSETTING_START_3MUS: break;
+                    case ITEMSETTING_START_3FEA: bmgId +=2; break;
+                    default:
+                        bmgId = BMG_TT_MODE_BOTTOM_SINGLE + 4;
+                        page->bottomText->SetMessage(bmgId);
+                        return;
+                }
+            } // Else item = 3MUS, which is valid and shows correct BMG.
         }
         page->bottomText->SetMessage(bmgId);
     }
@@ -190,23 +205,24 @@ void OnButtonClick(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId)
         //keep in mind that 200cc is done via speedsetting now, so 200cc tt validity is hence based on that
 
         //lolpack divider
-        const int speedContext = ( System::sInstance->IsContextLOL(PHYS_SPEED_1)
-                                 + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
-                                 + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
-                                 + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
-                                 );
-        const int itemContext = ( System::sInstance->IsContextLOL(ITEM_START_1)
-                                + System::sInstance->IsContextLOL(ITEM_START_2)*2
-                                + System::sInstance->IsContextLOL(ITEM_START_4)*4
-                                );
+        const u8 speedContext = System::sInstance->IsContextLOL(PHYS_SPEED_1)
+                              + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
+                              + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
+                              + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8;
+        const bool itemBool   = System::sInstance->IsContextLOL(ITEM_START_ENABLED);
+        const u8 itemContext  = System::sInstance->IsContextLOL(ITEM_START_1)
+                              + System::sInstance->IsContextLOL(ITEM_START_2)*2
+                              + System::sInstance->IsContextLOL(ITEM_START_4)*4
+                              + System::sInstance->IsContextLOL(ITEM_START_8)*8
+                              + System::sInstance->IsContextLOL(ITEM_START_16)*16;
         TTMode mode = TTMODE_UNRESTRICTED;
         if(System::sInstance->IsContextLOL(TTS_VALID)) {
-            if(itemContext == 0) {
-                if(speedContext==0) mode = TTMODE_150;
+            if(itemContext == ITEMSETTING_START_3MUS || itemBool == false) {
+                if(speedContext==PHYSSETTING_SPEED_100) mode = TTMODE_150;
                 else mode = TTMODE_200;
             }
-            else if(itemContext == 1) {
-                if(speedContext==0) mode = TTMODE_150_FEATHER;
+            else if(itemContext == ITEMSETTING_START_3FEA) {
+                if(speedContext==PHYSSETTING_SPEED_100) mode = TTMODE_150_FEATHER;
                 else mode = TTMODE_200_FEATHER;
             }
         }
