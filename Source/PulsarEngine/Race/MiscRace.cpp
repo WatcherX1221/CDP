@@ -134,6 +134,14 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
         id = LIGHTNING;
         inventory.currentItemCount = 1;
         break;
+    case ITEMSETTING_START_SGRN:
+        id = LIGHTNING;
+        inventory.currentItemCount = 1;
+        break;
+    case ITEMSETTING_START_SBOM:
+        id = LIGHTNING;
+        inventory.currentItemCount = 1;
+        break;
     default:
         id = ITEM_NONE;
     }}
