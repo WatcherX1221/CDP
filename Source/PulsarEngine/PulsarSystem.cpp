@@ -310,7 +310,7 @@ void System::UpdateContext() {
                   )); // AND assignment since we need to know if brakedrifting is allowed
 
     // Validate Time Trials
-    bool isValidTT = ! // NOT gate result
+    bool isValidTT = ! // NOT gate result // (every bit should be 0 for valid time trials)
                      //Valid lapcount would be 0000, = 3. (It'd be better to check directly with kmp, but not possible for most menus.)
                      (lolLaps1 |lolLaps2 |lolLaps3 |lolLaps4
                      // Valid gravity is 0000
@@ -319,15 +319,13 @@ void System::UpdateContext() {
                      |lolLapType2
                      //if speed is high, ignore as this is enabled anyway.
                      |(isLolBrake
-                         ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > 1) // Lower bound 2 = 1.25x speed
-                         & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < 9) // Upper bound 8 = 100x speed
+                         ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > PHYSSETTING_SPEED_125) // Lower bound 2 = 1.25x speed
+                         & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < PHYSSETTING_SPEED_999) // Upper bound 8 = 100x speed
                      ))
+                     //don't need to run above check for gravity as it is never valid
                      // Verify UMT setting matches pack setting
                      |(this->info.HasUMTs() != isUMTs1)
                      |isUMTs2 // high setting check
-                     // We run into a slight problem here - TT items depend on the mode, selected via menu buttons
-                     // Eventual solution - Condense all buttons into settings
-                     // Temporary solution - Make all buttons do the same thing lmao
                      );
 
 // Extra validity notes:
