@@ -11,11 +11,11 @@
 #include <Extensions/ItemExpansion/ItemObjDrop.hpp>
 
 static const u32 ORIGINAL_ITEM_COUNT = 19;
-static const u32 EXPANDED_ITEM_COUNT = 24;
+static const u32 EXPANDED_ITEM_COUNT = 26;
 
 extern "C" {
-    Item::Behavior expandedBehaviourTable[24];
-    u16 expandedAccumulator[24];
+    Item::Behavior expandedBehaviourTable[26];
+    u16 expandedAccumulator[26];
 }
 
 extern "C" void* __nwa__FUl(u32 size);
