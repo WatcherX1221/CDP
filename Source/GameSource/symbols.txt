@@ -1896,3 +1896,5 @@ ProcessRecvEVENT__Q24Item9ObjHolderFQ25RKNet11EVENTActionUsRCQ34Item11EVENTBuffe
 ActivateOob__Q24Kart9CollisionFbP13KCLTypeHolderbi = 0x80573b00
 IsCPU__Q24Kart4LinkCFv = 0x80590664
 ActivateMushroom__Q24Kart8MovementFv = 0x8057f3d8
+beginFrame= 0x8020fe24
+Update__20GameScreenEffectsMgrFv = 0x8054f1b0
