@@ -396,6 +396,7 @@
  67402	= Build Mini-Turbos by switching drift angle.
  68000	= Gravity Modifier
  68001	= Speed Modifier
+ 68002	= Vehicle Stats
  68020	= 1.0x
  68021	= 1.1x
  68022	= 1.25x
@@ -418,6 +419,8 @@
  68049	= 0.7x
  6804A	= 0.8x
  6804B	= 0.9x
+ 68060	= Vanilla
+ 68061	= Platinum
  68200	= Normal gravity.
  68201	= Slightly stronger gravity.
  68202	= Stronger gravity.
@@ -440,6 +443,8 @@
  68409  = Battle speed.
  6840A  = 50cc class for beginners.
  6840B  = 100cc class for amateurs.
+ 68600  = Vanilla vehicle properties.
+ 68601  = Every vehicle has perfect stats!
  69000  = Lap Calculation
  69020  = Calculated
  69200  = The lap count setting will account for track length.
