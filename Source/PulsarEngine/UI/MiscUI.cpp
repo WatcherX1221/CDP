@@ -23,6 +23,32 @@ kmWrite32(0x80855f48, 0x48000148);
 //BMG size patch (Diamond)
 kmWrite32(0x8007B37C, 0x38000128);
 
+//Always Show Timer on Vote Screen [Chadderz]
+kmWrite32(0x80650254, 0x60000000);
+
+//Instant Course Voting [Ro]
+kmWrite32(0x80643BC4, 0x60000000);
+kmWrite32(0x80643C2C, 0x60000000);
+
+//Cancel Froom Join [Ro]
+extern "C" void sInstance__Q25Input7Manager(void*);
+asmFunc CancelFroomJoin() {
+    ASM(
+    nofralloc;
+  lis       r31, sInstance__Q25Input7Manager@ha;
+  lwz       r31, sInstance__Q25Input7Manager@l(r31);
+  lhz       r31, 0x60(r31);
+  andi.     r31, r31, 0x2;
+  beq-      loc_0x18;
+  li        r3, 0x3;
+
+loc_0x18:
+  cmpwi     r3, 0x3;
+  blr;
+    )
+}
+kmCall(0x805DD85C, CancelFroomJoin);
+
 static PageId AfterWifiResults(PageId id) {
     const SectionMgr* sectionMgr = SectionMgr::sInstance;
     const System* system = System::sInstance;
