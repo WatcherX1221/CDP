@@ -9,23 +9,14 @@ namespace Race {
 
 // Custom Roulette odds loading
 static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
-    switch( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-          + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-          + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)-1) { // Subtract 1 to maintain parity with zero vanilla
-    case(ITEMSETTING_ROULETTE_STANDARD): // Standard
-        name = "ItemSlotStandard.bin";
-        break;
-    case(ITEMSETTING_ROULETTE_MUSHROOMS): // Mushrooms
-        name = "ItemSlotMushroom.bin";
-        break;
-    case(ITEMSETTING_ROULETTE_RANDOM): // Random
-        name = "ItemSlotRandom.bin";
-        break;
-    case(ITEMSETTING_ROULETTE_DEBALANCED): // Debalanced
-        name = "ItemSlotDebalanced.bin";
-        break;
-    default:   // Vanilla
-        name = "ItemSlot.bin";
+    switch ( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
+           + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
+           + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)-1) { // Subtract 1 to maintain parity with zero vanilla
+        case ITEMSETTING_ROULETTE_STANDARD:   name = "ItemSlotStandard.bin"; break;
+        case ITEMSETTING_ROULETTE_MUSHROOMS:  name = "ItemSlotMushroom.bin"; break;
+        case ITEMSETTING_ROULETTE_RANDOM:     name = "ItemSlotRandom.bin"; break;
+        case ITEMSETTING_ROULETTE_DEBALANCED: name = "ItemSlotDebalanced.bin"; break;
+    default: name = "ItemSlot.bin";
     }
     return archive->GetFile(type, name, length);
 }
@@ -39,17 +30,14 @@ kmCall(0x807bbdd4, GetCustomItemSlot);
 kmCall(0x807bbf50, GetCustomItemSlot);
 
 // Custom Vehicle Stat Loading
-/*
-static void *GetCustomKartParam(ArchiveRoot *archive, ArchiveSource type, const char *name, u32 *length){
-    const Gamemode gamemode = System::GetGamemode();
-    if (gamemode != GAMEMODE_NONE){ 
-        name = "CUSTOM_kartParam.bin"; // rename this to whatever you want
+static void *GetCustomKartParam(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
+    switch (System::sInstance->IsContextWDD(PHYS_KARTSTAT_1)) {
+        case PHYSSETTING_KARTSTAT_PLATINUM: name = "kartParamPlatinum.bin"; break;
+        default: name = "kartParam.bin";
     }
     return archive->GetFile(type, name, length);
 }
 kmCall(0x80591a30, GetCustomKartParam);
-*/ // Unimplemented as of yet
 
 } // namespace Race
-
 } // namespace Pulsar
