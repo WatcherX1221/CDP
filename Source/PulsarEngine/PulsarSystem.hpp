@@ -67,11 +67,12 @@ enum ContextLOL { // 24 Context Bits
     ITEM_START_16
 };
 
-enum ContextWDD {
+enum ContextWDD { // 5 Context Bits
     ITEM_CLOUD_1,
     ITEM_CLOUD_2,
     ITEM_CLOUD_4,
-    ITEM_CLOUD_8
+    ITEM_CLOUD_8,
+    PHYS_KARTSTAT_1
 };
 
 

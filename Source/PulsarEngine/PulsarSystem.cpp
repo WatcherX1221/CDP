@@ -167,7 +167,7 @@ void System::UpdateContext() {
     bool wddtceffect2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),2);
     bool wddtceffect3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),3);
     bool wddtceffect4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),4);
-    //bool cdpVehicleStats = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS); // Needs actual settings - hurry up and work on those vehicle stat edits!
+    bool cdpVehicleStats1 = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -211,14 +211,15 @@ void System::UpdateContext() {
                 lolRoulette1 = 1;
                 lolRoulette2 = 0;
                 lolRoulette3 = 0;
+                // Standard Vehicle Stats
+                cdpVehicleStats1 = 0;
                 // Thundercloud // Take MegaTC from pack creator settings
                 wddtceffect1 = this->info.HasMegaTC();
                 wddtceffect2 = 0;
                 wddtceffect3 = 0;
                 wddtceffect4 = 0;
-                // Starting Items
-                lolTTitembool = 0;
                 // Starting item // Unconditionally used in OTT regionals, so it's important to set this!
+                lolTTitembool = 0;
                 lolTTitem1 = 0;
                 lolTTitem2 = 0;
                 lolTTitem3 = 0;
@@ -279,6 +280,7 @@ void System::UpdateContext() {
                     wddtceffect2 = newContextWDD & (1 << ITEM_CLOUD_2);
                     wddtceffect3 = newContextWDD & (1 << ITEM_CLOUD_4);
                     wddtceffect4 = newContextWDD & (1 << ITEM_CLOUD_8);
+                    cdpVehicleStats1 = newContextWDD & (1 << PHYS_KARTSTAT_1);
                     }//end of tc
                 break;
             default:
@@ -322,10 +324,12 @@ void System::UpdateContext() {
                          ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > PHYSSETTING_SPEED_125) // Lower bound 2 = 1.25x speed
                          & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < PHYSSETTING_SPEED_999) // Upper bound 8 = 100x speed
                      ))
-                     //don't need to run above check for gravity as it is never valid
+                     //don't need to run that check for gravity as it is never valid
                      // Verify UMT setting matches pack setting
                      |(this->info.HasUMTs() != isUMTs1)
                      |isUMTs2 // high setting check
+                     // Disallow vehicle stat edits
+                     |cdpVehicleStats1
                      );
 
 // Extra validity notes:
@@ -388,7 +392,8 @@ void System::UpdateContext() {
                 |=(wddtceffect1 << ITEM_CLOUD_1)
                 | (wddtceffect2 << ITEM_CLOUD_2)
                 | (wddtceffect3 << ITEM_CLOUD_4)
-                | (wddtceffect4 << ITEM_CLOUD_8);
+                | (wddtceffect4 << ITEM_CLOUD_8)
+                | (cdpVehicleStats1 << PHYS_KARTSTAT_1);
     }
     this->contextPul = contextPul;
     this->contextLOL = contextLOL;
