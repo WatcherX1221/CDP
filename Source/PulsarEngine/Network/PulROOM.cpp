@@ -78,6 +78,7 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),2) << ITEM_CLOUD_2
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),3) << ITEM_CLOUD_4
             | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),4) << ITEM_CLOUD_8
+            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS),1) << PHYS_KARTSTAT_1
         ;
 
         u8 raceCount;
