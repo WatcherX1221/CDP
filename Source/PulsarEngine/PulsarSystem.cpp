@@ -12,7 +12,6 @@
 #include <Config.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
 #include <core/egg/DVD/DvdRipper.hpp>
-#include <BlFa3/VariousUtilityFunctions.hpp>
 namespace Pulsar {
 
 System* System::sInstance = nullptr;
@@ -120,172 +119,130 @@ void System::UpdateContext() {
     this->ottVoteState = OTT::COMBO_NONE;
     const Settings::Mgr& settings = Settings::Mgr::Get();
 
-    // try not to exceed 24 context bits because we think it causes problems
-    // pulsar divider -- 11 context bits
-
+    // Radio Contexts
     bool isCT = true;
-    bool isLOL = true;
-    bool isHAW = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0;
-    bool lolHAW = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 1;
+    bool isPUL = true;
+    u8   hostWins = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS);
     bool isKO = false;
     bool isOTT = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGOTT_VERSUS);
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
-    bool cdpDisregard = false;
-    bool isUMTs1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO),1);
-    bool isUMTs2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO),2);
+    bool isDisregard = false;
+    u8   turboStyle = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO);
+    u8   lapMaths = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC);
+    bool isItemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED);
+    bool isBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
 
-    // lolpack divider -- 23+1 context bits (TTVALID)
-
-    bool lolLapType1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),1);
-    bool lolLapType2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),2);
-    bool lolLaps1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),1);
-    bool lolLaps2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),2);
-    bool lolLaps3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),3);
-    bool lolLaps4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),4);
-    bool lolSpeeds1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),1);
-    bool lolSpeeds2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),2);
-    bool lolSpeeds3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),3);
-    bool lolSpeeds4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),4);
-    bool cdpGravity1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),1);
-    bool cdpGravity2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),2);
-    bool cdpGravity3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),3);
-    bool cdpGravity4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),4);
-    // It's important to define the last setting of lolRoulette as 0, so add one and mod by highest setting value.
-    bool lolRoulette1 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,1);
-    bool lolRoulette2 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,2);
-    bool lolRoulette3 = BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%6,3);
-    bool lolTTitem1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),1);
-    bool lolTTitem2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),2);
-    bool lolTTitem3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),3);
-    bool lolTTitem4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),4);
-    bool lolTTitem5 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),5);
-    bool lolTTitembool = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED);
-
-    // wdd & cdp divider -- 4 context bits
-
-    bool wddtceffect1 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),1);
-    bool wddtceffect2 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),2);
-    bool wddtceffect3 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),3);
-    bool wddtceffect4 = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),4);
-    bool cdpVehicleStats1 = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
+    // Large Contexts
+    u8 lapsLaps = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS);
+    u8 physSpeed = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED);
+    u8 physGravity = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV);
+    u8 itemRoulette = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE);
+    u8 itemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START);
+    u8 itemCloudEffect = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD);
+    u8 physVehicleStats = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
     Network::Mgr& netMgr = this->netMgr;
     const u32 sceneId = GameScene::GetCurrent()->id;
 
-    //bool is200 = racedataSettings.engineClass == CC_100 && this->info.Has200cc(); //unused
-    bool isFeather = this->info.HasFeather();
-    //bool isUMTs = this->info.HasUMTs(); // The normal definition for umts is undesirable now that we have trophy validation
-    //bool isMegaTC = this->info.HasMegaTC(); // Unused because of settings
+    // Config.pul contexts:
+    //bool is200 = racedataSettings.engineClass == CC_100 && this->info.Has200cc();
+    //bool isFeather = this->info.HasFeather();
+    //bool isUMTs = this->info.HasUMTs();
+    //bool isMegaTC = this->info.HasMegaTC();
 
-    bool isLolBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
-
-    u32 newContextPul = 0;
-    u32 newContextLOL = 0;
-    u32 newContextWDD = 0;
+    u32 newRadioContexts = 0;
+    u8 newLapsLaps = 0;
+    u8 newSpeedMod = 0;
+    u8 newGravMod = 0;
+    u8 newRouletteBin = 0;
+    u8 newKartBin = 0;
+    u8 newItemStart = 0;
+    u8 newCloudEffect = 0;
 
     if(sceneId != SCENE_ID_GLOBE && controller->connectionState != RKNet::CONNECTIONSTATE_SHUTDOWN) {
         switch(controller->roomType) {
             case(RKNet::ROOMTYPE_VS_REGIONAL): // Reset gameplay altering settings to default to keep regionals healthy!
-                isLolBrake = 1; // Is Brake Drift Allowed? (I'll say yes because I'm nice!)
-                // Calculated Laps
-                lolLapType1 = 0;
-                lolLapType2 = 0;
-                // 3 Laps
-                lolLaps1 = 0;
-                lolLaps2 = 0;
-                lolLaps3 = 0;
-                lolLaps4 = 0;
-                // 1.0x Speed
-                lolSpeeds1 = 0;
-                lolSpeeds2 = 0;
-                lolSpeeds3 = 0;
-                lolSpeeds4 = 0;
-                // 1.0x Gravity
-                cdpGravity1 = 0;
-                cdpGravity2 = 0;
-                cdpGravity3 = 0;
-                cdpGravity4 = 0;
-                // Standard Roulette
-                lolRoulette1 = 1;
-                lolRoulette2 = 0;
-                lolRoulette3 = 0;
-                // Standard Vehicle Stats
-                cdpVehicleStats1 = 0;
-                // Thundercloud // Take MegaTC from pack creator settings
-                wddtceffect1 = this->info.HasMegaTC();
-                wddtceffect2 = 0;
-                wddtceffect3 = 0;
-                wddtceffect4 = 0;
-                // Starting item // Unconditionally used in OTT regionals, so it's important to set this!
-                lolTTitembool = 0;
-                lolTTitem1 = 0;
-                lolTTitem2 = 0;
-                lolTTitem3 = 0;
-                lolTTitem4 = 0;
-                lolTTitem5 = 0;
-                // Turbo Style // Take UMTs from pack creator settings
-                isUMTs1 = this->info.HasUMTs();
-                isUMTs2 = 0;
+
+                // Variable based on config
+                switch(racedataSettings.engineClass) {
+                    case(CC_100):
+                        if(this->info.Has200cc()) physSpeed = PHYSSETTING_SPEED_150;
+                        else physSpeed = PHYSSETTING_SPEED_100; // Not entirely sure how this works
+                        break;
+                    case(CC_150): physSpeed = PHYSSETTING_SPEED_100 ;break;
+                    //case(CC_MIRROR): physSpeed = PHYSSETTING_SPEED_100 ;break;
+                    case(CC_BATTLE): physSpeed = PHYSSETTING_SPEED_100 ;break;
+                    default: physSpeed = PHYSSETTING_SPEED_100;
+                }
+                if(this->info.HasMegaTC()) itemCloudEffect = ITEMSETTING_CLOUD_MEGA;
+                else itemCloudEffect = ITEMSETTING_CLOUD_SHOCK;
+                if(this->info.HasUMTs()) turboStyle = PHYSSETTING_TURBO_UMT;
+                else turboStyle = PHYSSETTING_TURBO_VANILLA;
+
+                // Constant
+                isBrake = true; // Is Brake Drift Allowed?
+                lapMaths = LAPSETTING_CALC_MATHS;
+                lapsLaps = LAPSETTING_LAPS_3;
+                physGravity = PHYSSETTING_GRAVITY_100;
+                itemRoulette = ITEMSETTING_ROULETTE_STANDARD;
+                physVehicleStats = PHYSSETTING_KARTSTAT_VANILLA;
+                isItemStart = ITEMSETTING_START_DISABLED;
+                itemStart = ITEMSETTING_START_3MUS;
+
                 break;
             case(RKNet::ROOMTYPE_JOINING_REGIONAL):
                 isOTT = netMgr.ownStatusData == true;
                 break;
             case(RKNet::ROOMTYPE_FROOM_HOST):
+                // sudo rm -rf /*
                 break;
             case(RKNet::ROOMTYPE_FROOM_NONHOST):
                 isCT = mode != MODE_BATTLE && mode != MODE_PUBLIC_BATTLE && mode != MODE_PRIVATE_BATTLE;
-                newContextPul = netMgr.hostContextPul;
-                newContextLOL = netMgr.hostContextLOL;
-                newContextWDD = netMgr.hostContextWDD;
+
+                // Net Contexts
+                newRadioContexts = netMgr.hostRadioContexts;
+                newLapsLaps = netMgr.hostLapCount;
+                newSpeedMod = netMgr.hostSpeedMod;
+                newGravMod = netMgr.hostGravMod;
+                newRouletteBin = netMgr.hostRouletteBin;
+                newKartBin = netMgr.hostKartBin;
+                newItemStart = netMgr.hostStartItem;
+                newCloudEffect = netMgr.hostCloudEffect;
+
                 // Define disregard early so it does what it's meant to
-		cdpDisregard = newContextPul & ( 1 << CDP_DISREGARD );
-                isHAW = newContextPul & (1 << PULSAR_HAW_1);
-                isKO = newContextPul & (1 << PULSAR_MODE_KO);
-                isMiiHeads = newContextPul & (1 << PULSAR_MIIHEADS);
-                if (!cdpDisregard) { // Settings that don't always NEED to be synced:
-                    isOTT = newContextPul & (1 << PULSAR_MODE_OTT);
-                    isUMTs1 = newContextPul & (1 << PHYS_TURBO_1); // Usually defined alongside feathers for ott, but we don't want that
-                    isUMTs2 = newContextPul & (1 << PHYS_TURBO_2);
-                    isLolBrake = newContextLOL & (1 << LOLPACK_BRAKE); // Is Brake Drift Allowed? take host settings
-                    //lol settings
-                    lolLapType1 = newContextLOL & (1 << LAP_MATHS_1);
-                    lolLapType2 = newContextLOL & (1 << LAP_MATHS_2);
-                    lolLaps1 = newContextLOL & (1 << LAP_COUNT_1);
-                    lolLaps2 = newContextLOL & (1 << LAP_COUNT_2);
-                    lolLaps3 = newContextLOL & (1 << LAP_COUNT_4);
-                    lolLaps4 = newContextLOL & (1 << LAP_COUNT_8);
-                    lolSpeeds1 = newContextLOL & (1 << PHYS_SPEED_1);
-                    lolSpeeds2 = newContextLOL & (1 << PHYS_SPEED_2);
-                    lolSpeeds3 = newContextLOL & (1 << PHYS_SPEED_4);
-                    lolSpeeds4 = newContextLOL & (1 << PHYS_SPEED_8);
-                    cdpGravity1 = newContextLOL & (1 << PHYS_GRAVITY_1);
-                    cdpGravity2 = newContextLOL & (1 << PHYS_GRAVITY_2);
-                    cdpGravity3 = newContextLOL & (1 << PHYS_GRAVITY_4);
-                    cdpGravity4 = newContextLOL & (1 << PHYS_GRAVITY_8);
-                    lolRoulette1 = newContextLOL & (1 << ITEM_ROULETTE_1);
-                    lolRoulette2 = newContextLOL & (1 << ITEM_ROULETTE_2);
-                    lolRoulette3 = newContextLOL & (1 << ITEM_ROULETTE_4);
-                    lolTTitembool = newContextLOL & (1 << ITEM_START_ENABLED);
-                    lolTTitem1 = newContextLOL & (1 << ITEM_START_1);
-                    lolTTitem2 = newContextLOL & (1 << ITEM_START_2);
-                    lolTTitem3 = newContextLOL & (1 << ITEM_START_4);
-                    lolTTitem4 = newContextLOL & (1 << ITEM_START_8);
-                    lolTTitem5 = newContextLOL & (1 << ITEM_START_16);
-                    //end of lol settings
-                    //wdd tc settings
-                    //wddtcbehave = newContextWDD & (1 << ITEM_CLOUD_BEHAVE);
-                    wddtceffect1 = newContextWDD & (1 << ITEM_CLOUD_1);
-                    wddtceffect2 = newContextWDD & (1 << ITEM_CLOUD_2);
-                    wddtceffect3 = newContextWDD & (1 << ITEM_CLOUD_4);
-                    wddtceffect4 = newContextWDD & (1 << ITEM_CLOUD_8);
-                    cdpVehicleStats1 = newContextWDD & (1 << PHYS_KARTSTAT_1);
-                    }//end of tc
+		isDisregard = newRadioContexts & ( 1 << HOST_DISREGARD );
+
+                // Always Enabled
+                hostWins = newRadioContexts & (1 << HOST_HAW);
+                isKO = newRadioContexts & (1 << MODE_KO);
+                isMiiHeads = newRadioContexts & (1 << RACE_MIIHEADS);
+
+                if (isDisregard != HOSTSETTING_DISREGARD_ENABLED) { // Settings that don't always NEED to be synced:
+
+                    // Radio Contexts
+                    isOTT = newRadioContexts & (1 << MODE_OTT);
+                    turboStyle = newRadioContexts & (1 << PHYS_TURBO);
+                    isBrake = newRadioContexts & (1 << PHYS_BRAKE); // Is Brake Drift Allowed? take host settings
+                    lapMaths = newRadioContexts & (1 << LAP_MATHS);
+                    itemStart = newRadioContexts & (1 << ITEM_START_ENABLED);
+
+                    // Large Contexts
+                    lapsLaps = newLapsLaps;
+                    physSpeed = newSpeedMod;
+                    physGravity = newGravMod;
+                    itemRoulette = newRouletteBin;
+                    itemStart = newItemStart;
+                    itemCloudEffect = newCloudEffect;
+                    physVehicleStats = newKartBin;
+
+                } // Disregard Not Enabled
+
                 break;
             default:
                 isCT = false;
-                isLOL = false;
+                isPUL = false;
         }
     }
 
@@ -298,106 +255,93 @@ void System::UpdateContext() {
 //            isUMTs &= ~settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS);
 //        }
     }
-    this->netMgr.hostContextPul = newContextPul;
-    this->netMgr.hostContextLOL = newContextLOL;
-    this->netMgr.hostContextWDD = newContextWDD;
+
+    this->netMgr.hostRadioContexts = newRadioContexts;
+    this->netMgr.hostLapCount = newLapsLaps;
+    this->netMgr.hostSpeedMod = newSpeedMod;
+    this->netMgr.hostGravMod = newGravMod;
+    this->netMgr.hostRouletteBin = newRouletteBin;
+    this->netMgr.hostKartBin = newKartBin;
+    this->netMgr.hostStartItem = newItemStart;
+    this->netMgr.hostCloudEffect = newCloudEffect;
 
     // Brake Drift needs to be calculated after room settings since it differs based on several settings
-    isLolBrake &= (BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),2)| // If setting = 1X, always enable
-                  (!BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE),1) // If setting = 01, disable. Else, check speedmod & gravmod
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 >= 2) // Lower bound 2 = 1.25x speed
-                  & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 <= 8) // Upper bound 8 = 100x speed
-                  )|((cdpGravity1+cdpGravity2*2+cdpGravity3*4+cdpGravity4*8 >= 6) // Lower bound 6 = 0.25x gravity
-                  & (cdpGravity1+cdpGravity2*2+cdpGravity3*4+cdpGravity4*8 <= 8) // Upper bound 8 = 0.75x gravity
-                  )); // AND assignment since we need to know if brakedrifting is allowed
+    if (isBrake) {
+        switch (settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE)) {
+            case PHYSSETTING_BRAKE_ENABLED: isBrake = true; break;
+            case PHYSSETTING_BRAKE_STANDARD:
+                if ( physSpeed >= PHYSSETTING_SPEED_125
+                   & physSpeed <= PHYSSETTING_SPEED_999
+                   | physSpeed >= PHYSSETTING_GRAVITY_025
+                   & physSpeed <= PHYSSETTING_GRAVITY_075
+                   ) { isBrake = true; } break;
+            default: isBrake = false;
+        } // Switch Local Brake Setting
+    } // If Brake Drift Allowed
 
     // Validate Time Trials
-    bool isValidTT = ! // NOT gate result // (every bit should be 0 for valid time trials)
-                     //Valid lapcount would be 0000, = 3. (It'd be better to check directly with kmp, but not possible for most menus.)
-                     (lolLaps1 |lolLaps2 |lolLaps3 |lolLaps4
-                     // Valid gravity is 0000
-                     |cdpGravity1 |cdpGravity2 |cdpGravity3 |cdpGravity4
-                     //Calculated and Exclusive laps are always correct for 3 laps, but Forced laps cause issues, so restrict it.
-                     |lolLapType2
-                     //if speed is high, ignore as this is enabled anyway.
-                     |(isLolBrake
-                         ^((lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 > PHYSSETTING_SPEED_125) // Lower bound 2 = 1.25x speed
-                         & (lolSpeeds1+lolSpeeds2*2+lolSpeeds3*4+lolSpeeds4*8 < PHYSSETTING_SPEED_999) // Upper bound 8 = 100x speed
-                     ))
-                     //don't need to run that check for gravity as it is never valid
-                     // Verify UMT setting matches pack setting
-                     |(this->info.HasUMTs() != isUMTs1)
-                     |isUMTs2 // high setting check
-                     // Disallow vehicle stat edits
-                     |cdpVehicleStats1
-                     );
+    // Previous way of doing this was very awkward to edit - this isn't much better but I still can't think of a good way of doing this
 
-// Extra validity notes:
-// - All speedmods are valid now since they're split up into categories, so we don't need to check for that
-// - All items are also valid for the same reason
+    bool isValidTT = 1;
+    isValidTT &= lapMaths == LAPSETTING_CALC_MATHS || lapMaths == LAPSETTING_CALC_EXCLUDE;
+    isValidTT &= lapsLaps == LAPSETTING_LAPS_3;
+    isValidTT &= physGravity == PHYSSETTING_GRAVITY_100;
+    isValidTT &= ! isBrake // Brake Drift XNOR 200cc type classes
+                 ^ physSpeed >= PHYSSETTING_SPEED_125
+                 & physSpeed <= PHYSSETTING_SPEED_999;
+    isValidTT &= turboStyle == this->info.HasUMTs();
+    isValidTT &= physVehicleStats == PHYSSETTING_KARTSTAT_VANILLA;
+
+    // Extra validity notes:
+    // - All speedmods are valid now since they're split up into categories, so we don't need to check for that
+    // - All startitems are also valid for the same reason
 
 
+    // Contexts
+    // isCT  - Whether CTs are enabled (Disabled in battle)
+    // isPUL - Only ever disabled for RTWWs
 
-    u32 contextPul = (isCT << PULSAR_CT)
-                | (isMiiHeads << PULSAR_MIIHEADS);
-    if(isCT) { contextPul //contexts that should only exist when CTs are on
-                |=(isOTT << PULSAR_MODE_OTT);
-    }
-    if(isLOL) { contextPul //contexts that should only ever not exist for RTWWs
-                |=(isLolBrake << LOLPACK_BRAKE)
-                | (isHAW << PULSAR_HAW_1)
-                | (isHAW << PULSAR_HAW_2)
-                | (isFeather << PULSAR_FEATHER)
-                | (isKO << PULSAR_MODE_KO)
-                | (isUMTs1 << PHYS_TURBO_1)
-                | (isUMTs2 << PHYS_TURBO_2)
-                | (cdpDisregard << CDP_DISREGARD);
-    }
-    // LOL Contexts
-    u32 contextLOL = (isValidTT << TTS_VALID);
-    if(isCT) { contextLOL //contexts that should only exist when CTs are on
-                |=(lolLapType1 << LAP_MATHS_1)
-                | (lolLapType2 << LAP_MATHS_2)
-                | (lolLaps1 << LAP_COUNT_1)
-                | (lolLaps2 << LAP_COUNT_2)
-                | (lolLaps3 << LAP_COUNT_4)
-                | (lolLaps4 << LAP_COUNT_8);
-    }
-    if(isLOL) { contextLOL //contexts that should only ever not exist for RTWWs
-                |=(lolSpeeds1 << PHYS_SPEED_1)
-                | (lolSpeeds2 << PHYS_SPEED_2)
-                | (lolSpeeds3 << PHYS_SPEED_4)
-                | (lolSpeeds4 << PHYS_SPEED_8)
-                | (cdpGravity1 << PHYS_GRAVITY_1)
-                | (cdpGravity2 << PHYS_GRAVITY_2)
-                | (cdpGravity3 << PHYS_GRAVITY_4)
-                | (cdpGravity4 << PHYS_GRAVITY_8)
-                | (lolRoulette1 << ITEM_ROULETTE_1)
-                | (lolRoulette2 << ITEM_ROULETTE_2)
-                | (lolRoulette3 << ITEM_ROULETTE_4)
-                | (lolTTitembool << ITEM_START_ENABLED)
-                | (lolTTitem1 << ITEM_START_1)
-                | (lolTTitem2 << ITEM_START_2)
-                | (lolTTitem3 << ITEM_START_4)
-                | (lolTTitem4 << ITEM_START_8)
-                | (lolTTitem5 << ITEM_START_16);
-    }
+    // Initial definitions - Enabled in RTWWs!
+    u32 contextRadioContexts = ( isCT << PULSAR_CT )
+                      | ( isMiiHeads << RACE_MIIHEADS );
+    u8 contextLapsLaps = LAPSETTING_LAPS_3;
+    u8 contextSpeedMod = PHYSSETTING_SPEED_100;
+    u8 contextGravMod = PHYSSETTING_GRAVITY_100;
+    u8 contextRouletteBin = ITEMSETTING_ROULETTE_VANILLA;
+    u8 contextKartBin = PHYSSETTING_KARTSTAT_VANILLA;
+    u8 contextItemStart = ITEMSETTING_START_NONE; // Not important
+    u8 contextCloudEffect = ITEMSETTING_CLOUD_SHOCK;
 
-    // WDD Contexts
-    u32 contextWDD = 0;
-    if(isCT) { //contexts that should only exist when CTs are on
-        contextWDD = 0;
-    }
-    if(isLOL) { contextWDD //contexts that should only ever not exist for RTWWs
-                |=(wddtceffect1 << ITEM_CLOUD_1)
-                | (wddtceffect2 << ITEM_CLOUD_2)
-                | (wddtceffect3 << ITEM_CLOUD_4)
-                | (wddtceffect4 << ITEM_CLOUD_8)
-                | (cdpVehicleStats1 << PHYS_KARTSTAT_1);
-    }
-    this->contextPul = contextPul;
-    this->contextLOL = contextLOL;
-    this->contextWDD = contextWDD;
+    // if CTs are enabled
+    if (isCT) {
+        contextRadioContexts |= ( isOTT << MODE_OTT )
+                       | ( lapMaths << LAP_MATHS );
+        contextLapsLaps = lapsLaps;
+    } // isCT
+
+    // if anything but RTWWs
+    if (isPUL) {
+        contextRadioContexts |= ( hostWins << HOST_HAW )
+                       | ( isKO << MODE_KO )
+                       | ( isBrake << PHYS_BRAKE )
+                       | ( turboStyle << PHYS_TURBO )
+                       | ( isDisregard << HOST_DISREGARD )
+                       | ( isItemStart << ITEM_START_ENABLED );
+        contextSpeedMod = physSpeed;
+        contextGravMod = physGravity;
+        contextRouletteBin = itemRoulette;
+        contextItemStart = itemStart;
+        contextCloudEffect = itemCloudEffect;
+    } // isPUL
+
+    this->radioContexts = contextRadioContexts;
+    this->lapCount = contextLapsLaps;
+    this->speedMod = contextSpeedMod;
+    this->gravMod = contextGravMod;
+    this->rouletteBin = contextRouletteBin;
+    this->kartBin = contextKartBin;
+    this->itemStart = contextItemStart;
+    this->cloudEffect = contextCloudEffect;
 
     //Create temp instances if needed:
     /*
@@ -422,8 +366,8 @@ void System::UpdateContext() {
 s32 System::OnSceneEnter(Random& random) {
     System* self = System::sInstance;
     self->UpdateContext();
-    if(self->IsContextPul(PULSAR_MODE_OTT)) OTT::AddGhostToVS();
-    if(self->IsContextPul(PULSAR_HAW_1) && self->IsContextPul(PULSAR_MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
+    if(self->GetBoolRadioContext(MODE_OTT)) OTT::AddGhostToVS();
+    if(self->GetFullRadioContext(HOST_HAW) == HOSTSETTING_HOSTWINS_ENABLED && self->GetBoolRadioContext(MODE_KO) && GameScene::GetCurrent()->id == SCENE_ID_RACE && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber > 0) {
         KO::HAWChangeData();
     }
     return random.NextLimited(8);

@@ -61,10 +61,7 @@ static void ApplyAreaGravityMultiplier(Kart::Physics& physics, float dt, float m
         }
     }
 
-    switch ( System::sInstance->IsContextLOL(PHYS_GRAVITY_8)*8
-           + System::sInstance->IsContextLOL(PHYS_GRAVITY_4)*4
-           + System::sInstance->IsContextLOL(PHYS_GRAVITY_2)*2
-           + System::sInstance->IsContextLOL(PHYS_GRAVITY_1)) {
+    switch ( System::sInstance->GetContext(PHYS_GRAVITY) ) {
         case(PHYSSETTING_GRAVITY_110): gravityMultiplier *= 1.1f   ;break;
         case(PHYSSETTING_GRAVITY_125): gravityMultiplier *= 1.25f  ;break;
         case(PHYSSETTING_GRAVITY_150): gravityMultiplier *= 1.5f   ;break;

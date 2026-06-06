@@ -27,21 +27,10 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     if (Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_CPU) return;
     const System* system = System::sInstance;
     const bool isTT = DriverMgr::isTT;
-    if ((isTT || system->IsContextPul(PULSAR_MODE_OTT)) || system->IsContextLOL(ITEM_START_ENABLED)) {
-    bool isFeather;
-    if (isTT) { //Should probably remove this but right now I don't care much
-        const TTMode mode = system->ttMode;
-        isFeather = (mode == TTMODE_150_FEATHER || mode == TTMODE_200_FEATHER);
-    }
-    else isFeather = system->IsContextPul(PULSAR_FEATHER);
+    if ((isTT || system->GetBoolRadioContext(MODE_OTT)) || system->GetBoolRadioContext(ITEM_START_ENABLED)) {
     // Switch for item
-    if ( system->IsContextLOL(ITEM_START_ENABLED) ) {
-    switch(system->IsContextLOL(ITEM_START_1)
-          +system->IsContextLOL(ITEM_START_2)*2
-          +system->IsContextLOL(ITEM_START_4)*4
-          +system->IsContextLOL(ITEM_START_8)*8
-          +system->IsContextLOL(ITEM_START_16)*16
-          ){
+    if ( system->GetBoolRadioContext(ITEM_START_ENABLED) ) {
+    switch( system->GetContext(ITEM_START) ) {
     case ITEMSETTING_START_MUSH:
         id = MUSHROOM;
         inventory.currentItemCount = 1;
@@ -157,7 +146,7 @@ kmCall(0x80799808, SetStartingItem);
 //From JoshuaMK, ported to C++ by Brawlbox and adapted as a setting
 static int MiiHeads(Racedata* racedata, u32 unused, u32 unused2, u8 id) {
     CharacterId charId = racedata->racesScenario.players[id].characterId;
-    if (System::sInstance->IsContextPul(PULSAR_MIIHEADS)) {
+    if (System::sInstance->GetBoolRadioContext(RACE_MIIHEADS)) {
         if (charId < MII_M) {
             if (id == 0) charId = MII_M;
             else if (RKNet::Controller::sInstance->connectionState != 0) charId = MII_M;
@@ -175,7 +164,7 @@ static void BattleGlitchEnable() {
     float maxDistance = 7500.0f;
     if (val == RACESETTING_BATTLE_GLITCH_ENABLED) maxDistance = 75000.0f;
     System* system = System::sInstance;
-    if (system->IsContextPul(PULSAR_MODE_OTT)) {
+    if (system->GetBoolRadioContext(MODE_OTT)) {
         const Input::RealControllerHolder* controllerHolder = SectionMgr::sInstance->pad.padInfos[0].controllerHolder;
         const ControllerType controllerType = controllerHolder->curController->GetType();
         const u16 inputs = controllerHolder->inputStates[0].buttonRaw;
@@ -210,6 +199,7 @@ kmWrite32(0x807F4DB8, 0x38000001);
 
 //Draggable blue shells
 static void DraggableBlueShells(Item::PlayerObj& sub) {
+    // I think this breaks RTWWs?
     if (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_BLUES) == RACESETTING_DRAGGABLE_BLUES_DISABLED) {
         sub.isNotDragged = true;
     }
@@ -220,6 +210,9 @@ kmBranch(0x807ae8ac, DraggableBlueShells);
 kmWrite32(0x807DFC24, 0x60000000);
 
 //No Team Invincibility
+// By the way, this stuff annihilates RTWW Battles.
+// Who on the pulsar dev team thought this was a good idea? :P
+// Would be better to have team invincibility as a setting...
 kmWrite32(0x8056fd24, 0x38000000); //KartCollision::CheckKartCollision()
 kmWrite32(0x80572618, 0x38000000); //KartCollision::CheckItemCollision()
 kmWrite32(0x80573290, 0x38000000); //KartCollision::HandleFIBCollision()
@@ -239,17 +232,11 @@ kmWrite16(0x80569F68, 0x4800);
 kmWrite24(0x808A9C16, 'PUL'); //item_window_new -> item_window_PUL
 
 const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
-    const bool feather = System::sInstance->IsContextPul(PULSAR_FEATHER);
-    const bool megaTC = System::sInstance->IsContextPul(PULSAR_MEGATC);
     const char* paneName;
     switch (id) {
         case THUNDER_CLOUD:
             switch
-            ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
-            + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
-            + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
-            + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
-            ) {
+            ( System::sInstance->GetContext(ITEM_CLOUDEFFECT)) {
             case ITEMSETTING_CLOUD_SHOCK: GetItemIconPaneName(id, itemCount); ;break; //Shock
             case ITEMSETTING_CLOUD_MEGA: paneName = "megaTC" ;break; // Mega
             case ITEMSETTING_CLOUD_STAR: paneName = "starTC" ;break; // Star
