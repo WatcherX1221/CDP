@@ -78,7 +78,6 @@ if __name__ == "__main__":
 	# find every cpp that may need compiled
 	cpp_files = glob.glob(f"{PULSAR}/**/*.cpp", recursive=True)
 	cpp_files.append(f"{ENGINE}/kamek.cpp")
-	cpp_files.append(f"{ENGINE}/runtimeWrite.cpp")
 	for d in MYDIRS:
 		cpp_files.extend(glob.glob(f"{d}/**/*.cpp", recursive=True))
 
@@ -102,9 +101,6 @@ if __name__ == "__main__":
 			
 	# build cpp files (in parallel!)
 	compile_cpp(f"{ENGINE}/kamek.cpp")
-	with concurrent.futures.ThreadPoolExecutor() as executor:
-		executor.map(compile_cpp, modified_cpps)
-	compile_cpp(f"{ENGINE}/runtimeWrite.cpp")
 	with concurrent.futures.ThreadPoolExecutor() as executor:
 		executor.map(compile_cpp, modified_cpps)
 
