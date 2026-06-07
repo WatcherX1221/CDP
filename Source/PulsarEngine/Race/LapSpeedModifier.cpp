@@ -14,9 +14,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
 //Mostly a port of MrBean's version with better hooks and arguments documentation
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
 
-    //Blockface3 Lap Mod
-
-    int lapSetting = System::sInstance->GetContext(LAPS_LAPS);
+    u8 lapSetting = System::sInstance->GetContext(LAPS_LAPS) +3;
     if (lapSetting > 9) {
         lapSetting -= 9;
     };
@@ -33,9 +31,6 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     case(LAPSETTING_CALC_FORCE): // Forced
         lapCount = lapSetting;
         break;
-//    case(LAPSETTING_CALC_EXPONENT): // EXPONENT DEBUG
-//        lapCount = lapSetting*lapSetting*lapSetting;
-//        break;
     default: // Calculated
         lapCount = ((lapCount * lapSetting + 1) / 3); // added 1 for rounding
         if (lapCount < 1) lapCount = 1;

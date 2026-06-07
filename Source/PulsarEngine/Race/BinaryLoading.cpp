@@ -29,7 +29,7 @@ kmCall(0x807bbf50, GetCustomItemSlot);
 
 // Custom Vehicle Stat Loading
 static void *GetCustomKartParam(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
-    switch (System::sInstance->GetContext(PHYS_KARTBIN) ) {
+    switch ( System::sInstance->GetContext(PHYS_KARTBIN) ) {
         case PHYSSETTING_KARTSTAT_PLATINUM: name = "kartParamPlatinum.bin"; break;
         default: name = "kartParam.bin";
     }
@@ -39,16 +39,16 @@ kmCall(0x80591a30, GetCustomKartParam);
 
 // Custom Driver Stat Loading
 static void *GetCustomDriverParam(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
-    switch (System::sInstance->GetContext(PHYS_KARTBIN) ) {
+    switch ( System::sInstance->GetContext(PHYS_KARTBIN) ) {
         case PHYSSETTING_KARTSTAT_PLATINUM: name = "driverParamPlatinum.bin"; break;
         default: name = "driverParamMiiFix.bin";
     }
     return archive->GetFile(type, name, length);
 }
-kmCall(0x80591a54, GetCustomDriverParam); // Unsure what the proper address for this is. Try this one?
+//kmCall(0x80591a54, GetCustomDriverParam); // Unsure what the proper address for this is. Try this one?
 // Use Intended Mii Stats [B_squo]
-kmWrite32(0x80592163, 0x00000018);
-kmWrite32(0x80592143, 0x000000E8);
+//kmWrite32(0x80592163, 0x00000018);
+//kmWrite32(0x80592143, 0x000000E8);
 
 } // namespace Race
 } // namespace Pulsar

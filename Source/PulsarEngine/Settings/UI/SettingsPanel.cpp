@@ -284,7 +284,7 @@ void SettingsPanel::OnBackPress(u32 hudSlotId) {
     okButton.SelectFocus(); 
     // Credits to ToadetteHackFan for singleplayermenu reboot, used to fix tt bmgs
     // ignore if fastmenus enabled because this is only a minor fix and if you're using fast menus you probably don't care
-    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) != MENUSETTING_FASTMENUS_DISABLED) {
+    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) == MENUSETTING_FASTMENUS_DISABLED) {
         this->SaveSettings(true);
         Pages::Menu::ChangeSectionById(SECTION_SINGLE_P_FROM_MENU, okButton);
     }
@@ -295,7 +295,7 @@ void SettingsPanel::OnBackPress(u32 hudSlotId) {
 
 void SettingsPanel::OnSaveButtonClick(PushButton& button, u32 hudSlotId) {
     // credits to thf, same as above
-    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) != MENUSETTING_FASTMENUS_DISABLED) {
+    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) == MENUSETTING_FASTMENUS_DISABLED) {
         this->SaveSettings(true);
         Pages::Menu::ChangeSectionById(SECTION_SINGLE_P_FROM_MENU, button);
     }

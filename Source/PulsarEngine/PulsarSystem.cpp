@@ -269,26 +269,23 @@ void System::UpdateContext() {
     if (isBrake) {
         switch (settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_BRAKE)) {
             case PHYSSETTING_BRAKE_ENABLED: isBrake = true; break;
-            case PHYSSETTING_BRAKE_STANDARD:
-                if ( physSpeed >= PHYSSETTING_SPEED_125
-                   & physSpeed <= PHYSSETTING_SPEED_999
-                   | physSpeed >= PHYSSETTING_GRAVITY_025
-                   & physSpeed <= PHYSSETTING_GRAVITY_075
-                   ) { isBrake = true; } break;
-            default: isBrake = false;
+            case PHYSSETTING_BRAKE_DISABLED: isBrake = false; break;
+            default: // Standard
+                isBrake = false;
+                isBrake |= physSpeed >= PHYSSETTING_SPEED_125 && physSpeed <= PHYSSETTING_SPEED_999;
+                isBrake |= physGravity >= PHYSSETTING_GRAVITY_025 && physGravity <= PHYSSETTING_GRAVITY_075;
+                break;
         } // Switch Local Brake Setting
     } // If Brake Drift Allowed
 
     // Validate Time Trials
     // Previous way of doing this was very awkward to edit - this isn't much better but I still can't think of a good way of doing this
 
-    bool isValidTT = 1;
+    bool isValidTT = true;
     isValidTT &= lapMaths == LAPSETTING_CALC_MATHS || lapMaths == LAPSETTING_CALC_EXCLUDE;
     isValidTT &= lapsLaps == LAPSETTING_LAPS_3;
     isValidTT &= physGravity == PHYSSETTING_GRAVITY_100;
-    isValidTT &= ! isBrake // Brake Drift XNOR 200cc type classes
-                 ^ physSpeed >= PHYSSETTING_SPEED_125
-                 & physSpeed <= PHYSSETTING_SPEED_999;
+    isValidTT &= ( ! isBrake ) ^ ( physSpeed >= PHYSSETTING_SPEED_125 && physSpeed <= PHYSSETTING_SPEED_999 );
     isValidTT &= turboStyle == this->info.HasUMTs();
     isValidTT &= physVehicleStats == PHYSSETTING_KARTSTAT_VANILLA;
 
@@ -303,7 +300,8 @@ void System::UpdateContext() {
 
     // Initial definitions - Enabled in RTWWs!
     u32 contextRadioContexts = ( isCT << PULSAR_CT )
-                      | ( isMiiHeads << RACE_MIIHEADS );
+                      | ( isMiiHeads << RACE_MIIHEADS )
+                      | ( isValidTT << TTS_VALID );
     u8 contextLapsLaps = LAPSETTING_LAPS_3;
     u8 contextSpeedMod = PHYSSETTING_SPEED_100;
     u8 contextGravMod = PHYSSETTING_GRAVITY_100;
@@ -329,6 +327,7 @@ void System::UpdateContext() {
                        | ( isItemStart << ITEM_START_ENABLED );
         contextSpeedMod = physSpeed;
         contextGravMod = physGravity;
+        contextKartBin = physVehicleStats;
         contextRouletteBin = itemRoulette;
         contextItemStart = itemStart;
         contextCloudEffect = itemCloudEffect;
