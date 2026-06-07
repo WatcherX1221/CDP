@@ -53,6 +53,7 @@ echo Success, Next phase: Compile CPP
 
 :: Compile CPP
 %CC% %CFLAGS% -c -o "build/kamek.o" "%ENGINE%\kamek.cpp"
+%CC% %CFLAGS% -c -o "build/runtimeWrite.o" "%ENGINE%\runtimeWrite.cpp"
 
 echo Success, Next phase: Set objects thing
 pause

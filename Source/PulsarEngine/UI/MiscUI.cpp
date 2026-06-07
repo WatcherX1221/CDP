@@ -16,6 +16,13 @@
 namespace Pulsar {
 
 namespace UI {
+
+// Fix Custom Region Joining Via Friend Roster [Kazuki]
+kmWrite32(0x8065a01c, 0x60000000);
+kmWrite32(0x8065a020, 0x2C0000FF);
+kmWrite32(0x8065a068, 0x60000000);
+kmWrite32(0x8065a06c, 0x2C0000FF);
+
 //No ghost saving on RKSYS
 kmWrite32(0x8054913C, 0x60000000);
 kmWrite32(0x80855f48, 0x48000148);
@@ -25,6 +32,12 @@ kmWrite32(0x8007B37C, 0x38000128);
 
 //Always Show Timer on Vote Screen [Chadderz]
 kmWrite32(0x80650254, 0x60000000);
+
+//Always Show Timer After Online Race Results [Sponge]
+kmWrite32(0x8064DB2C, 0x60000000);
+
+// Show Nametags During Countdown By [Ro]
+kmWrite32(0x807F13F0, 0x38600001);
 
 //Instant Course Voting [Ro]
 kmWrite32(0x80643BC4, 0x60000000);

@@ -37,6 +37,7 @@ for /R %PULSAR% %%f in (*.cpp) do SET "CPPFILES=%%f !CPPFILES!"
 
 :: Compile CPP
 %CC% %CFLAGS% -c -o "build/kamek.o" "%ENGINE%\kamek.cpp"
+%CC% %CFLAGS% -c -o "build/runtimeWrite.o" "%ENGINE%\runtimeWrite.cpp"
 
 SET OBJECTS=
 FOR %%H IN (%CPPFILES%) DO (
