@@ -8,7 +8,7 @@ namespace Pulsar {
 namespace Settings {
 
 u8 Params::radioCount[Params::pageCount] ={
-    2, 4, 5, 4, // PUL  // Misc, Race, Host, OTTKO
+    3, 4, 5, 4, // PUL  // Misc, Race, Host, OTTKO
     4, 1, 2, 1  // USER // Audio, Item, Physics, Lap
 };
 
@@ -19,7 +19,7 @@ u8 Params::scrollerCount[Params::pageCount] ={
 
 u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] = //first row is PulsarSettingsType, 2nd is rowIdx of radio
 {
-    { 2, 2, 0, 0, 0, 0 }, // Misc
+    { 4, 2, 2, 0, 0, 0 }, // Misc
     { 2, 2, 2, 3, 0, 0 }, // Race
     { 3, 2, 2, 2, 2, 0 }, // Host
     { 2, 2, 2, 2, 0, 0 }, // OTTKO
@@ -31,7 +31,7 @@ u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] = //fi
 
 u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount] =
 {
-    {  5,  7,  0,  0,  0}, // Misc
+    {  5,  0,  0,  0,  0}, // Misc
     {  4,  0,  0,  0,  0}, // Race
     {  0,  0,  0,  0,  0}, // Host
     {  4,  4,  0,  0,  0}, // OTTKO

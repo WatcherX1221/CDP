@@ -1,11 +1,10 @@
-    #include <kamek.hpp>
+#include <kamek.hpp>
 #include <MarioKartWii/RKNet/ROOM.hpp>
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
 #include <Settings/Settings.hpp>
 #include <Network/Network.hpp>
 #include <Network/PacketExpansion.hpp>
-#include <BlFa3/VariousUtilityFunctions.hpp>
 
 namespace Pulsar {
 namespace Network {
@@ -17,10 +16,15 @@ namespace Network {
 
 static void ConvertROOMPacketToData(const PulROOM& packet) {
     System* system = System::sInstance;
-    system->netMgr.hostContextPul = packet.hostSystemContextPul;
-    system->netMgr.hostContextLOL = packet.hostSystemContextLOL;
-    system->netMgr.hostContextWDD = packet.hostSystemContextWDD;
     system->netMgr.racesPerGP = packet.raceCount;
+    system->netMgr.hostRadioContexts = packet.RadioContexts;
+    system->netMgr.hostLapCount = packet.lapCount;
+    system->netMgr.hostSpeedMod = packet.speedMod;
+    system->netMgr.hostGravMod = packet.gravMod;
+    system->netMgr.hostRouletteBin = packet.rouletteBin;
+    system->netMgr.hostKartBin = packet.kartBin;
+    system->netMgr.hostStartItem = packet.itemStart;
+    system->netMgr.hostCloudEffect = packet.cloudEffect;
 }
 
 static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* src, u64 len) {
@@ -34,55 +38,27 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
         packetHolder->packetSize += sizeof(PulROOM) - sizeof(RKNet::ROOMPacket); //this has been changed by copy so it's safe to do this
         const Settings::Mgr& settings = Settings::Mgr::Get();
 
-        const u8 koSetting = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGKO_ENABLED) && destPacket->message == 0; //KO only enabled for normal GPs
-        //invert mii setting as the first button is enabled, not disabled, so a value of 1 indicates disabled
-        destPacket->hostSystemContextPul
-            = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGOTT_VERSUS) << PULSAR_MODE_OTT //ott
-            | settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGPHYS_RADIO_TURBO) << PHYS_TURBO_1
-            | settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGPHYS_RADIO_TURBO) << PHYS_TURBO_2
-            | koSetting << PULSAR_MODE_KO
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_ALLOW_MIIHEADS) ^ true) << PULSAR_MIIHEADS
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_ALLOW_BRAKE) ^ true) << LOLPACK_BRAKE
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 0) << PULSAR_HAW_1
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) > 1) << PULSAR_HAW_2
-            //| (settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_LAYOUT) > 0) << PULSAR_LAYOUT // Used to speed up "In Order" rooms where transitions are otherwise unnecessary
-            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_DISREGARD) << CDP_DISREGARD
+        destPacket->RadioContexts
+            = settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGOTT_VERSUS) << MODE_OTT
+            | settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_TURBO) << PHYS_TURBO
+            | (settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGKO_ENABLED) && destPacket->message == 0) << MODE_KO //KO only enabled for normal GPs
+            | (!settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_ALLOW_MIIHEADS)) << RACE_MIIHEADS // invert as setting 0 is enabled
+            | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_ALLOW_BRAKE) ^ true) << PHYS_BRAKE
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) << HOST_HAW
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_DISREGARD) << HOST_DISREGARD // Yes, we do still need to send this.
+            | settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED) << ITEM_START_ENABLED
+            | settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC) << LAP_MATHS
         ;
-        destPacket->hostSystemContextLOL
-            = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),1) << LAP_MATHS_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC),2) << LAP_MATHS_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),1) << LAP_COUNT_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),2) << LAP_COUNT_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),3) << LAP_COUNT_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS),4) << LAP_COUNT_8
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),1) << PHYS_SPEED_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),2) << PHYS_SPEED_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),3) << PHYS_SPEED_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED),4) << PHYS_SPEED_8
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),1) << PHYS_GRAVITY_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),2) << PHYS_GRAVITY_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),3) << PHYS_GRAVITY_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV),4) << PHYS_GRAVITY_8
-            | BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%5,1) << ITEM_ROULETTE_1 //max settings 5
-            | BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%5,2) << ITEM_ROULETTE_2 //read pulsarsystem for context
-            | BlFa3::getbin((settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE)+1)%5,3) << ITEM_ROULETTE_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED),1) << ITEM_START_ENABLED
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),1) << ITEM_START_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),2) << ITEM_START_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),3) << ITEM_START_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),4) << ITEM_START_8
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START),5) << ITEM_START_16
-        ;
-        destPacket->hostSystemContextWDD
-            = BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),1) << ITEM_CLOUD_1
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),2) << ITEM_CLOUD_2
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),3) << ITEM_CLOUD_4
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD),4) << ITEM_CLOUD_8
-            | BlFa3::getbin(settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS),1) << PHYS_KARTSTAT_1
-        ;
+        destPacket->lapCount = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS);
+        destPacket->speedMod = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED);
+        destPacket->gravMod = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_GRAV);
+        destPacket->rouletteBin = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_ROULETTE);
+        destPacket->kartBin = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
+        destPacket->itemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START);
+        destPacket->cloudEffect = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD);
 
         u8 raceCount;
-        if (koSetting == KOSETTING_ENABLED) raceCount = 0xFE;
+        if ( settings.GetSettingValue(Settings::SETTINGSTYPE_OTTKO, SETTINGKO_ENABLED) == KOSETTING_ENABLED) raceCount = 0xFE;
         else switch (settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGHOST_SCROLL_GP_RACES)) {
         case(0x1):
             raceCount = 5;
@@ -100,18 +76,15 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             raceCount = 63;
             break;
         case(0x6):
-            raceCount = 255; // these settings fucking suck who tf wants this
+            raceCount = 255;
             break;
         case(0x7):
-            raceCount = -1; // dawg this is literally the same as the last setting but worse to look at
-            break;
-        case(0x8):
             raceCount = 0;
             break;
-        case(0x9):
+        case(0x8):
             raceCount = 1;
             break;
-        case(0xA):
+        case(0x9):
             raceCount = 2;
             break;
         default:

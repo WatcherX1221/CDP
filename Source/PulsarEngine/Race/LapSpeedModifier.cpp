@@ -14,12 +14,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
 //Mostly a port of MrBean's version with better hooks and arguments documentation
     u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
 
-    //Blockface3 Lap Mod
-
-    int lapSetting = System::sInstance->IsContextLOL(LAP_COUNT_8)*8
-                   + System::sInstance->IsContextLOL(LAP_COUNT_4)*4
-                   + System::sInstance->IsContextLOL(LAP_COUNT_2)*2
-                   + System::sInstance->IsContextLOL(LAP_COUNT_1)+3;
+    u8 lapSetting = System::sInstance->GetContext(LAPS_LAPS) +3;
     if (lapSetting > 9) {
         lapSetting -= 9;
     };
@@ -27,7 +22,7 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     if ((lapSetting == 9) || (lapCount == 9)) {
         lapMax9 = 1;
     };
-    switch (System::sInstance->IsContextLOL(LAP_MATHS_1)+System::sInstance->IsContextLOL(LAP_MATHS_2)*2) {
+    switch ( System::sInstance->GetFullRadioContext(LAP_MATHS) ) {
     case(LAPSETTING_CALC_EXCLUDE): // Exclusive
         if (lapCount == 3) {
             lapCount = lapSetting;
@@ -36,9 +31,6 @@ RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
     case(LAPSETTING_CALC_FORCE): // Forced
         lapCount = lapSetting;
         break;
-//    case(LAPSETTING_CALC_EXPONENT): // EXPONENT DEBUG
-//        lapCount = lapSetting*lapSetting*lapSetting;
-//        break;
     default: // Calculated
         lapCount = ((lapCount * lapSetting + 1) / 3); // added 1 for rounding
         if (lapCount < 1) lapCount = 1;
@@ -77,10 +69,7 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     float factor = 1.0f;
 
     // Speed Setting
-    switch ( System::sInstance->IsContextLOL(PHYS_SPEED_8)*8
-           + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
-           + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
-           + System::sInstance->IsContextLOL(PHYS_SPEED_1)) {
+    switch ( System::sInstance->GetContext(PHYS_SPEED) ) {
     case(PHYSSETTING_SPEED_110):
         factor = 1.1f;
         break;
@@ -123,10 +112,7 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     //const u8 lapCount = racedata->racesScenario.settings.lapCount; // <- This will be useful!
     //player->raceCompletion // <- This is our race completion
 /*
-    switch ( System::sInstance->IsContextWDD(LAP_SPEED_8)*8
-           + System::sInstance->IsContextWDD(LAP_SPEED_4)*4
-           + System::sInstance->IsContextWDD(LAP_SPEED_2)*2
-           + System::sInstance->IsContextWDD(LAP_SPEED_1)) {
+    switch ( System::sInstance->GetContext(LAPS_SPEED) ) {
     case(LAPSETTING_SPEED_101):
         factor *= 1.01f;
         break;

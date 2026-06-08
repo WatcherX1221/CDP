@@ -47,8 +47,9 @@ enum UserType {
 //SETTINGS ENUM, for the page, DO NOT FORGET THE +6 for scrollers (see menu settings for example)
 //Use these 3 for "u32 setting" in GetSettingValue, the return will be the value of the other enums
 enum MenuSettings {
-    SETTINGMENU_RADIO_FASTMENUS = 0,
-    SETTINGMENU_RADIO_LAYOUT = 1,
+    SETTINGMENU_RADIO_CUPSHIFT = 0,
+    SETTINGMENU_RADIO_FASTMENUS = 1,
+    SETTINGMENU_RADIO_LAYOUT = 2,
 
     SETTINGMENU_SCROLL_BOOT = 0 + 6
 };
@@ -112,6 +113,13 @@ enum LapSettings {
 };
 
 //MENU SETTINGS
+enum MenuSettingCupShift {
+    MENUSETTING_CUPSHIFT_2,
+    MENUSETTING_CUPSHIFT_4,
+    MENUSETTING_CUPSHIFT_6,
+    MENUSETTING_CUPSHIFT_8
+};
+
 enum MenuSettingFastMenus {
     MENUSETTING_FASTMENUS_DISABLED = 0x0,
     MENUSETTING_FASTMENUS_ENABLED = 0x1
@@ -163,7 +171,8 @@ enum RaceSettingSOMDigits {
 enum HostSettingHAW {
     HOSTSETTING_HOSTWINS_DISABLED,
     HOSTSETTING_HOSTWINS_ENABLED,
-    HOSTSETTING_HOSTWINS_INORDER
+    HOSTSETTING_HOSTWINS_INORDER,
+    HOSTSETTING_HOSTWINS_RANDOM
 };
 
 enum HostSettingHostCC {

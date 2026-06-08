@@ -5,18 +5,7 @@
 #include <UI/UI.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
-//Implements 4 TT modes by splitting the "Time Trials" button
-//Actually doesn't in lolpack because of tt validation + settings
-//This file can almost definitely be optimised
-// I HATE BUTTONS!!!!
-// I HATE BUTTONS!!!!
-// I HATE BUTTONS!!!!
-// I HATE BUTTONS!!!!
-// I HATE BUTTONS!!!!
-// Hi Block, found your comments
-// SPINACH GAS!!!!
-// SPINACH GAS!!!!
-// SPINACH GAS!!!!
+// Defines TT modes
 
 
 namespace Pulsar {
@@ -126,18 +115,11 @@ void OnButtonSelect(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId
     if(id == 4) bmgId = BMG_SETTINGSBUTTON_BOTTOM;
     else if(id == 1) {
         bmgId = BMG_TT_MODE_BOTTOM_SINGLE;
-        if(!System::sInstance->IsContextLOL(TTS_VALID)) bmgId+=4;
+        if(!System::sInstance->GetBoolRadioContext(TTS_VALID)) bmgId+=4;
         else {
-            const u8 speedContext = System::sInstance->IsContextLOL(PHYS_SPEED_1)
-                                  + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
-                                  + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
-                                  + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8;
-            const bool itemBool   = System::sInstance->IsContextLOL(ITEM_START_ENABLED);
-            const u8 itemContext  = System::sInstance->IsContextLOL(ITEM_START_1)
-                                  + System::sInstance->IsContextLOL(ITEM_START_2)*2
-                                  + System::sInstance->IsContextLOL(ITEM_START_4)*4
-                                  + System::sInstance->IsContextLOL(ITEM_START_8)*8
-                                  + System::sInstance->IsContextLOL(ITEM_START_16)*16;
+            const u8 speedContext = System::sInstance->GetContext(PHYS_SPEED);
+            const bool itemBool   = System::sInstance->GetBoolRadioContext(ITEM_START_ENABLED);
+            const u8 itemContext  = System::sInstance->GetContext(ITEM_START);
             switch (speedContext) {
                 case PHYSSETTING_SPEED_100: break;
                 case PHYSSETTING_SPEED_150: bmgId +=1; break;
@@ -197,26 +179,14 @@ void OnButtonClick(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId)
 //                break;
 //        }
 
-        //Above commented is normal pulsar in case this doesn't work
-        //we love doing weird stuff
-        //the following basically stupidly divides the settings into the generic pulsar tt modes
-        //which is a terrible way of doing it but the pulsar modes are default so what the hell
-        //I am so sorry tt community lmfao
-        //keep in mind that 200cc is done via speedsetting now, so 200cc tt validity is hence based on that
+        // Convert settings into standard TT modes
 
-        //lolpack divider
-        const u8 speedContext = System::sInstance->IsContextLOL(PHYS_SPEED_1)
-                              + System::sInstance->IsContextLOL(PHYS_SPEED_2)*2
-                              + System::sInstance->IsContextLOL(PHYS_SPEED_4)*4
-                              + System::sInstance->IsContextLOL(PHYS_SPEED_8)*8;
-        const bool itemBool   = System::sInstance->IsContextLOL(ITEM_START_ENABLED);
-        const u8 itemContext  = System::sInstance->IsContextLOL(ITEM_START_1)
-                              + System::sInstance->IsContextLOL(ITEM_START_2)*2
-                              + System::sInstance->IsContextLOL(ITEM_START_4)*4
-                              + System::sInstance->IsContextLOL(ITEM_START_8)*8
-                              + System::sInstance->IsContextLOL(ITEM_START_16)*16;
+        const u8 speedContext = System::sInstance->GetContext(PHYS_SPEED);
+        const bool itemBool   = System::sInstance->GetBoolRadioContext(ITEM_START_ENABLED);
+        const u8 itemContext  = System::sInstance->GetContext(ITEM_START);
+
         TTMode mode = TTMODE_UNRESTRICTED;
-        if(System::sInstance->IsContextLOL(TTS_VALID)) {
+        if(System::sInstance->GetBoolRadioContext(TTS_VALID)) {
             if(itemContext == ITEMSETTING_START_3MUS || itemBool == false) {
                 if(speedContext==PHYSSETTING_SPEED_100) mode = TTMODE_150;
                 else mode = TTMODE_200;

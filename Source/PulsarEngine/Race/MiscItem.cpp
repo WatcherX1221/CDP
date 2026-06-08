@@ -8,6 +8,7 @@
 #include <SlotExpansion/CupsConfig.hpp>
 #include <MarioKartWii/Kart/KartCollision.hpp>
 #include <MarioKartWii/Item/ItemBehaviour.hpp>
+#include <Settings/SettingsParam.hpp>
 
 // Credits to Brawlbox for Accurate Roulette
 // Credits to Vega for Remove Mushroom Bug
@@ -18,10 +19,7 @@ namespace Race{
 
 // Accurate roulettes for supported modes
 static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxType, u8 position, ItemId prevRandomItem, bool r7){
-    if (    ( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-            + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-            + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)
-            ) > 0 ) {
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) {
         const u8 playerId = Raceinfo::sInstance->playerIdInEachPosition[position-1];
         const GameMode gameMode = Racedata::sInstance->racesScenario.settings.gamemode;
         if (gameMode != MODE_BATTLE &&
@@ -35,9 +33,7 @@ static int AccurateItemRoulette(Item::ItemSlotData *itemSlotData, u16 itemBoxTyp
 }
 
 static int PatchMushroomBug() { // Needs testing, not sure how to disable?
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return 0x0;
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return 0x0;
     return -1; // Change this value probably?
 }
 
@@ -49,45 +45,31 @@ static int UseItem(Kart::Collision *kartCollision, ItemId id){
     return -1;
 }
 static int GroundCollisionShock(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, LIGHTNING);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, LIGHTNING);
     return -1;
 }
 static int GroundCollisionMega(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, MEGA_MUSHROOM);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, MEGA_MUSHROOM);
     return -1;
 }
 static int GroundCollisionFeather(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, BLOOPER);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, BLOOPER);
     return -1;
 }
 static int GroundCollisionPOW(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, POW_BLOCK);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, POW_BLOCK);
     return -1;
 }
 static int GroundCollisionGolden(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, MUSHROOM);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, MUSHROOM);
     return -1;
 }
 static int GroundCollisionBullet(Kart::Collision *kartCollision){
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return UseItem(kartCollision, BULLET_BILL);
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, BULLET_BILL);
     return -1;
 }
 static int ItemLanding() {
-    if (( System::sInstance->IsContextLOL(ITEM_ROULETTE_4)*4
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_2)*2
-        + System::sInstance->IsContextLOL(ITEM_ROULETTE_1)) > 0 ) return 0x39800001;
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return 0x39800001;
     return 0x89840058;
 }
 

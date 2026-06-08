@@ -6,6 +6,7 @@
 #include <Network/PacketExpansion.hpp>
 #include <Network/PulSELECT.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
+#include <Settings/SettingsParam.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -27,7 +28,7 @@ kmCall(0x80622088, BuildCustomSection);
 
 static void AddCustomLayers(Section& section, SectionId id) {
     if(id < SECTION_P1_WIFI_FROOM_VS_VOTING || id > SECTION_P2_WIFI_FROOM_COIN_VOTING
-        || !System::sInstance->IsContextPul(PULSAR_HAW_1)) section.AddInitialLayers(id);
+        || System::sInstance->GetFullRadioContext(HOST_HAW) != HOSTSETTING_HOSTWINS_ENABLED ) section.AddInitialLayers(id);
     else section.AddPageLayer(PAGE_SELECT_STAGE_MGR);
 }
 kmCall(0x8062213c, AddCustomLayers);

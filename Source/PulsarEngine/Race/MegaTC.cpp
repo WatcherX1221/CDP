@@ -9,11 +9,7 @@ namespace Pulsar {
 namespace Race {
 //Mega TC
 void MegaTC(Kart::Movement& movement, int frames, int unk0, int unk1) {
-    switch ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
-           ) {
+    switch ( System::sInstance->GetContext(ITEM_CLOUDEFFECT) ) {
         case ITEMSETTING_CLOUD_MEGA: // Mega
             movement.ActivateMega();
             break;
@@ -54,11 +50,7 @@ kmCall(0x80580630, MegaTC);
 
 void LoadCorrectTCBRRES(Item::ObjKumo& objKumo, const char* mdlName, const char* shadowSrc, u8 whichShadowListToUse,
     Item::Obj::AnmParam* anmParam) {
-    switch ( System::sInstance->IsContextWDD(ITEM_CLOUD_1)
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_2)*2
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_4)*4
-           + System::sInstance->IsContextWDD(ITEM_CLOUD_8)*8
-           ) {
+    switch ( System::sInstance->GetContext(ITEM_CLOUDEFFECT) ) {
         case ITEMSETTING_CLOUD_MEGA: // Mega
             objKumo.LoadGraphics("megaTC.brres", mdlName, shadowSrc, 1, anmParam,
             static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
@@ -89,6 +81,10 @@ void LoadCorrectTCBRRES(Item::ObjKumo& objKumo, const char* mdlName, const char*
 //            break;
 //        case ITEMSETTING_CLOUD_SHOCKMEGA: // Dizzy
 //            objKumo.LoadGraphics("dizzyTC.brres", mdlName, shadowSrc, 1, anmParam,
+//            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
+//            break;
+//        case ITEMSETTING_CLOUD_SHOCKSTAR: // Shock Star
+//            objKumo.LoadGraphics("shockstarTC.brres", mdlName, shadowSrc, 1, anmParam,
 //            static_cast<nw4r::g3d::ScnMdl::BufferOption>(0), nullptr, 0);
 //            break;
         case ITEMSETTING_CLOUD_MEGASHOCK: // Cloud

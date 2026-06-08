@@ -27,7 +27,7 @@ ExpCupSelect::ExpCupSelect() {
     this->controlsManipulatorManager.SetGlobalHandler(START_PRESS, onStartPressHandler, false, false);
 
     CupsConfig* cupsConfig = CupsConfig::sInstance;
-    cupsConfig->ToggleCTs(System::sInstance->IsContextPul(PULSAR_CT));
+    cupsConfig->ToggleCTs(System::sInstance->GetBoolRadioContext(PULSAR_CT));
     if (cupsConfig->GetTotalCupCount() <= 8) {
         this->arrows.leftArrow.manipulator.inaccessible = true;
         this->arrows.leftArrow.isHidden = true;
@@ -75,11 +75,13 @@ UIControl* ExpCupSelect::CreateControl(u32 controlId) {
 }
 
 void ExpCupSelect::OnRightArrowSelect(SheetSelectControl& control, u32 hudSlotId) {
-    this->OnArrowSelect(2);
+    u8 cupshift = (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_CUPSHIFT)+1)*2;
+    this->OnArrowSelect(cupshift);
 }
 
 void ExpCupSelect::OnLeftArrowSelect(SheetSelectControl& control, u32 hudSlotId) {
-    this->OnArrowSelect(-2);
+    u8 cupshift = (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_CUPSHIFT)+1)*2;
+    this->OnArrowSelect(-cupshift);
 }
 
 void ExpCupSelect::OnArrowSelect(s32 direction) {

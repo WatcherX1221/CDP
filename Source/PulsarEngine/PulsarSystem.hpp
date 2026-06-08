@@ -22,57 +22,28 @@ class Mgr;
 class ConfigFile;
 
 
-enum ContextPul { // 10 Context Bits
-    PULSAR_CT = 0,
-    //PULSAR_200, //Useless now since it's done via speedmod
-    PULSAR_FEATHER,
-    PULSAR_MEGATC,
-    PULSAR_HAW_1,
-    PULSAR_HAW_2,
-    //PULSAR_LAYOUT, //Added for convenience
-    PULSAR_MIIHEADS,
-    PULSAR_MODE_OTT,
-    PULSAR_MODE_KO,
-    LOLPACK_BRAKE,
-    CDP_DISREGARD,
-    PHYS_TURBO_1,
-    PHYS_TURBO_2
-    //PULSAR_CONTEXT_COUNT //I don't think this ever gets used
+enum RadioContexts {
+    PULSAR_CT = 0x0,
+    HOST_HAW = 0x1, // 0x2
+    RACE_MIIHEADS = 0x3,
+    MODE_OTT = 0x4,
+    MODE_KO = 0x5,
+    PHYS_BRAKE = 0x6,
+    HOST_DISREGARD = 0x7,
+    PHYS_TURBO = 0x8, // 0x2
+    TTS_VALID = 0xA,
+    ITEM_START_ENABLED = 0xB,
+    LAP_MATHS = 0xC // 0x2
 };
 
-enum ContextLOL { // 24 Context Bits
-    TTS_VALID,
-    LAP_MATHS_1,
-    LAP_MATHS_2,
-    LAP_COUNT_1,
-    LAP_COUNT_2,
-    LAP_COUNT_4,
-    LAP_COUNT_8,
-    PHYS_SPEED_1,
-    PHYS_SPEED_2,
-    PHYS_SPEED_4,
-    PHYS_SPEED_8,
-    PHYS_GRAVITY_1,
-    PHYS_GRAVITY_2,
-    PHYS_GRAVITY_4,
-    PHYS_GRAVITY_8,
-    ITEM_ROULETTE_1,
-    ITEM_ROULETTE_2,
-    ITEM_ROULETTE_4,
-    ITEM_START_ENABLED,
-    ITEM_START_1,
-    ITEM_START_2,
-    ITEM_START_4,
-    ITEM_START_8,
-    ITEM_START_16
-};
-
-enum ContextWDD { // 5 Context Bits
-    ITEM_CLOUD_1,
-    ITEM_CLOUD_2,
-    ITEM_CLOUD_4,
-    ITEM_CLOUD_8,
-    PHYS_KARTSTAT_1
+enum ScrollContexts {
+    LAPS_LAPS,
+    PHYS_SPEED,
+    PHYS_GRAVITY,
+    PHYS_KARTBIN,
+    ITEM_ROULETTEBIN,
+    ITEM_START,
+    ITEM_CLOUDEFFECT
 };
 
 
@@ -100,10 +71,21 @@ public:
     //virtual void ParsePackROOMMsg(u8 msg) {}  //Only called for non-hosts
     const Info& GetInfo() const { return this->info; }
 
-    bool IsContextPul(ContextPul context) const { return (this->contextPul & (1 << context)) != 0; }
-    bool IsContextLOL(ContextLOL context) const { return (this->contextLOL & (1 << context)) != 0; }
-    bool IsContextWDD(ContextWDD context) const { return (this->contextWDD & (1 << context)) != 0; }
-    //bool IsWatcherInsane = yes;
+    bool GetBoolRadioContext(RadioContexts context) const { return (this->radioContexts & (1 << context)) != 0; }
+    u8   GetFullRadioContext(RadioContexts context) const { return (this->radioContexts >> context) & 0b11; }
+    u8 GetContext(ScrollContexts context) const {
+        switch (context) {
+            case LAPS_LAPS: return this->lapCount;
+            case PHYS_SPEED: return this->speedMod;
+            case PHYS_GRAVITY: return this->gravMod;
+            case PHYS_KARTBIN: return this->kartBin;
+            case ITEM_ROULETTEBIN: return this->rouletteBin;
+            case ITEM_START: return this->itemStart;
+            case ITEM_CLOUDEFFECT: return this->cloudEffect;
+            // This default should never run
+            default: return this->radioContexts;
+        }
+    }
     static s32 OnSceneEnter(Random& random);
 
     const char* GetModFolder() const { return modFolderName; }
@@ -136,9 +118,14 @@ private:
     char modFolderName[IOS::ipcMaxFileName + 1]; //0xC
     u8 padding[2];
     Info info; //0x1c
-    u32 contextPul;
-    u32 contextWDD;
-    u32 contextLOL;
+    u32 radioContexts;
+    u8 lapCount;
+    u8 speedMod;
+    u8 gravMod;
+    u8 kartBin;
+    u8 rouletteBin;
+    u8 itemStart;
+    u8 cloudEffect;
 
     //Add extra contexts here
 

@@ -53,10 +53,15 @@ struct PulRH2 : public      RKNet::RACEHEADER2Packet {};
 struct PulROOM : public     RKNet::ROOMPacket {
 
     //Generic ROOM settings
-    u32 hostSystemContextPul; //System's context but with just gamemodes taken from the settings
-    u32 hostSystemContextLOL;
-    u32 hostSystemContextWDD;
     u8 raceCount;
+    u32 RadioContexts;
+    u8 lapCount;
+    u8 speedMod;
+    u8 gravMod;
+    u8 rouletteBin;
+    u8 kartBin;
+    u8 itemStart;
+    u8 cloudEffect;
 };
 
 enum SELECTComboStatus {

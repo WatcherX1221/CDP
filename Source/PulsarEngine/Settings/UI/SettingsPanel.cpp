@@ -91,10 +91,10 @@ void SettingsPanel::OnInit() {
     const Settings::Mgr& settings = Settings::Mgr::Get();
     for(int i = 0; i < Settings::Params::pageCount; ++i) {
         for(int radioIdx = 0; radioIdx < Settings::Params::radioCount[i]; ++radioIdx) {
-            this->radioSettings[i][radioIdx] = settings.GetSettingValue(static_cast<Settings::Type>(i), radioIdx);
+            this->radioSettings[i][radioIdx] = Settings::Mgr::Get().GetSettingValue(static_cast<Settings::Type>(i), radioIdx);
         }
         for(int scrollerIdx = 0; scrollerIdx < Settings::Params::scrollerCount[i]; ++scrollerIdx) {
-            this->scrollerSettings[i][scrollerIdx] = settings.GetSettingValue(static_cast<Settings::Type>(i), scrollerIdx + 6);
+            this->scrollerSettings[i][scrollerIdx] = Settings::Mgr::Get().GetSettingValue(static_cast<Settings::Type>(i), scrollerIdx + 6);
         }
     }
     MenuInteractable::OnInit();
@@ -281,8 +281,10 @@ void SettingsPanel::SaveSettings(bool writeFile) {
 
 void SettingsPanel::OnBackPress(u32 hudSlotId) {
     PushButton& okButton = *this->externControls[0];
-    okButton.SelectFocus();
-    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU) { // Credits to ToadetteHackFan for singleplayermenu reboot, used to fix tt bmgs
+    okButton.SelectFocus(); 
+    // Credits to ToadetteHackFan for singleplayermenu reboot, used to fix tt bmgs
+    // ignore if fastmenus enabled because this is only a minor fix and if you're using fast menus you probably don't care
+    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) == MENUSETTING_FASTMENUS_DISABLED) {
         this->SaveSettings(true);
         Pages::Menu::ChangeSectionById(SECTION_SINGLE_P_FROM_MENU, okButton);
     }
@@ -292,7 +294,8 @@ void SettingsPanel::OnBackPress(u32 hudSlotId) {
 }
 
 void SettingsPanel::OnSaveButtonClick(PushButton& button, u32 hudSlotId) {
-    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU) { // credits to thf, same as above
+    // credits to thf, same as above
+    if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FASTMENUS) == MENUSETTING_FASTMENUS_DISABLED) {
         this->SaveSettings(true);
         Pages::Menu::ChangeSectionById(SECTION_SINGLE_P_FROM_MENU, button);
     }
