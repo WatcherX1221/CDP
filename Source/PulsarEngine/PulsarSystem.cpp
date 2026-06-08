@@ -226,7 +226,7 @@ void System::UpdateContext() {
                     turboStyle = newRadioContexts & (1 << PHYS_TURBO);
                     isBrake = newRadioContexts & (1 << PHYS_BRAKE); // Is Brake Drift Allowed? take host settings
                     lapMaths = newRadioContexts & (1 << LAP_MATHS);
-                    itemStart = newRadioContexts & (1 << ITEM_START_ENABLED);
+                    isItemStart = newRadioContexts & (1 << ITEM_START_ENABLED);
 
                     // Large Contexts
                     lapsLaps = newLapsLaps;
