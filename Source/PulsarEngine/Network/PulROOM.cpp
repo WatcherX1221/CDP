@@ -27,7 +27,7 @@ static void ConvertROOMPacketToData(const PulROOM& packet) {
     system->netMgr.hostCloudEffect = packet.cloudEffect;
 }
 
-static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* src, u64 len) {
+static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* src, u32 len) {
     packetHolder->Copy(src, len); //default
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;

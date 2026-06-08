@@ -38,7 +38,7 @@ u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount
     {  0,  0,  0,  0,  0}, // Audio
     { 10,  5, 25,  0,  0}, // Item
     { 10, 12,  2,  0,  0}, // Physics
-    { 11,  9,  0,  0,  0}  // Lap
+    { 10,  9,  0,  0,  0}  // Lap
 };
 
 }//namespace Settings
