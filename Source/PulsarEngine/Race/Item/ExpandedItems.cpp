@@ -3,7 +3,7 @@
 #include <MarioKartWii/System/Identifiers.hpp>
 
 // Expanded behaviourTable in mod BSS (from ItemSlotExpansion.cpp)
-extern "C" Item::Behavior expandedBehaviourTable[26];
+extern "C" Item::Behavior expandedBehaviourTable[27];
 
 namespace Pulsar {
 namespace Race {
@@ -17,7 +17,7 @@ void FusionMushroomBoost(Item::Player& itemPlayer) {
 }
 
 
-static void RegisterCtdnItemBehaviours() {
+static void RegisterExpandedItemBehaviours() {
 
     Item::Behavior& greenShellMush = expandedBehaviourTable[GREEN_SHELL_MUSHROOM];
     greenShellMush.unknkown_0x0 = 1;
@@ -38,9 +38,19 @@ static void RegisterCtdnItemBehaviours() {
     bobombMush.unknown_0x10 = 0;
     bobombMush.useType = Item::ITEMUSE_FIRE;
     bobombMush.useFunction = FusionMushroomBoost;
+
+    Item::Behavior& bobombTriple = expandedBehaviourTable[TRIPLE_BOBOMB];
+    bobombTriple.unknkown_0x0 = 1;
+    bobombTriple.unknkown_0x1 = 1;
+    bobombTriple.objId = OBJ_BOBOMB;
+    bobombTriple.numberOfItems = 3;
+    bobombTriple.unknown_0xc = 0;
+    bobombTriple.unknown_0x10 = 0;
+    bobombTriple.useType = Item::ITEMUSE_CIRCLE;
+    bobombTriple.useFunction = nullptr;
 }
 
-RaceLoadHook RegisterCtdnItems(RegisterCtdnItemBehaviours);
+RaceLoadHook RegisterExpandedItems(RegisterExpandedItemBehaviours);
 
 } // namespace Race
 } // namespace Pulsar

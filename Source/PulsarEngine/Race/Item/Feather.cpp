@@ -14,7 +14,7 @@
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 
 // Expanded behaviourTable in mod BSS (from ItemSlotExpansion.cpp)
-extern "C" Item::Behavior expandedBehaviourTable[26];
+extern "C" Item::Behavior expandedBehaviourTable[27];
 
 namespace Pulsar {
 namespace Race {

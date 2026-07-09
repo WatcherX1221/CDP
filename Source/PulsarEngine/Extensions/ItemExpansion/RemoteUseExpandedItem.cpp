@@ -11,7 +11,7 @@
 #include <MarioKartWii/RKNet/PacketMgr.hpp>
 #include <Extensions/ItemExpansion/ItemObjDrop.hpp>
 //#include <Race/Boo.hpp>
-#include <Race/Feather.hpp>
+#include <Race/Item/Feather.hpp>
 #include <PulsarSystem.hpp>
 
 namespace Pulsar {

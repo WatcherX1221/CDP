@@ -11,11 +11,11 @@
 #include <Extensions/ItemExpansion/ItemObjDrop.hpp>
 
 static const u32 ORIGINAL_ITEM_COUNT = 19;
-static const u32 EXPANDED_ITEM_COUNT = 26;
+static const u32 EXPANDED_ITEM_COUNT = 27;
 
 extern "C" {
-    Item::Behavior expandedBehaviourTable[26];
-    u16 expandedAccumulator[26];
+    Item::Behavior expandedBehaviourTable[27];
+    u16 expandedAccumulator[27];
 }
 
 extern "C" void* __nwa__FUl(u32 size);
@@ -390,9 +390,11 @@ static void ExpandedLoseItemFromDmg(Item::PlayerInventory& inventory) {
         Item::Player* player = inventory.itemPlayer;
         const Vec3& pos = player->GetPosition();
         u8 playerId = player->id;
-        Pulsar::Race::EjectDroppedItem(itemId, pos, playerId);
-        if (DriverMgr::isOnlineRace && !player->isRemote) {
-            Pulsar::Race::SendEncodedCustomDropEvent(itemId, playerId);
+        for (int i = 0; i < inventory.currentItemCount; i++) {
+            Pulsar::Race::EjectDroppedItem(itemId, pos, playerId);
+            if (DriverMgr::isOnlineRace && !player->isRemote) {
+                Pulsar::Race::SendEncodedCustomDropEvent(itemId, playerId);
+            }
         }
         inventory.currentItemId = ITEM_NONE;
         inventory.currentItemCount = 0;

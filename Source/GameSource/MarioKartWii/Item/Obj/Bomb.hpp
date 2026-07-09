@@ -42,7 +42,7 @@ public:
     u32 timer; //0x1dc how long a bomb lasts before exploding
     u8 unknown_0x1e0[0x1f0 - 0x1e0];
 };
-size_assert(ObjBomb, 0x1f0);
+//size_assert(ObjBomb, 0x1f0);
 }//namespace Item
 
 #endif

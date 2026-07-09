@@ -1,4 +1,3 @@
-
 #include <kamek.hpp>
 #include <MarioKartWii/Archive/ArchiveMgr.hpp>
 #include <MarioKartWii/Effect/EffectMgr.hpp>
@@ -62,4 +61,12 @@ const KMP::Holder<KTPT>* SecondaryKTPT(const KMP::Manager& manager, u32 idx) {
     return holder;
 }
 kmCall(0x807ea670, SecondaryKTPT);
+
+// Slot Specific Objects Work in All Slots (pylon01, sunDS, FireSnake and begoman_spike) (Ro_)
+kmWrite32(0x8082A4F8, 0x3800000A);
+
+// Invincibility Period Against Cars/Trucks Objects in All Slots (Ro_)
+kmWrite32(0x806D686C, 0x3800000A);
+kmWrite32(0x80827968, 0x38000000);
+
 }//namespace Pulsar

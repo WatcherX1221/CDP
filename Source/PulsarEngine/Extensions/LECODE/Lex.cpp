@@ -6,6 +6,7 @@
 #include <MarioKartWii/Item/Obj/ItemObj.hpp>
 #include <PulsarSystem.hpp>
 #include <Extensions/LECODE/LECODEMgr.hpp>
+#include <PulsarSystem.hpp>
 
 //https://wiki.tockdom.com/wiki/LEX_(File_Format)
 
@@ -29,8 +30,8 @@ const KMPHeader* LexMgr::LoadLEXAndKMP(u32, const char* kmpString) {
             if(header->magic == LEXHeader::goodMagic && header->majorVersion == 1) {
 
                 LEXSectionHeader* section = reinterpret_cast<LEXSectionHeader*>(reinterpret_cast<u8*>(header) + header->offsetToFirstSection);
-                u8* data = reinterpret_cast<u8*>(section) + sizeof(LEXSectionHeader);
                 while(section->magic != 0) {
+                    u8* data = reinterpret_cast<u8*>(section) + sizeof(LEXSectionHeader);
                     switch(section->magic) {
                         case SET1::magic:
                             self.set1 = reinterpret_cast<SET1*>(section);
@@ -120,6 +121,10 @@ u32 ApplySET1TimeLimit(const Racedata& racedata) {
         const GameMode mode = racedata.racesScenario.settings.gamemode;
         if(mode == MODE_PRIVATE_VS || mode == MODE_PUBLIC_VS) hiTime = set->onlineTime * 1000 + 0x93e0; //the game subtracts that after
     }
+    // Override for extended race time setting
+    Pulsar::System* system = Pulsar::System::sInstance;
+    if ( system->GetBoolRadioContext(Pulsar::HOST_RACETIME) ) hiTime = 0x2932E00; // 12 Hours
+    // Proceed
     asm(lwz r5, 0x0004 (r31)); //default, make this volatile if another func is called
     return hiTime;
 }

@@ -103,6 +103,10 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
         id = BOBOMB;
         inventory.currentItemCount = 1;
         break;
+    case ITEMSETTING_START_3BOM:
+        id = TRIPLE_BOBOMB;
+        inventory.currentItemCount = 3;
+        break;
     case ITEMSETTING_START_BLPR:
         id = BLOOPER;
         inventory.currentItemCount = 1;
@@ -142,6 +146,15 @@ static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool is
     }
 }
 kmCall(0x80799808, SetStartingItem);
+
+/*
+static u32 SetMushroomBugItem(ItemId id) {
+    const System* system = System::sInstance;
+    if(system->GetBoolRadioContext(MODE_CTDN)) return GREEN_SHELL_MUSHROOM;
+    return MUSHROOM;
+}
+kmWritePointer(0x807BA13B, SetMushroomBugItem);
+*/
 
 //From JoshuaMK, ported to C++ by Brawlbox and adapted as a setting
 static int MiiHeads(Racedata* racedata, u32 unused, u32 unused2, u8 id) {
@@ -213,20 +226,24 @@ kmWrite32(0x807DFC24, 0x60000000);
 // By the way, this stuff annihilates RTWW Battles.
 // Who on the pulsar dev team thought this was a good idea? :P
 // Would be better to have team invincibility as a setting...
+/*
 kmWrite32(0x8056fd24, 0x38000000); //KartCollision::CheckKartCollision()
 kmWrite32(0x80572618, 0x38000000); //KartCollision::CheckItemCollision()
 kmWrite32(0x80573290, 0x38000000); //KartCollision::HandleFIBCollision()
 kmWrite32(0x8068e2d0, 0x38000000); //PlayerEffects ctor
 kmWrite32(0x8068e314, 0x38000000); //PlayerEffects ctor
-//kmWrite32(0x807a7f6c, 0x38c00000); //FIB are always red //funny
+kmWrite32(0x807a7f6c, 0x38c00000); //FIB are always red
 kmWrite32(0x807b0bd4, 0x38000000); //pass TC to teammate
 kmWrite32(0x807bd2bc, 0x38000000); //RaceGlobals
 kmWrite32(0x807f18c8, 0x38000000); //TC alert
+*/
 
 //Accurate Explosion Damage (MrBean, CLF)
 kmWrite16(0x80572690, 0x4800);
 kmWrite16(0x80569F68, 0x4800);
 
+// Change Camera Perspective in Race (Like Live View/Replay)
+kmWrite32(0x805A2948, 0x38600001);
 
 //CtrlItemWindow
 kmWrite24(0x808A9C16, 'PUL'); //item_window_new -> item_window_PUL
@@ -254,6 +271,7 @@ const char* ChangeItemWindowPane(ItemId id, u32 itemCount) {
         case TRIPLE_FAKE_ITEM_BOX: paneName = "dummybox_3" ;break;
         case GREEN_SHELL_MUSHROOM: paneName = "ctdn_green" ;break;
         case BOBOMB_MUSHROOM: paneName = "ctdn_bomb" ;break;
+        case TRIPLE_BOBOMB: paneName = "bomb_3" ;break;
         default: paneName = GetItemIconPaneName(id, itemCount);}
     return paneName;
 }

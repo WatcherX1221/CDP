@@ -18,6 +18,13 @@ kmWrite32(0x8053EF6C, 0x38000000);
 kmWrite32(0x8053F0B4, 0x38000000);
 kmWrite32(0x8053F124, 0x38000000);
 
+// Friend Room Message Appear Delay Modifier [Ro]
+//kmWrite32(0x805DA8D8, 0x2C00003C); // 60 Frames
+
+// Disable Online Six Minute Disconnection [Ro]
+// Time extension is defined in Lex.cpp
+kmWrite32(0x8053F474, 0x60000000);
+
 static void CalcSectionAfterRace(SectionMgr* sectionMgr, SectionId id) {
 
     UI::ChooseNextTrack* choosePage = reinterpret_cast<UI::ExpSection*>(sectionMgr->curSection)->GetPulPage<UI::ChooseNextTrack>();

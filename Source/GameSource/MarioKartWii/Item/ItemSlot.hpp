@@ -39,7 +39,7 @@ class ItemSlotData {
     struct RouletteItems {  // visual only
         RouletteItems();  // 807bb374, no dtor
         u32 itemCount;
-        ItemId items[26]; // Expanded from [19] to [26] for item slot expansion
+        ItemId items[27]; // Expanded from [19] to [27] for item slot expansion
     };
 
     static ItemSlotData* sInstance();  // 809c3670

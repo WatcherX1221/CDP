@@ -1898,3 +1898,4 @@ IsCPU__Q24Kart4LinkCFv = 0x80590664
 ActivateMushroom__Q24Kart8MovementFv = 0x8057f3d8
 beginFrame= 0x8020fe24
 Update__20GameScreenEffectsMgrFv = 0x8054f1b0
+objProperties__Q24Item13ObjProperties = 0x809c2f48

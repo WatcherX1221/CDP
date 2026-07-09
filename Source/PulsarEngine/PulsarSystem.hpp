@@ -33,7 +33,10 @@ enum RadioContexts {
     PHYS_TURBO = 0x8, // 0x2
     TTS_VALID = 0xA,
     ITEM_START_ENABLED = 0xB,
-    LAP_MATHS = 0xC // 0x2
+    LAP_MATHS = 0xC, // 0x2
+    HOST_RACETIME = 0xD,
+    HOST_KARTRESTRICT = 0xE, // 0x2
+    HOST_CHARRESTRICT = 0x10 // 0x2
 };
 
 enum ScrollContexts {

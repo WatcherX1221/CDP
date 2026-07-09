@@ -131,6 +131,7 @@ void System::UpdateContext() {
     u8   lapMaths = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC);
     bool isItemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED);
     bool isBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
+    bool raceTime = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RACETIME);
 
     // Large Contexts
     u8 lapsLaps = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS);
@@ -140,6 +141,8 @@ void System::UpdateContext() {
     u8 itemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START);
     u8 itemCloudEffect = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD);
     u8 physVehicleStats = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
+    u8 hostKartRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RESTRICTKART);
+    u8 hostCharRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RESTRICTCHAR);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -190,6 +193,9 @@ void System::UpdateContext() {
                 physVehicleStats = PHYSSETTING_KARTSTAT_VANILLA;
                 isItemStart = ITEMSETTING_START_DISABLED;
                 itemStart = ITEMSETTING_START_3MUS;
+                raceTime = HOSTSETTING_RACETIME_NORMAL;
+                hostKartRestrict = HOSTSETTING_RESTRICTKART_DISABLED;
+                hostCharRestrict = HOSTSETTING_RESTRICTCHAR_DISABLED;
 
                 break;
             case(RKNet::ROOMTYPE_JOINING_REGIONAL):
@@ -227,6 +233,9 @@ void System::UpdateContext() {
                     isBrake = newRadioContexts & (1 << PHYS_BRAKE); // Is Brake Drift Allowed? take host settings
                     lapMaths = newRadioContexts & (1 << LAP_MATHS);
                     isItemStart = newRadioContexts & (1 << ITEM_START_ENABLED);
+                    raceTime = newRadioContexts & (1 << HOST_RACETIME);
+                    hostCharRestrict = newRadioContexts & (1 << HOST_CHARRESTRICT);
+                    hostKartRestrict = newRadioContexts & (1 << HOST_KARTRESTRICT);
 
                     // Large Contexts
                     lapsLaps = newLapsLaps;
@@ -279,7 +288,7 @@ void System::UpdateContext() {
     } // If Brake Drift Allowed
 
     // Validate Time Trials
-    // Previous way of doing this was very awkward to edit - this isn't much better but I still can't think of a good way of doing this
+    // Previous way of doing this was very awkward to edit - this isn't much better but I still can't think of a good way to do this
 
     bool isValidTT = true;
     isValidTT &= lapMaths == LAPSETTING_CALC_MATHS || lapMaths == LAPSETTING_CALC_EXCLUDE;
@@ -288,6 +297,7 @@ void System::UpdateContext() {
     isValidTT &= ( ! isBrake ) ^ ( physSpeed >= PHYSSETTING_SPEED_125 && physSpeed <= PHYSSETTING_SPEED_999 );
     isValidTT &= turboStyle == this->info.HasUMTs();
     isValidTT &= physVehicleStats == PHYSSETTING_KARTSTAT_VANILLA;
+    //isValidTT &= isCTDN == MODESETTING_CTDN_DISABLED;
 
     // Extra validity notes:
     // - All speedmods are valid now since they're split up into categories, so we don't need to check for that
@@ -313,6 +323,7 @@ void System::UpdateContext() {
     // if CTs are enabled
     if (isCT) {
         contextRadioContexts |= ( isOTT << MODE_OTT )
+                       | ( raceTime << HOST_RACETIME )
                        | ( lapMaths << LAP_MATHS );
         contextLapsLaps = lapsLaps;
     } // isCT
@@ -324,7 +335,9 @@ void System::UpdateContext() {
                        | ( isBrake << PHYS_BRAKE )
                        | ( turboStyle << PHYS_TURBO )
                        | ( isDisregard << HOST_DISREGARD )
-                       | ( isItemStart << ITEM_START_ENABLED );
+                       | ( isItemStart << ITEM_START_ENABLED )
+                       | ( hostKartRestrict << HOST_KARTRESTRICT )
+                       | ( hostCharRestrict << HOST_CHARRESTRICT );
         contextSpeedMod = physSpeed;
         contextGravMod = physGravity;
         contextKartBin = physVehicleStats;

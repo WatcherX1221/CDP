@@ -4,6 +4,7 @@
 #include <UI/ChangeCombo/ChangeCombo.hpp>
 #include <PulsarSystem.hpp>
 #include <Gamemodes/KO/KOMgr.hpp>
+#include <Settings/UI/SettingsPanel.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -130,6 +131,7 @@ void ExpVR::ChangeCombo(PushButton& changeComboButton, u32 hudSlotId) {
 static void AddChangeComboPages(Section* section, PageId id) {
     section->CreateAndInitPage(id);
     section->CreateAndInitPage(PAGE_CHARACTER_SELECT);
+    section->CreateAndInitPage(static_cast<PageId>(SettingsPanel::id)); // credits to yosh
     bool isBattle = IsBattle();
     PageId kartPage  = PAGE_KART_SELECT;
     PageId driftPage = PAGE_DRIFT_SELECT;

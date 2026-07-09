@@ -9,11 +9,11 @@
 #include <MarioKartWii/CourseMgr.hpp>
 #include <PulsarSystem.hpp>
 //#include <Race/Boo.hpp>
-#include <Race/Feather.hpp>
+#include <Race/Item/Feather.hpp>
 #include <include/c_math.h>
 
 // Expanded behaviourTable in mod BSS (from ItemSlotExpansion.cpp)
-extern "C" Item::Behavior expandedBehaviourTable[26];
+extern "C" Item::Behavior expandedBehaviourTable[27];
 
 namespace Pulsar {
 namespace Race {
@@ -125,7 +125,8 @@ static void OnPickup(u8 playerId, ItemId droppedType) {
 
     Item::Player& player = mgr->players[playerId];
 
-    bool hasExistingItem = (player.inventory.currentItemId != ITEM_NONE);
+    // bool hasExistingItem = (player.inventory.currentItemId != ITEM_NONE);
+    bool hasExistingItem = (player.inventory.currentItemCount > 0);
 
     if (hasExistingItem) {
         ItemId savedId = player.inventory.currentItemId;
@@ -260,7 +261,7 @@ static void InitDropModels(ItemId type) {
         drops[i].model = new ModelDirector(0xb, 0);
         if (drops[i].model == nullptr) continue;
         drops[i].model->LoadWithAnm(mdlName, res, nullptr);
-        DisableBillboard(drops[i].model);
+        //DisableBillboard(drops[i].model);
 //        if (type == BOO) {
 //            drops[i].model->LinkAnimation(0, res, "wait", ANMTYPE_CHR, true,
 //                nullptr, ARCHIVE_HOLDER_COMMON, 0);
