@@ -1,11 +1,50 @@
-#include <VP.hpp>
 #include <MarioKartWii/UI/Ctrl/Menu/CtrlMenuCharacterSelect.hpp>
 #include <MarioKartWii/UI/Page/Menu/CharacterSelect.hpp>
+#include <MarioKartWii/GlobalFunctions.hpp>
+#include <PulsarSystem.hpp>
+#include <Settings/SettingsParam.hpp>
 
 // Credits to VP for Character Restrictions
 
-namespace VP {
+namespace Pulsar {
 namespace UI {
+
+    enum WeightClass{
+        LIGHTWEIGHT,
+        MEDIUMWEIGHT,
+        HEAVYWEIGHT,
+        MIIS
+    };
+
+    enum CharButtonId{
+        BUTTON_BABY_MARIO,
+        BUTTON_BABY_LUIGI,
+        BUTTON_TOAD,
+        BUTTON_TOADETTE,
+        BUTTON_BABY_PEACH,
+        BUTTON_BABY_DAISY,
+        BUTTON_KOOPA_TROOPA,
+        BUTTON_DRY_BONES,
+        BUTTON_MARIO,
+        BUTTON_LUIGI,
+        BUTTON_YOSHI,
+        BUTTON_BIRDO,
+        BUTTON_PEACH,
+        BUTTON_DAISY,
+        BUTTON_DIDDY_KONG,
+        BUTTON_BOWSER_JR,
+        BUTTON_WARIO,
+        BUTTON_WALUIGI,
+        BUTTON_KING_BOO,
+        BUTTON_ROSALINA,
+        BUTTON_DONKEY_KONG,
+        BUTTON_FUNKY_KONG,
+        BUTTON_BOWSER,
+        BUTTON_DRY_BOWSER,
+        BUTTON_MII_A,
+        BUTTON_MII_B
+    };
+
     // Uses the global function to get the character ID of the local player's Mii to determine it's weight class.
     WeightClass GetMiiWeightClass(Mii &mii){
         CharacterId charId = GetMiiCharacterId(mii);
@@ -45,33 +84,63 @@ namespace UI {
         button->manipulator.inaccessible = true;
     }
 
+    WeightClass GetWeightClass(CharacterId currentChar) {
+        switch (currentChar) {
+            case MARIO: return MEDIUMWEIGHT;
+            case BABY_PEACH: return LIGHTWEIGHT;
+            case WALUIGI: return HEAVYWEIGHT;
+            case BOWSER: return HEAVYWEIGHT;
+            case BABY_DAISY: return LIGHTWEIGHT;
+            case DRY_BONES: return LIGHTWEIGHT;
+            case BABY_MARIO: return LIGHTWEIGHT;
+            case LUIGI: return MEDIUMWEIGHT;
+            case TOAD: return LIGHTWEIGHT;
+            case DONKEY_KONG: return HEAVYWEIGHT;
+            case YOSHI: return MEDIUMWEIGHT;
+            case WARIO: return HEAVYWEIGHT;
+            case BABY_LUIGI: return LIGHTWEIGHT;
+            case TOADETTE: return LIGHTWEIGHT;
+            case KOOPA_TROOPA: return LIGHTWEIGHT;
+            case DAISY: return MEDIUMWEIGHT;
+            case PEACH: return MEDIUMWEIGHT;
+            case BIRDO: return MEDIUMWEIGHT;
+            case DIDDY_KONG: return MEDIUMWEIGHT;
+            case KING_BOO: return HEAVYWEIGHT;
+            case BOWSER_JR: return MEDIUMWEIGHT;
+            case DRY_BOWSER: return HEAVYWEIGHT;
+            case FUNKY_KONG: return HEAVYWEIGHT;
+            case ROSALINA: return HEAVYWEIGHT;
+            default: return LIGHTWEIGHT;
+        }
+    }
+
     void RestrictCharacterSelection(PushButton *button, u32 hudSlotId){
         Pages::CharacterSelect *page = SectionMgr::sInstance->curSection->Get<Pages::CharacterSelect>();
         CtrlMenuCharacterSelect &charSelect = page->ctrlMenuCharSelect;
         SectionId curSection = SectionMgr::sInstance->curSection->sectionId;
-        CharacterRestriction charRestrict = System::GetCharacterRestriction();
+        u8 charRestrict = System::sInstance->GetFullRadioContext(HOST_CHARRESTRICT);
         CtrlMenuCharacterSelect::ButtonDriver *driverButtons = charSelect.driverButtonsArray;
         CharacterId currentChar = page->models[hudSlotId].curCharacter;
-        WeightClass weight = System::GetWeightClass(currentChar);
+        WeightClass weight = GetWeightClass(currentChar);
         WeightClass miiWeight = GetMiiWeightClass(page->localPlayerMiis[0]);
         CtrlMenuCharacterSelect::ButtonDriver *newButton = charSelect.GetButtonDriver(currentChar);
 
         EnableButtons(charSelect);
 
         // Disables the buttons that are not in the character weight class restriction.
-        if (charRestrict != CHAR_DEFAULTSELECTION){
+        if (charRestrict != HOSTSETTING_RESTRICTCHAR_DISABLED){
             for (int i = BUTTON_BABY_MARIO; i < BUTTON_MII_A; i++)
             {
                 driverButtons[i].manipulator.inaccessible = false;
-                if (charRestrict == CHAR_LIGHTONLY &&
+                if (charRestrict == HOSTSETTING_RESTRICTCHAR_SMALLONLY &&
                 i >= BUTTON_MARIO && i < BUTTON_MII_A){
                     DisableButton(&driverButtons[i]);
                 }
-                if (charRestrict == CHAR_MEDIUMONLY &&
+                if (charRestrict == HOSTSETTING_RESTRICTCHAR_MEDIUMONLY &&
                 ((i >= BUTTON_BABY_MARIO && i < BUTTON_MARIO) || (i >= BUTTON_WARIO && i < BUTTON_MII_A))){
                     DisableButton(&driverButtons[i]);
                 }
-                if (charRestrict == CHAR_HEAVYONLY &&
+                if (charRestrict == HOSTSETTING_RESTRICTCHAR_LARGEONLY &&
                 i >= BUTTON_BABY_MARIO && i < BUTTON_WARIO){
                     DisableButton(&driverButtons[i]);
                 }
@@ -83,16 +152,17 @@ namespace UI {
             curSection == SECTION_P2_WIFI_FROOM_TEAMVS_VOTING ||
             curSection == SECTION_P2_WIFI_FROOM_BALLOON_VOTING ||
             curSection == SECTION_P2_WIFI_FROOM_COIN_VOTING ||
-            (charRestrict == CHAR_LIGHTONLY && miiWeight != LIGHTWEIGHT) ||
-            (charRestrict == CHAR_MEDIUMONLY && miiWeight != MEDIUMWEIGHT) ||
-            (charRestrict == CHAR_HEAVYONLY && miiWeight != HEAVYWEIGHT)){
+            (charRestrict == HOSTSETTING_RESTRICTCHAR_SMALLONLY && miiWeight != LIGHTWEIGHT) ||
+            (charRestrict == HOSTSETTING_RESTRICTCHAR_MEDIUMONLY && miiWeight != MEDIUMWEIGHT) ||
+            (charRestrict == HOSTSETTING_RESTRICTCHAR_LARGEONLY && miiWeight != HEAVYWEIGHT)){
                 DisableButton(&driverButtons[BUTTON_MII_A]);
                 DisableButton(&driverButtons[BUTTON_MII_B]);
             }
+            /*
             // Changes the initially selected button to one that is not disabled.
-            if (charRestrict == CHAR_LIGHTONLY &&
+            if (charRestrict == HOSTSETTING_RESTRICTCHAR_SMALLONLY &&
             ((weight != LIGHTWEIGHT && weight != MIIS) ||
-            ((miiWeight != LIGHTWEIGHT || RaceData::sInstance->menusScenario.localPlayerCount > 1) &&
+            ((miiWeight != LIGHTWEIGHT || Racedata::sInstance->menusScenario.localPlayerCount > 1) &&
             currentChar >= MII_S_A_MALE))){
                 button->HandleDeselect(hudSlotId, -1);
                 if (hudSlotId == 0) newButton = charSelect.GetButtonDriver(static_cast<CharacterId>(BABY_MARIO));
@@ -101,9 +171,9 @@ namespace UI {
                 newButton->SetButtonColours(hudSlotId);
                 page->OnButtonDriverSelect(newButton, newButton->buttonId, hudSlotId);
             }
-            else if (charRestrict == CHAR_MEDIUMONLY &&
+            else if (charRestrict == HOSTSETTING_RESTRICTCHAR_MEDIUMONLY &&
             ((weight != MEDIUMWEIGHT && weight != MIIS) ||
-            ((miiWeight != MEDIUMWEIGHT || RaceData::sInstance->menusScenario.localPlayerCount > 1) &&
+            ((miiWeight != MEDIUMWEIGHT || Racedata::sInstance->menusScenario.localPlayerCount > 1) &&
             currentChar >= MII_S_A_MALE))){
                 button->HandleDeselect(hudSlotId, -1);
                 if (hudSlotId == 0) newButton = charSelect.GetButtonDriver(static_cast<CharacterId>(MARIO));
@@ -112,9 +182,9 @@ namespace UI {
                 newButton->SetButtonColours(hudSlotId);
                 page->OnButtonDriverSelect(newButton, newButton->buttonId, hudSlotId);
             }
-            else if (charRestrict == CHAR_HEAVYONLY &&
+            else if (charRestrict == HOSTSETTING_RESTRICTCHAR_LARGEONLY &&
             ((weight != HEAVYWEIGHT && weight != MIIS) ||
-            ((miiWeight != HEAVYWEIGHT || RaceData::sInstance->menusScenario.localPlayerCount > 1) &&
+            ((miiWeight != HEAVYWEIGHT || Racedata::sInstance->menusScenario.localPlayerCount > 1) &&
             currentChar >= MII_S_A_MALE))){
                 button->HandleDeselect(hudSlotId, -1);
                 if (hudSlotId == 0) newButton = charSelect.GetButtonDriver(static_cast<CharacterId>(WARIO));
@@ -123,8 +193,9 @@ namespace UI {
                 newButton->SetButtonColours(hudSlotId);
                 page->OnButtonDriverSelect(newButton, newButton->buttonId, hudSlotId);
             }
+            */
         }
     }
     kmCall(0x807e33a8, RestrictCharacterSelection);
 } // namespace UI
-} // namespace VP
+} // namespace Pulsar

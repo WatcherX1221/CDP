@@ -132,6 +132,9 @@ void System::UpdateContext() {
     bool isItemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED);
     bool isBrake = 1; // At this stage, this value means "Is Brake Drifting Allowed?" since it needs to be calculated later
     bool raceTime = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RACETIME);
+    u8 hostKartRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST2, SETTINGHOST_RADIO_RESTRICTKART);
+    u8 hostCharRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST2, SETTINGHOST_RADIO_RESTRICTCHAR);
+    bool isSpeedLimit = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_SPEEDLIMIT);
 
     // Large Contexts
     u8 lapsLaps = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS);
@@ -141,8 +144,6 @@ void System::UpdateContext() {
     u8 itemStart = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_START);
     u8 itemCloudEffect = settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_SCROLL_CLOUD);
     u8 physVehicleStats = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_VEHICLESTATS);
-    u8 hostKartRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RESTRICTKART);
-    u8 hostCharRestrict = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_RESTRICTCHAR);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -196,6 +197,7 @@ void System::UpdateContext() {
                 raceTime = HOSTSETTING_RACETIME_NORMAL;
                 hostKartRestrict = HOSTSETTING_RESTRICTKART_DISABLED;
                 hostCharRestrict = HOSTSETTING_RESTRICTCHAR_DISABLED;
+                isSpeedLimit = HOSTSETTING_RESTRICTCHAR_DISABLED;
 
                 break;
             case(RKNet::ROOMTYPE_JOINING_REGIONAL):
@@ -221,7 +223,7 @@ void System::UpdateContext() {
 		isDisregard = newRadioContexts & ( 1 << HOST_DISREGARD );
 
                 // Always Enabled
-                hostWins = newRadioContexts & (1 << HOST_HAW);
+                hostWins = newRadioContexts & (0b11 << HOST_HAW);
                 isKO = newRadioContexts & (1 << MODE_KO);
                 isMiiHeads = newRadioContexts & (1 << RACE_MIIHEADS);
 
@@ -229,13 +231,14 @@ void System::UpdateContext() {
 
                     // Radio Contexts
                     isOTT = newRadioContexts & (1 << MODE_OTT);
-                    turboStyle = newRadioContexts & (1 << PHYS_TURBO);
+                    turboStyle = newRadioContexts & (0b11 << PHYS_TURBO);
                     isBrake = newRadioContexts & (1 << PHYS_BRAKE); // Is Brake Drift Allowed? take host settings
-                    lapMaths = newRadioContexts & (1 << LAP_MATHS);
+                    lapMaths = newRadioContexts & (0b11 << LAP_MATHS);
                     isItemStart = newRadioContexts & (1 << ITEM_START_ENABLED);
                     raceTime = newRadioContexts & (1 << HOST_RACETIME);
-                    hostCharRestrict = newRadioContexts & (1 << HOST_CHARRESTRICT);
-                    hostKartRestrict = newRadioContexts & (1 << HOST_KARTRESTRICT);
+                    hostCharRestrict = newRadioContexts & (0b11 << HOST_CHARRESTRICT);
+                    hostKartRestrict = newRadioContexts & (0b11 << HOST_KARTRESTRICT);
+                    isSpeedLimit = newRadioContexts & (1 << PHYS_SPEEDLIMIT);
 
                     // Large Contexts
                     lapsLaps = newLapsLaps;
@@ -283,6 +286,7 @@ void System::UpdateContext() {
                 isBrake = false;
                 isBrake |= physSpeed >= PHYSSETTING_SPEED_125 && physSpeed <= PHYSSETTING_SPEED_999;
                 isBrake |= physGravity >= PHYSSETTING_GRAVITY_025 && physGravity <= PHYSSETTING_GRAVITY_075;
+                isBrake |= physVehicleStats == PHYSSETTING_KARTSTAT_DIAMOND;
                 break;
         } // Switch Local Brake Setting
     } // If Brake Drift Allowed
@@ -297,6 +301,7 @@ void System::UpdateContext() {
     isValidTT &= ( ! isBrake ) ^ ( physSpeed >= PHYSSETTING_SPEED_125 && physSpeed <= PHYSSETTING_SPEED_999 );
     isValidTT &= turboStyle == this->info.HasUMTs();
     isValidTT &= physVehicleStats == PHYSSETTING_KARTSTAT_VANILLA;
+    isValidTT &= isSpeedLimit == PHYSSETTING_SPEEDLIMIT_ENABLED;
     //isValidTT &= isCTDN == MODESETTING_CTDN_DISABLED;
 
     // Extra validity notes:
@@ -337,7 +342,8 @@ void System::UpdateContext() {
                        | ( isDisregard << HOST_DISREGARD )
                        | ( isItemStart << ITEM_START_ENABLED )
                        | ( hostKartRestrict << HOST_KARTRESTRICT )
-                       | ( hostCharRestrict << HOST_CHARRESTRICT );
+                       | ( hostCharRestrict << HOST_CHARRESTRICT )
+                       | ( isSpeedLimit << PHYS_SPEEDLIMIT );
         contextSpeedMod = physSpeed;
         contextGravMod = physGravity;
         contextKartBin = physVehicleStats;

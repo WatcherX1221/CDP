@@ -41,6 +41,7 @@ static bool CheckControllerStrap() {
 }
 kmCall(0x800079b0, CheckControllerStrap);
 
+/*
 char bootParams[17];
 SectionId BootIntoSection(const NdevArgsExtractor& extractor) {
     SectionId section = SECTION_NONE;
@@ -63,6 +64,7 @@ SectionId BootIntoSection(const NdevArgsExtractor& extractor) {
     return section;
 }
 kmCall(0x80634f20, BootIntoSection);
+*/
 
 //kmWrite32(0x805243e4, 0x7F65DB78); //mr r5, r27 to get slot
 using namespace Input;

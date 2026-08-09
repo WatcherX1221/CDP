@@ -393,9 +393,9 @@ void EjectDroppedItem(ItemId type, const Vec3& position, u8 ownerPlayerId) {
         drops[i].spawnY = position.y;
 
         drops[i].model->ToggleVisible(true);
-//        if (type == BOO && drops[i].model->modelTransformator != nullptr) {
-//            drops[i].model->modelTransformator->PlayAnmNoBlend(0, 0.0f, 1.0f);
-//        }
+        if ( drops[i].model->modelTransformator != nullptr ) {
+            drops[i].model->modelTransformator->PlayAnmNoBlend(0, 0.0f, 1.0f);
+        }
         UpdateDropModelPosition(drops[i]);
         return;
     }

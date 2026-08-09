@@ -30,13 +30,14 @@ enum RadioContexts {
     MODE_KO = 0x5,
     PHYS_BRAKE = 0x6,
     HOST_DISREGARD = 0x7,
-    PHYS_TURBO = 0x8, // 0x2
-    TTS_VALID = 0xA,
-    ITEM_START_ENABLED = 0xB,
-    LAP_MATHS = 0xC, // 0x2
-    HOST_RACETIME = 0xD,
-    HOST_KARTRESTRICT = 0xE, // 0x2
-    HOST_CHARRESTRICT = 0x10 // 0x2
+    HOST_KARTRESTRICT = 0x8, // 0x2
+    HOST_CHARRESTRICT = 0xA, // 0x2
+    PHYS_TURBO = 0xC, // 0x2
+    TTS_VALID = 0xE,
+    ITEM_START_ENABLED = 0xF,
+    LAP_MATHS = 0x10, // 0x2
+    HOST_RACETIME = 0x12,
+    PHYS_SPEEDLIMIT = 0x13
 };
 
 enum ScrollContexts {

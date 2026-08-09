@@ -15,6 +15,9 @@
 
 namespace Pulsar {
 
+// Solo VS Race
+kmWrite32(0x80853148, 0x38E00004);
+
 namespace UI {
 //No ghost saving on RKSYS
 kmWrite32(0x8054913C, 0x60000000);

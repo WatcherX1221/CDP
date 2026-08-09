@@ -779,6 +779,10 @@ LoadNoAnm__13ModelDirectorFPCcRQ34nw4r3g3d7ResFileP5Light = 0x8055c2b8
 LinkAnimation__13ModelDirectorFUiRQ34nw4r3g3d7ResFilePCc7AnmTypebPCc13ArchiveSourceUc = 0x8055ddec
 UpdateDrawPriority__13ModelDirectorFUi = 0x8055f4c4
 
+#ModelTransformator
+PlayAnmNoBlend__18ModelTransformatorFUiff = 0x805573cc
+PlayAnmWithBlend__18ModelTransformatorFUibff = 0x80557684
+
 #MHModelDirector
 matNames__15MHModelDirector = 0x808d1860
 
@@ -1899,3 +1903,8 @@ ActivateMushroom__Q24Kart8MovementFv = 0x8057f3d8
 beginFrame= 0x8020fe24
 Update__20GameScreenEffectsMgrFv = 0x8054f1b0
 objProperties__Q24Item13ObjProperties = 0x809c2f48
+DecoderEnd= 0x8000a2a8
+RespawnImpl__Q27Objects11ItemDropperFv = 0x8076ed70
+IsKartUnlocked__F6KartIdUi = 0x805500cc
+GetMiiCharacterId__FRC3Mii = 0x80831af4
+GetCharacterIconPaneName__F11CharacterId = 0x80860acc

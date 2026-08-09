@@ -3,6 +3,7 @@
 #include <kamek.hpp>
 #include <MarioKartWii/UI/Ctrl/UIControl.hpp>
 #include <MarioKartWii/UI/Ctrl/PushButton.hpp>
+#include <MarioKartWii/UI/Ctrl/CountDown.hpp>
 
 //_sinit_ at 807e43ec
 class CtrlMenuCharacterSelect : public LayoutUIControl {

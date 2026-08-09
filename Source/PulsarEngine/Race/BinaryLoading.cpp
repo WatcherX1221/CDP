@@ -14,6 +14,7 @@ static void *GetCustomItemSlot(ArchiveMgr *archive, ArchiveSource type, const ch
         case ITEMSETTING_ROULETTE_MUSHROOMS:  name = "ItemSlotMushroom.bin"; break;
         case ITEMSETTING_ROULETTE_RANDOM:     name = "ItemSlotRandom.bin"; break;
         case ITEMSETTING_ROULETTE_DEBALANCED: name = "ItemSlotDebalanced.bin"; break;
+        case ITEMSETTING_ROULETTE_THUNDERSTORM: name = "ItemSlotThunderstorm.bin"; break;
     default: name = "ItemSlot.bin";
     }
     return archive->GetFile(type, name, length);
@@ -30,7 +31,11 @@ kmCall(0x807bbf50, GetCustomItemSlot);
 // Custom Vehicle Stat Loading
 static void *GetCustomKartParam(ArchiveMgr *archive, ArchiveSource type, const char *name, u32 *length){
     switch ( System::sInstance->GetContext(PHYS_KARTBIN) ) {
+        case PHYSSETTING_KARTSTAT_GOLD: name = "kartParamGold.bin"; break;
         case PHYSSETTING_KARTSTAT_PLATINUM: name = "kartParamPlatinum.bin"; break;
+        case PHYSSETTING_KARTSTAT_DIAMOND: name = "kartParamDiamond.bin"; break;
+        case PHYSSETTING_KARTSTAT_DRIFTSWAP: name = "kartParamDriftSwap.bin"; break;
+        case PHYSSETTING_KARTSTAT_BOLLOCKS: name = "kartParamBollocks.bin"; break;
         default: name = "kartParam.bin";
     }
     return archive->GetFile(type, name, length);

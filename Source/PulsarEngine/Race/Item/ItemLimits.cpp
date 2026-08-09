@@ -15,22 +15,25 @@ enum itemLimitDef {
     ITEMLIMIT_VANILLA = 0x0,
     ITEMLIMIT_STANDARD = 0x1,
     ITEMLIMIT_LARGE = 0x2,
-    ITEMLIMIT_SMALL = 0x3 // debug option
+    ITEMLIMIT_SMALL = 0x3, // debug option
+    ITEMLIMIT_THUNDERSTORM = 0x4
 };
 
-static const u8 itemLimits[4][17] = { // Table of item limits
+static const u8 itemLimits[5][17] = { // Table of item limits
 //  GRNS REDS BANA MUSH STAR BLUE SHOK FIBX MEGA BOMB BLPR POWB GMUS BILL CLOU NONE FEAT
     { 12,   8,  16,  12,   3,   1,   1,   6,   2,   3,   1,   1,   2,   1,   1,   0,   0 }, // Vanilla
     { 12,   8,  12,  12,   4,   3,   2,  12,   4,   8,   2,   2,   3,   2,   3,   0,   4 }, // Standard
     { 16,  16,  32,  16,  12,  16,   8,  32,  12,  32,   6,   6,   8,   8,  12,   0,   8 }, // Large Item Counts
-    {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3 }  // Small
+    {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3 }, // Small
+    {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3, 128,   3,   3 }  // Thunderstorm
 };
 
-static const u8 itemSettingLimit[5] = {
+static const u8 itemSettingLimit[6] = {
     ITEMLIMIT_STANDARD, // Standard
     ITEMLIMIT_STANDARD, // Mushrooms
     ITEMLIMIT_STANDARD, // Random
     ITEMLIMIT_LARGE, // Debalanced
+    ITEMLIMIT_THUNDERSTORM, // Thunderstorm
     ITEMLIMIT_VANILLA // Vanilla
 };
 

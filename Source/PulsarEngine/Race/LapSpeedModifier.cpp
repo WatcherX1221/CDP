@@ -10,35 +10,52 @@
 
 namespace Pulsar {
 namespace Race {
+
+
+
+//Max Lap Fix [Toadette Hack Fan]
+kmWrite32(0x805328C0, 0x280000FF);
+kmWrite32(0x805336c8, 0x280000FF);
+kmWrite32(0x80534bcc, 0x280000FF);
+kmWrite32(0x80534360, 0x280000FF);
+
+
 RaceinfoPlayer* LoadCustomLapCount(RaceinfoPlayer* player, u8 id) {
 //Mostly a port of MrBean's version with better hooks and arguments documentation
-    u8 lapCount = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
+    const u8 lapKMP = KMP::Manager::sInstance->stgiSection->holdersArray[0]->raw->lapCount;
+    u8 lapSetting = 3;
+    u8 lapCount = lapKMP;
 
-    u8 lapSetting = System::sInstance->GetContext(LAPS_LAPS) +3;
-    if (lapSetting > 9) {
-        lapSetting -= 9;
-    };
-    bool lapMax9 = 0;
-    if ((lapSetting == 9) || (lapCount == 9)) {
-        lapMax9 = 1;
-    };
-    switch ( System::sInstance->GetFullRadioContext(LAP_MATHS) ) {
-    case(LAPSETTING_CALC_EXCLUDE): // Exclusive
-        if (lapCount == 3) {
-            lapCount = lapSetting;
-        };
-        break;
-    case(LAPSETTING_CALC_FORCE): // Forced
-        lapCount = lapSetting;
-        break;
-    default: // Calculated
-        lapCount = ((lapCount * lapSetting + 1) / 3); // added 1 for rounding
-        if (lapCount < 1) lapCount = 1;
-        else if ((lapCount > 9) && (lapMax9)) lapCount = 9;
-        else if ((lapCount > 8) && (!lapMax9)) lapCount = 8;
+    switch ( System::sInstance->GetContext(LAPS_LAPS) ) {
+        case LAPSETTING_LAPS_1: lapSetting = 1 ;break;
+        case LAPSETTING_LAPS_2: lapSetting = 2 ;break;
+        case LAPSETTING_LAPS_3: lapSetting = 3 ;break;
+        case LAPSETTING_LAPS_4: lapSetting = 4 ;break;
+        case LAPSETTING_LAPS_5: lapSetting = 5 ;break;
+        case LAPSETTING_LAPS_6: lapSetting = 6 ;break;
+        case LAPSETTING_LAPS_7: lapSetting = 7 ;break;
+        case LAPSETTING_LAPS_8: lapSetting = 8 ;break;
+        case LAPSETTING_LAPS_9: lapSetting = 9 ;break;
+        case LAPSETTING_LAPS_15: lapSetting = 15 ;break;
+        case LAPSETTING_LAPS_50: lapSetting = 50 ;break;
+        case LAPSETTING_LAPS_255: lapSetting = 255 ;break;
+        default: lapSetting = 3;
     }
 
-    //End of custom code
+    switch ( System::sInstance->GetFullRadioContext(LAP_MATHS) ) {
+        case(LAPSETTING_CALC_EXCLUDE): // Exclusive
+            if (lapKMP == 3) {
+                lapCount = lapSetting;
+            };
+            break;
+        case(LAPSETTING_CALC_FORCE): // Forced
+            lapCount = lapSetting;
+            break;
+        default: // Calculated
+            lapCount = ((lapKMP * lapSetting + 1) / 3); // added 1 for rounding
+            if (lapCount < 1) lapCount = 1;
+            if ((lapKMP * lapSetting + 1)/3 > 255) lapCount = 255;
+        }
 
     Racedata::sInstance->racesScenario.settings.lapCount = lapCount;
     return new(player) RaceinfoPlayer(id, lapCount);
@@ -156,7 +173,10 @@ Kart::Stats* ApplySpeedModifier(KartId kartId, CharacterId characterId) {
     Item::blueShellMinimumDiveDistance = 640000.0f * factor;
     Item::blueShellHomingSpeed = 130.0f * factor;
 
-    Kart::hardSpeedCap = 120.0f + (factor - 1.0f) * 90.0f; // credits to BlueLeopard02 for 200cc speed fix in the Pulsar discord
+    // credits to BlueLeopard02 for 200cc speed fix in the Pulsar discord
+    if ( System::sInstance->GetBoolRadioContext(PHYS_SPEEDLIMIT) == PHYSSETTING_SPEEDLIMIT_DISABLED )
+        Kart::hardSpeedCap = 340282346638528859811704200000000000000.0f;
+        else Kart::hardSpeedCap = 120.0f + (factor - 1.0f) * 90.0f;
     Kart::bulletSpeed = 145.0f * factor;
     Kart::starSpeed = 105.0f * factor;
     Kart::megaTCSpeed = 95.0f * factor;
@@ -182,13 +202,6 @@ kmWrite32(0x80723D10, 0x281D0009);
 kmWrite32(0x80723D40, 0x3BA00009);
 
 kmWrite24(0x808AAA0C, 'PUL'); //time_number -> time_numPUL
-
-
-//Max Lap Fix [Toadette Hack Fan]
-kmWrite32(0x805328C0, 0x280000FF);
-kmWrite32(0x805336c8, 0x280000FF);
-kmWrite32(0x80534bcc, 0x280000FF);
-kmWrite32(0x80534360, 0x280000FF);
 
 }//namespace Race
 }//namespace Pulsar

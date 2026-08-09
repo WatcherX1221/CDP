@@ -27,12 +27,12 @@ static void* AllocZeroed(u32 size) {
 }
 kmCall(0x807baa28, AllocZeroed);
 
+/*
 extern "C" {
     u8 compiledItemSlotBin[3000];
     u32 compiledItemSlotLen = 0;
 }
 
-/*
 extern "C" void BuildItemSlotBinary() {
     u32 offset = 0;
     compiledItemSlotBin[offset++] = (u8)ItemProbs::TABLE_COUNT;
@@ -426,20 +426,15 @@ static void ConditionalEjectItems(Item::PlayerInventory& inventory) {
 kmCall(0x807bc6c4, ConditionalEjectItems);
 
 extern "C" bool ExpandedCapacityCheck(ItemId id) {
-/*
-    if (id == BOO) {
-        if (Pulsar::Race::GetBooSpawnTimer() > 0) return false;
-        u32 inPlay = Pulsar::Race::CountPlayersHoldingItem(BOO)
-                   + Pulsar::Race::GetActiveDropCount(BOO);
-        return inPlay < Pulsar::Race::BOO_MAX_COUNT;
-    }
-*/
-    if (id == FEATHER || id == TRIPLE_FEATHER) {
+    if (id > ORIGINAL_ITEM_COUNT) {
+        return true;
+        /*
         if (Pulsar::Race::GetFeatherSpawnTimer() > 0) return false;
-        u32 inPlay = Pulsar::Race::CountPlayersHoldingItem(FEATHER)
-                   + Pulsar::Race::CountPlayersHoldingItem(TRIPLE_FEATHER)
-                   + Pulsar::Race::GetActiveDropCount(FEATHER);
+        u32 inPlay = Pulsar::Race::CountPlayersHoldingItem(id)
+                   + Pulsar::Race::GetActiveDropCount(id);
+        // Should be updated to use new item maxes
         return inPlay < Pulsar::Race::FEATHER_MAX_COUNT;
+        */
     }
     return Item::Manager::IsThereCapacityForItem(id);
 }

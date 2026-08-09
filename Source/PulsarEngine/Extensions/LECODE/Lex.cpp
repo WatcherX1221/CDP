@@ -123,7 +123,8 @@ u32 ApplySET1TimeLimit(const Racedata& racedata) {
     }
     // Override for extended race time setting
     Pulsar::System* system = Pulsar::System::sInstance;
-    if ( system->GetBoolRadioContext(Pulsar::HOST_RACETIME) ) hiTime = 0x2932E00; // 12 Hours
+    if ( system->GetBoolRadioContext(Pulsar::HOST_RACETIME) || true) hiTime = 0x2932E00; // 12 Hours
+    // Forced true now that we've switched to newwfc, but still preferably want this on the setting
     // Proceed
     asm(lwz r5, 0x0004 (r31)); //default, make this volatile if another func is called
     return hiTime;

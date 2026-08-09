@@ -2,6 +2,8 @@
 #include <Settings/SettingsParam.hpp>
 #include <MarioKartWii/UI/Page/Menu/KartSelect.hpp>
 #include <MarioKartWii/UI/Ctrl/UIControl.hpp>
+#include <MarioKartWii/UI/Section/SectionMgr.hpp>
+#include <MarioKartWii/GlobalFunctions.hpp>
 
 // Credits to VP & RR for Kart Restrictions
 
@@ -12,9 +14,9 @@ namespace UI {
 // Changes the display type of the kart select depending on the kart restriction.
 u8 RestrictKartSelection(){
     SectionMgr::sInstance->sectionParams->kartsDisplayType = 2;
-    KartRestriction kartRest = System::GetFullRadioContext(HOST_KARTRESTRICT);
-    if (kartRest == KART_KARTONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 0;
-    else if (kartRest == KART_BIKEONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 1;
+    u8 kartRest = System::sInstance->GetFullRadioContext(HOST_KARTRESTRICT);
+    if (kartRest == HOSTSETTING_RESTRICTKART_KARTONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 0;
+    else if (kartRest == HOSTSETTING_RESTRICTKART_BIKEONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 1;
     return SectionMgr::sInstance->sectionParams->kartsDisplayType;
 }
 kmCall(0x808455a4, RestrictKartSelection);
@@ -24,10 +26,10 @@ kmWrite32(0x808455a8, 0x907f06ec);
 // Removes karts from the accessible pool if restricted when selecting a kart in multiplayer.
 bool IsKartAccessible(KartId kart, u32 r4){
     bool ret = IsKartUnlocked(kart, r4);
-    KartRestriction kartRest = System::GetFullRadioContext(HOST_KARTRESTRICT);
+    u8 kartRest = System::sInstance->GetFullRadioContext(HOST_KARTRESTRICT);
 
-    if ((kart < STANDARD_BIKE_S && kartRest == KART_BIKEONLY) ||
-        (kart >= STANDARD_BIKE_S && kartRest == KART_KARTONLY)){
+    if ((kart < STANDARD_BIKE_S && kartRest == HOSTSETTING_RESTRICTKART_BIKEONLY) ||
+        (kart >= STANDARD_BIKE_S && kartRest == HOSTSETTING_RESTRICTKART_KARTONLY)){
         ret = false;
     }
 

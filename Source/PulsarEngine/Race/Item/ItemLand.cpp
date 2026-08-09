@@ -5,7 +5,12 @@
 #include <PulsarSystem.hpp>
 #include <Settings/SettingsParam.hpp>
 #include <MarioKartWii/Item/Obj/ObjProperties.hpp>
+#include <MarioKartWii/Kart/KartDamage.hpp>
 //#include <MarioKartWii/Item/Obj/Bomb.hpp>
+
+// testing
+#include <MarioKartWii/Item/ItemBehaviour.hpp>
+#include <MarioKartWii/Item/Obj/ItemObj.hpp>
 
 
 namespace Pulsar {
@@ -34,9 +39,27 @@ static int PickupItem(Kart::Collision *kartCollision, ItemId item, ItemId backup
     else if( backup != ITEM_NONE ) return UseItem(kartCollision, backup);
     return -1;
 }
+/*
+static int HitItem(Kart::Collision *kartCollision, DamageType damage) {
+    u8 playerId = kartCollision->GetPlayerIdx();
+    kartDamage->SetDamage(damage, r5, affectsMegas, appliedDamage, playerIdxItemPlayerSub, r8)
+    return -1;
+}
+*/
+
 
 // Ground Collision Definitions
 
+/*
+static int GroundCollisionGreenShell(Kart::Collision *kartCollision){
+    return HitItem(kartCollision, KNOCKBACK_STAR);
+    return -1;
+}
+*/
+static int GroundCollisionMushroom(Kart::Collision *kartCollision){
+    return UseItem(kartCollision, MUSHROOM);
+    return -1;
+}
 static int GroundCollisionLightning(Kart::Collision *kartCollision){
     if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, LIGHTNING);
     return -1;
@@ -61,6 +84,10 @@ static int GroundCollisionBill(Kart::Collision *kartCollision){
     if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, BULLET_BILL);
     return -1;
 }
+static int GroundCollisionCloud(Kart::Collision *kartCollision){
+    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) return UseItem(kartCollision, THUNDER_CLOUD);
+    return -1;
+}
 
 //kmWritePointer(0x808b5470, GroundCollisionGreenShell);
 //kmWritePointer(0x808b547c, GroundCollisionRedShell);
@@ -78,15 +105,32 @@ kmWritePointer(0x808b5500, GroundCollisionGolden);
 kmWritePointer(0x808b550c, GroundCollisionBill);
 //kmWritePointer(0x808b5518, GroundCollisionCloud);
 
-// Credits to Retro Rewind for landable items modifying
-
 // Item Landing Definitions
 
+enum ITEMLANDTYPES {
+    ITEMLAND_VANILLA,
+    ITEMLAND_ALL,
+    ITEMLAND_NONE
+};
+
+static const bool itemlands[3][15] = {
+    {1,1,1,1,1,0,0,1,0,1,0,0,0,0,0},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+};
+
 void AllowDroppedItems() {
-    if ( System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA ) {
-        for (int i = 0; i < 15; i++) {
-            Item::ObjProperties::objProperties[i].canFallOnTheGround = true;
+    u8 landtype = ITEMLAND_VANILLA;
+    if(System::sInstance->GetBoolRadioContext(MODE_OTT)) landtype = ITEMLAND_NONE;
+    else {
+        switch ( System::sInstance->GetContext(ITEM_ROULETTEBIN) ) {
+            case (ITEMSETTING_ROULETTE_VANILLA): landtype = ITEMLAND_VANILLA ;break;
+            default: landtype = ITEMLAND_ALL ;break;
         }
+    }
+    for (int i = 0; i < 15; i++) {
+        Item::ObjProperties::objProperties[i].canFallOnTheGround  = itemlands[landtype][i];
+        Item::ObjProperties::objProperties[i].canFallOnTheGround2 = itemlands[landtype][i];
     }
 }
 kmBranch(0x80790af8, AllowDroppedItems);

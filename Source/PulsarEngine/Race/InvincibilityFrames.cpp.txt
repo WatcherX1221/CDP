@@ -1,0 +1,59 @@
+#include <kamek.hpp>
+#include <MarioKartWii/System/Random.hpp>
+#include <MarioKartWii/Kart/KartDamage.hpp>
+#include <MarioKartWii/Race/RaceData.hpp>
+#include <MarioKartWii/Item/ItemManager.hpp>
+#include <MarioKartWii/Item/ItemBehaviour.hpp>
+#include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
+#include <MarioKartWii/GlobalFunctions.hpp>
+
+// Credits to Variety Pack
+
+namespace Pulsar {
+namespace Race {
+
+u16 invincibilityTimer[12];
+
+static void UpdateTimers(){
+//    if (!Pulsar::CupsConfig::IsRegsSituation()) {
+        for (int i=0; i<12; ++i){
+            if (invincibilityTimer[i] > 0){
+                --invincibilityTimer[i];
+            }
+        }
+//    }
+}
+
+static RaceFrameHook UpdateTimerHook(UpdateTimers);
+
+static void ResetTimers(){
+//    if (!Pulsar::CupsConfig::IsRegsSituation()) {
+        for (int i=0; i<12; ++i){
+            invincibilityTimer[i] = 0;
+        }
+//    }
+}
+
+static RaceLoadHook ResetTimerHook(ResetTimers);
+
+static void InvincibilityFrames(Kart::Damage *kartDamage, DamageType newDamage, u32 r5, bool affectsMegas, DamageType* appliedDamage, u32 playerIdxItemPlayerSub, u32 r8){
+//    if (!Pulsar::CupsConfig::IsRegsSituation() && !IsBattle()) {
+//        const u8 playerId = kartDamage->link.GetPlayerIdx();
+        const u8 playerId = 0x0;
+        const GameMode gameMode = RaceData::sInstance->racesScenario.settings.gamemode;
+        const Gamemode vpGameMode = System::GetGamemode();
+        if (invincibilityTimer[playerId] > 0){
+            return;
+        }
+        invincibilityTimer[playerId] = 150;
+//    }
+    if (newDamage != NO_DAMAGE) kartDamage->SetDamage(newDamage, r5, affectsMegas, appliedDamage, playerIdxItemPlayerSub, r8);
+}
+
+kmCall(0x805700b0, InvincibilityFrames);
+kmCall(0x805705d8, InvincibilityFrames);
+kmCall(0x805721a4, InvincibilityFrames);
+kmCall(0x805727b4, InvincibilityFrames);
+kmBranch(0x80590d84, InvincibilityFrames);
+} // namespace Race
+} // namespace Pulsar

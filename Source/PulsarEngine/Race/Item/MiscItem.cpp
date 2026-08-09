@@ -41,7 +41,7 @@ kmCall(0x807ba598, AccurateItemRoulette);
 // Mushroom Glitch Fix [Vabold]
 static Item::PlayerRoulette* ApplyMushroomGlitchFix(Item::PlayerRoulette* roulette) {
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
-    if (controller != nullptr && (System::sInstance->GetContext(ITEM_ROULETTEBIN) != ITEMSETTING_ROULETTE_VANILLA)) ++roulette->itemNum;
+    if (controller != nullptr && (System::sInstance->GetContext(ITEM_ROULETTEBIN) == ITEMSETTING_ROULETTE_VANILLA)) ++roulette->itemNum;
     return roulette;
 }
 kmCall(0x807BA078, ApplyMushroomGlitchFix);

@@ -48,6 +48,9 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
             | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_DISREGARD) << HOST_DISREGARD // Yes, we do still need to send this.
             | settings.GetUserSettingValue(Settings::SETTINGSTYPE_ITEM, SETTINGITEM_RADIO_STARTENABLED) << ITEM_START_ENABLED
             | settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_RADIO_CALC) << LAP_MATHS
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST2, SETTINGHOST_RADIO_RESTRICTCHAR) << HOST_CHARRESTRICT
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST2, SETTINGHOST_RADIO_RESTRICTKART) << HOST_KARTRESTRICT
+            | settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_RADIO_SPEEDLIMIT) << HOST_KARTRESTRICT
         ;
         destPacket->lapCount = settings.GetUserSettingValue(Settings::SETTINGSTYPE_LAP, SETTINGLAP_SCROLL_LAPS);
         destPacket->speedMod = settings.GetUserSettingValue(Settings::SETTINGSTYPE_PHYSICS, SETTINGPHYS_SCROLL_SPEED);
