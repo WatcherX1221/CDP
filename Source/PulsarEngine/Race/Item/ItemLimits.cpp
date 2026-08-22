@@ -23,9 +23,9 @@ static const u8 itemLimits[5][17] = { // Table of item limits
 //  GRNS REDS BANA MUSH STAR BLUE SHOK FIBX MEGA BOMB BLPR POWB GMUS BILL CLOU NONE FEAT
     { 12,   8,  16,  12,   3,   1,   1,   6,   2,   3,   1,   1,   2,   1,   1,   0,   0 }, // Vanilla
     { 12,   8,  12,  12,   4,   3,   2,  12,   4,   8,   2,   2,   3,   2,   3,   0,   4 }, // Standard
-    { 16,  16,  32,  16,  12,  16,   8,  32,  12,  32,   6,   6,   8,   8,  12,   0,   8 }, // Large Item Counts
+    { 12,  12,  24,   8,   6,   6,   4,  24,   6,  12,   4,   4,   6,   8,  12,   0,   8 }, // Large Item Counts
     {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3 }, // Small
-    {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3, 128,   3,   3 }  // Thunderstorm
+    {  3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,  64,   3,   3 }  // Thunderstorm
 };
 
 static const u8 itemSettingLimit[6] = {

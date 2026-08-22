@@ -132,6 +132,7 @@ void AllowDroppedItems() {
         Item::ObjProperties::objProperties[i].canFallOnTheGround  = itemlands[landtype][i];
         Item::ObjProperties::objProperties[i].canFallOnTheGround2 = itemlands[landtype][i];
     }
+    //if( System::sInstance->GetContext(ITEM_ROULETTEBIN) == ITEMSETTING_ROULETTE_DEBALANCED ) Item::Behavior::behaviourTable[MEGA_MUSHROOM].objId = OBJ_THUNDER_CLOUD;
 }
 kmBranch(0x80790af8, AllowDroppedItems);
 

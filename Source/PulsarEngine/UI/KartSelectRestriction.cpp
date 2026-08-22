@@ -5,18 +5,19 @@
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
 #include <MarioKartWii/GlobalFunctions.hpp>
 
-// Credits to VP & RR for Kart Restrictions
+// Credits to VP for Kart Restrictions
 
 namespace Pulsar {
 namespace UI {
 
 
 // Changes the display type of the kart select depending on the kart restriction.
-u8 RestrictKartSelection(){
+u32 RestrictKartSelection(){
     SectionMgr::sInstance->sectionParams->kartsDisplayType = 2;
     u8 kartRest = System::sInstance->GetFullRadioContext(HOST_KARTRESTRICT);
     if (kartRest == HOSTSETTING_RESTRICTKART_KARTONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 0;
     else if (kartRest == HOSTSETTING_RESTRICTKART_BIKEONLY) SectionMgr::sInstance->sectionParams->kartsDisplayType = 1;
+    SectionMgr::sInstance->sectionParams->kartsDisplayType = 2; // temporary line to disable setting behaviour because it isn't working
     return SectionMgr::sInstance->sectionParams->kartsDisplayType;
 }
 kmCall(0x808455a4, RestrictKartSelection);
